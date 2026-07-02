@@ -1,4 +1,4 @@
-import { access, mkdir, copyFile, rm, cp } from 'node:fs/promises';
+import { access, mkdir, copyFile, rm, cp, readdir } from 'node:fs/promises';
 import { constants } from 'node:fs';
 
 async function exists(path) {
@@ -13,7 +13,13 @@ async function exists(path) {
 await rm('dist', { recursive: true, force: true });
 await mkdir('dist', { recursive: true });
 
-await copyFile('index.html', 'dist/index.html');
+const rootFiles = await readdir('.');
+const htmlFiles = rootFiles.filter((file) => file.endsWith('.html'));
+
+for (const file of htmlFiles) {
+  await copyFile(file, `dist/${file}`);
+}
+
 await cp('src', 'dist/src', { recursive: true });
 await cp('docs', 'dist/docs', { recursive: true });
 
@@ -23,4 +29,4 @@ for (const file of ['_headers', '_redirects']) {
   }
 }
 
-console.log('Static build ready in dist/');
+console.log(`Static build ready in dist/ with ${htmlFiles.length} HTML page(s).`);
