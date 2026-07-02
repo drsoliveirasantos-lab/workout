@@ -154,15 +154,22 @@
                   </label>
                   <label class="field full">
                     Exercice réellement utilisé
-                    <input name="calibrationExercise" type="text" placeholder="Ex : développé couché, leg press 45°, curl machine..." />
+                    <select id="calibration-exercise" name="calibrationExercise" required>
+                      <option value="Développé couché">Développé couché</option>
+                      <option value="Chest press machine">Chest press machine</option>
+                      <option value="Développé incliné">Développé incliné</option>
+                      <option value="Développé haltères">Développé haltères</option>
+                    </select>
                   </label>
-                  <label class="field">
+                  <label class="field full">
                     Charge utilisée (kg)
                     <input name="calibrationWeight" type="number" min="1" step="0.5" value="60" required />
+                    <div id="weight-quick-picks" class="quick-picks" aria-label="Choix rapide du poids"></div>
                   </label>
-                  <label class="field">
+                  <label class="field full">
                     Répétitions propres
                     <input name="calibrationReps" type="number" min="1" max="30" value="8" required />
+                    <div id="reps-quick-picks" class="quick-picks" aria-label="Choix rapide des répétitions"></div>
                   </label>
                   <label class="field">
                     RIR réel
