@@ -25,7 +25,9 @@ test('plan page contains zone funnel, selectable exercise, quick picks and resul
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
   const families = await text('src/data/movementFamilies.js');
+  const exerciseProfiles = await text('src/data/exerciseProfiles.js');
   const calibration = await text('src/engine/calibration.js');
+  const training = await text('src/engine/training.js');
   const calibrationCss = await text('src/calibration.css');
   const accordionCss = await text('src/result-accordion.css');
 
@@ -67,8 +69,14 @@ test('plan page contains zone funnel, selectable exercise, quick picks and resul
   assert.match(families, /CALIBRATION_ZONES/);
   assert.match(families, /movementLabel: 'Squat \/ leg press'/);
   assert.match(families, /technicalLabel: 'Poussée horizontale'/);
-  assert.match(calibration, /buildCalibrationZones/);
-  assert.match(calibration, /mouvement/);
+  assert.match(exerciseProfiles, /EXERCISE_PROFILES/);
+  assert.match(exerciseProfiles, /hack_squat/);
+  assert.match(exerciseProfiles, /calculateExerciseTransfer/);
+  assert.match(exerciseProfiles, /muscles/);
+  assert.match(calibration, /sourceProfileId/);
+  assert.match(calibration, /getExerciseProfileByName/);
+  assert.match(training, /calculateExerciseTransfer/);
+  assert.match(training, /fiabilité/);
   assert.match(calibrationCss, /quick-pick/);
   assert.match(calibrationCss, /calibration-movement-item/);
   assert.match(accordionCss, /accordion-section/);
