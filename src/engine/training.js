@@ -111,6 +111,7 @@ export function generateTrainingPlan({ profile, strengthTests = [], calibrations
   const intensity = getIntensityByGoal(goal, level);
   const split = SPLITS[days] || SPLITS[3];
   const testsByExercise = Object.fromEntries(strengthTests.map((test) => [test.exerciseId, test]));
+  const calibrationByFamily = Object.fromEntries(calibrations.map((entry) => [entry.familyId, entry]));
 
   const sessions = split.map((sessionType, index) => buildSession({
     sessionType,
@@ -118,6 +119,7 @@ export function generateTrainingPlan({ profile, strengthTests = [], calibrations
     intensity,
     level,
     testsByExercise,
+    calibrationByFamily,
     equipment: profile.equipment || 'basic'
   }));
 
@@ -244,7 +246,7 @@ function sumSessionSets(session, key) {
   return session.exercises.reduce((total, exercise) => total + (exercise[key] || 0), 0);
 }
 
-function buildSession({ sessionType, index, intensity, level, testsByExercise, equipment }) {
+function buildSession({ sessionType, index, intensity, level, testsByExercise, calibrationByFamily, equipment }) {
   const templates = {
     full_body_a: ['squat', 'bench_press', 'row', 'lunge', 'plank'],
     full_body_b: ['deadlift', 'overhead_press', 'pulldown', 'squat', 'plank'],
@@ -261,12 +263,11 @@ function buildSession({ sessionType, index, intensity, level, testsByExercise, e
   const exercises = exerciseIds.map((exerciseId, position) => {
     const exercise = EXERCISES.find((item) => item.id === exerciseId);
     const test = testsByExercise[exerciseId];
+    const calibration = calibrationByFamily?.[exercise.familyId];
     const isMainLift = position <= 2 && exercise?.loadSource === 'estimated-1rm';
     const sets = isMainLift ? (level === 'beginner' ? 3 : 4) : 2;
     const repRange = isMainLift ? intensity.repRange : exercise.defaultRepRange;
-    const load = test?.trainingMax
-      ? roundToStep(test.trainingMax * intensity.percent)
-      : null;
+    const prescription = buildGeneralPrescription({ exercise, test, calibration, intensity });
 
     return {
       id: exerciseId,
@@ -275,11 +276,11 @@ function buildSession({ sessionType, index, intensity, level, testsByExercise, e
       sets,
       repRange,
       rest: intensity.rest,
-      loadKg: load,
-      loadText: load ? `${load} kg` : 'Choisir une charge à RIR 2-3',
+      loadKg: prescription.loadKg,
+      loadText: prescription.loadText,
       supportLabel: 'Alternative débutant',
       alternative: exercise.beginnerAlternative,
-      note: load ? `Charge calculée depuis Training Max ${test.trainingMax} kg` : 'Pas encore de test sous-maximal pour cet exercice.'
+      note: prescription.note
     };
   });
 
@@ -290,6 +291,52 @@ function buildSession({ sessionType, index, intensity, level, testsByExercise, e
     exercises,
     warmup: buildWarmup(equipment),
     cooldown: '5-10 min facile + mobilité légère si utile.'
+  };
+}
+
+function buildGeneralPrescription({ exercise, test, calibration, intensity }) {
+  if (test?.trainingMax) {
+    const load = roundToStep(test.trainingMax * intensity.percent);
+    return {
+      loadKg: load,
+      loadText: `${load} kg`,
+      note: `Charge calculée depuis Training Max ${test.trainingMax} kg.`
+    };
+  }
+
+  if (calibration && exercise.familyId && exercise.familyId !== 'core') {
+    const family = MOVEMENT_FAMILIES[exercise.familyId];
+    const transfer = family?.transfer?.[exercise.transferKey];
+
+    if (transfer !== null && transfer !== undefined) {
+      const low = roundToStep(calibration.workingRange.low * transfer);
+      const high = roundToStep(calibration.workingRange.high * transfer);
+      return {
+        loadKg: low,
+        loadText: `Charge estimée ${low}-${high} kg`,
+        note: `Basé sur ${calibration.exerciseName} · confiance ${calibration.confidence.label} · famille ${calibration.familyLabel}.`
+      };
+    }
+
+    return {
+      loadKg: null,
+      loadText: 'Choisir une charge à RIR 2-3',
+      note: `Calibration ${calibration.familyLabel} disponible, mais transfert non fiable vers ${exercise.name}. Utilise RIR.`
+    };
+  }
+
+  if (exercise.familyId === 'core' || exercise.loadSource === 'time') {
+    return {
+      loadKg: null,
+      loadText: 'Poids du corps / temps contrôlé',
+      note: 'Pas besoin de test de charge pour cet exercice.'
+    };
+  }
+
+  return {
+    loadKg: null,
+    loadText: 'Choisir une charge à RIR 2-3',
+    note: 'Famille non calibrée : utiliser RIR puis enregistrer la charge après la séance.'
   };
 }
 
