@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evidence base — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Base scientifique de Workout Nykuto : formules e1RM, Training Max, progression, nutrition et garde-fous."
+    />
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html" aria-current="page">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="evidence-title">
+          <p class="eyebrow">Evidence base</p>
+          <h1 id="evidence-title">Formules, règles et limites du moteur</h1>
+          <p class="muted">
+            Cette page explique les règles utilisées par le MVP. Elle sert à rendre les calculs compréhensibles,
+            pas à promettre une précision parfaite.
+          </p>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="training-evidence">
+          <h2 id="training-evidence">1. Estimation de charge</h2>
+          <div class="two-columns">
+            <article class="mini-card">
+              <p class="eyebrow">Epley</p>
+              <h3>e1RM = charge × (1 + reps / 30)</h3>
+              <p class="muted">Formule simple pour estimer une répétition maximale à partir d'une série sous-maximale.</p>
+            </article>
+            <article class="mini-card">
+              <p class="eyebrow">Brzycki</p>
+              <h3>e1RM = charge × 36 / (37 - reps)</h3>
+              <p class="muted">Formule alternative. Le MVP moyenne Epley et Brzycki pour éviter de dépendre d'une seule estimation.</p>
+            </article>
+          </div>
+          <p>
+            Le moteur transforme ensuite l'e1RM en <strong>Training Max à 90 %</strong>. C'est volontairement prudent,
+            surtout pour débutants et intermédiaires.
+          </p>
+          <ul class="clean-list">
+            <li><strong>3-10 répétitions :</strong> fiabilité haute.</li>
+            <li><strong>11-15 répétitions :</strong> fiabilité moyenne.</li>
+            <li><strong>&gt;15 répétitions :</strong> fiabilité basse.</li>
+          </ul>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="progression-evidence">
+          <h2 id="progression-evidence">2. Progression</h2>
+          <p>
+            Le MVP utilise une double progression : on augmente la charge seulement quand toutes les séries atteignent
+            le haut de la fourchette avec une technique propre.
+          </p>
+          <ul class="clean-list">
+            <li><strong>Haut du corps :</strong> +2 à +2,5 kg ou +2,5 à 5 %.</li>
+            <li><strong>Bas du corps :</strong> +2,5 à +5 kg ou +5 à 10 %.</li>
+            <li><strong>Fatigue, douleur ou baisse nette :</strong> maintien ou deload.</li>
+          </ul>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="nutrition-evidence">
+          <h2 id="nutrition-evidence">3. Nutrition</h2>
+          <p>
+            Les calories sont estimées avec Mifflin-St Jeor, puis ajustées selon l'activité et l'objectif.
+          </p>
+          <div class="two-columns">
+            <article class="mini-card">
+              <p class="eyebrow">Homme</p>
+              <h3>BMR = 10×kg + 6,25×cm - 5×âge + 5</h3>
+            </article>
+            <article class="mini-card">
+              <p class="eyebrow">Femme</p>
+              <h3>BMR = 10×kg + 6,25×cm - 5×âge - 161</h3>
+            </article>
+          </div>
+          <ul class="clean-list">
+            <li><strong>Perte de gras :</strong> déficit modéré de 300-500 kcal/jour.</li>
+            <li><strong>Prise de muscle :</strong> surplus modéré de 150-300 kcal/jour.</li>
+            <li><strong>Protéines utilisateur actif :</strong> repère de 1,4 à 2,0 g/kg/jour selon objectif.</li>
+          </ul>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="limits-evidence">
+          <h2 id="limits-evidence">4. Limites et sécurité</h2>
+          <p>
+            Le site ne remplace pas un médecin, un kinésithérapeute, un diététicien ou un coach diplômé.
+            Il doit recommander un avis professionnel si l'utilisateur déclare une douleur thoracique, un malaise,
+            une pathologie cardiaque, une hypertension non contrôlée, une grossesse, une maladie rénale ou métabolique,
+            une blessure récente ou une douleur aiguë à l'effort.
+          </p>
+          <p class="muted">
+            Version documentaire complète : <a href="docs/evidence.md">docs/evidence.md</a>
+          </p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Les formules donnent des repères. L'évolution réelle dépend de la technique, récupération, sommeil, nutrition et contexte médical.</p>
+      </footer>
+    </div>
+  </body>
+</html>
