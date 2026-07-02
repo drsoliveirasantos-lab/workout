@@ -8,11 +8,11 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux9" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux9" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux9" />
-    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux9" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux9" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux10" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux10" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux10" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux10" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux10" />
   </head>
   <body>
     <div class="page-shell">
@@ -198,74 +198,76 @@
               <summary class="builder-step-summary">
                 <span class="builder-step-title">
                   <strong>Étape 2 — Calibration</strong>
-                  <span>Zone musculaire, mouvement, exercice exact et test sous-maximal.</span>
+                  <span>Tableau de bord, progression par zone et saisie directe.</span>
                 </span>
               </summary>
               <div class="builder-step-content">
                 <p class="muted">
-                  Les tests conseillés se mettent à jour automatiquement quand tu changes le niveau, l’objectif ou le nombre de séances. Fais un test sous-maximal : 5-10 répétitions propres,
-                  avec <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2.
+                  Les tests conseillés se mettent à jour automatiquement quand tu changes le niveau, l’objectif ou le nombre de séances. Remplis directement les tests dans chaque zone : la barre de fiabilité se met à jour au fur et à mesure.
                 </p>
-                <form id="calibration-form">
-                  <div class="form-grid">
-                    <label class="field full">
-                      Zone à calibrer
-                      <select id="calibration-zone" name="zoneId" required>
-                        <option value="pecs">Pecs</option>
-                        <option value="dos">Dos</option>
-                        <option value="jambes">Jambes</option>
-                      </select>
-                    </label>
-                    <label class="field full">
-                      Mouvement / test à calibrer
-                      <select id="calibration-family" name="familyId" required>
-                        <option value="horizontal_push">Développé / chest press</option>
-                        <option value="horizontal_pull">Rowing</option>
-                        <option value="leg_press_pattern">Squat / leg press</option>
-                      </select>
-                    </label>
-                    <label class="field full">
-                      Exercice réellement utilisé
-                      <select id="calibration-exercise" name="calibrationExercise" required>
-                        <option value="Développé couché">Développé couché</option>
-                        <option value="Chest press machine">Chest press machine</option>
-                        <option value="Développé incliné barre">Développé incliné barre</option>
-                        <option value="Développé incliné haltères">Développé incliné haltères</option>
-                      </select>
-                    </label>
-                    <label class="field full">
-                      Charge utilisée (kg)
-                      <select name="calibrationWeight" id="calibration-weight" required></select>
-                      <small class="select-hint">La liste s’adapte au mouvement choisi.</small>
-                    </label>
-                    <label class="field full">
-                      Répétitions propres
-                      <select name="calibrationReps" id="calibration-reps" required></select>
-                    </label>
-                    <label class="field">
-                      RIR réel
-                      <select name="calibrationRir" id="calibration-rir" required></select>
-                    </label>
-                    <label class="field">
-                      Douleur 0-10
-                      <select name="calibrationPain" id="calibration-pain" required></select>
-                    </label>
-                    <label class="field full">
-                      Technique
-                      <select name="calibrationTechnique">
-                        <option value="clean">Propre</option>
-                        <option value="unstable">Instable / amplitude douteuse</option>
-                        <option value="failed">Trop lourd / échec technique</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div class="form-actions">
-                    <button class="btn primary" type="submit">Ajouter cette calibration</button>
-                    <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
-                  </div>
-                </form>
                 <div id="calibration-guidance" class="tests-list" aria-live="polite"></div>
                 <div id="calibration-list" class="tests-list" aria-live="polite"></div>
+                <details class="manual-calibration-panel">
+                  <summary>Calibration manuelle avancée</summary>
+                  <form id="calibration-form">
+                    <div class="form-grid">
+                      <label class="field full">
+                        Zone à calibrer
+                        <select id="calibration-zone" name="zoneId" required>
+                          <option value="pecs">Pecs</option>
+                          <option value="dos">Dos</option>
+                          <option value="jambes">Jambes</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Mouvement / test à calibrer
+                        <select id="calibration-family" name="familyId" required>
+                          <option value="horizontal_push">Développé / chest press</option>
+                          <option value="horizontal_pull">Rowing</option>
+                          <option value="leg_press_pattern">Squat / leg press</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Exercice réellement utilisé
+                        <select id="calibration-exercise" name="calibrationExercise" required>
+                          <option value="Développé couché">Développé couché</option>
+                          <option value="Chest press machine">Chest press machine</option>
+                          <option value="Développé incliné barre">Développé incliné barre</option>
+                          <option value="Développé incliné haltères">Développé incliné haltères</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Charge utilisée (kg)
+                        <select name="calibrationWeight" id="calibration-weight" required></select>
+                        <small class="select-hint">La liste s’adapte au mouvement choisi.</small>
+                      </label>
+                      <label class="field full">
+                        Répétitions propres
+                        <select name="calibrationReps" id="calibration-reps" required></select>
+                      </label>
+                      <label class="field">
+                        RIR réel
+                        <select name="calibrationRir" id="calibration-rir" required></select>
+                      </label>
+                      <label class="field">
+                        Douleur 0-10
+                        <select name="calibrationPain" id="calibration-pain" required></select>
+                      </label>
+                      <label class="field full">
+                        Technique
+                        <select name="calibrationTechnique">
+                          <option value="clean">Propre</option>
+                          <option value="unstable">Instable / amplitude douteuse</option>
+                          <option value="failed">Trop lourd / échec technique</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="form-actions">
+                      <button class="btn primary" type="submit">Ajouter cette calibration</button>
+                      <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
+                    </div>
+                  </form>
+                </details>
               </div>
             </details>
 
@@ -286,7 +288,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux9"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux9"></script>
+    <script type="module" src="src/app.js?v=20260702-ux10"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux10"></script>
   </body>
 </html>
