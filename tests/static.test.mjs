@@ -20,13 +20,14 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains selectable calibration exercise and quick picks', async () => {
+test('plan page contains selectable calibration exercise, quick picks and result accordion', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
   const families = await text('src/data/movementFamilies.js');
   const calibration = await text('src/engine/calibration.js');
   const calibrationCss = await text('src/calibration.css');
+  const accordionCss = await text('src/result-accordion.css');
 
   assert.match(html, /id="profile-form"/);
   assert.match(html, /id="calibration-form"/);
@@ -35,6 +36,7 @@ test('plan page contains selectable calibration exercise and quick picks', async
   assert.match(html, /id="weight-quick-picks"/);
   assert.match(html, /id="reps-quick-picks"/);
   assert.match(html, /src\/calibration\.css/);
+  assert.match(html, /src\/result-accordion\.css/);
   assert.match(html, /value="horizontal_push"/);
   assert.match(html, /Pecs — développé/);
   assert.match(html, /Jambes — squat/);
@@ -50,7 +52,9 @@ test('plan page contains selectable calibration exercise and quick picks', async
   assert.match(app, /data-select-family/);
   assert.match(app, /data-quick-pick/);
   assert.match(app, /refreshCalibrationPlan/);
-  assert.match(app, /renderCalculations/);
+  assert.match(app, /renderAccordion/);
+  assert.match(app, /accordion-section/);
+  assert.match(app, /Diète \/ calories/);
   assert.match(app, /generateTrainingPlan/);
   assert.match(advanced, /Split ABCD/);
   assert.match(advanced, /familyId: 'horizontal_push'/);
@@ -58,6 +62,8 @@ test('plan page contains selectable calibration exercise and quick picks', async
   assert.match(families, /technicalLabel: 'Poussée horizontale'/);
   assert.match(calibration, /confidence/);
   assert.match(calibrationCss, /quick-pick/);
+  assert.match(accordionCss, /accordion-section/);
+  assert.match(accordionCss, /accordion-summary/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
