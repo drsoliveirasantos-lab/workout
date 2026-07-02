@@ -39,5 +39,6 @@ jobs:
           test -f dist/src/result-accordion.css
           test -f dist/src/data/glossary.js
           test -f dist/src/data/movementFamilies.js
+          test -f dist/src/data/exerciseProfiles.js
           test -f dist/src/engine/calibration.js
           test -f dist/docs/evidence.md
