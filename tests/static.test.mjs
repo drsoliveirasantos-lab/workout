@@ -20,23 +20,30 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains the generator, advanced levels and glossary triggers', async () => {
+test('plan page contains guided calibration workflow and advanced levels', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
+  const families = await text('src/data/movementFamilies.js');
+  const calibration = await text('src/engine/calibration.js');
 
   assert.match(html, /id="profile-form"/);
-  assert.match(html, /id="strength-form"/);
+  assert.match(html, /id="calibration-form"/);
+  assert.match(html, /id="calibration-family"/);
+  assert.match(html, /Générer les tests conseillés/);
   assert.match(html, /value="advanced"/);
   assert.match(html, /value="very_advanced"/);
   assert.match(html, /src\/app\.js/);
   assert.match(html, /src\/glossary\.js/);
   assert.match(html, /data-glossary="rir"/);
   assert.match(html, /data-glossary="bmr"/);
+  assert.match(app, /refreshCalibrationPlan/);
   assert.match(app, /renderCalculations/);
   assert.match(app, /generateTrainingPlan/);
   assert.match(advanced, /Split ABCD/);
-  assert.match(advanced, /Développé incliné/);
+  assert.match(advanced, /familyId: 'horizontal_push'/);
+  assert.match(families, /Poussée horizontale/);
+  assert.match(calibration, /confidence/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
