@@ -7,7 +7,8 @@
 }
 
 .mini-card.is-complete,
-.calibration-movement-item.is-complete {
+.calibration-movement-item.is-complete,
+.calibration-movement-roll.is-complete {
   border-color: rgba(167, 243, 208, 0.36);
   background: rgba(167, 243, 208, 0.08);
 }
@@ -53,19 +54,22 @@
   gap: 10px;
 }
 
-.calibration-zone-accordion {
+.calibration-zone-accordion,
+.calibration-movement-roll {
   border: 1px solid var(--line);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.045);
   overflow: hidden;
 }
 
-.calibration-zone-accordion[open] {
+.calibration-zone-accordion[open],
+.calibration-movement-roll[open] {
   border-color: rgba(125, 211, 252, 0.28);
   background: rgba(255, 255, 255, 0.065);
 }
 
-.calibration-zone-accordion > summary {
+.calibration-zone-accordion > summary,
+.calibration-movement-roll > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -75,11 +79,18 @@
   list-style: none;
 }
 
-.calibration-zone-accordion > summary::-webkit-details-marker {
+.calibration-movement-roll > summary span {
+  display: grid;
+  gap: 3px;
+}
+
+.calibration-zone-accordion > summary::-webkit-details-marker,
+.calibration-movement-roll > summary::-webkit-details-marker {
   display: none;
 }
 
-.calibration-zone-accordion > summary::after {
+.calibration-zone-accordion > summary::after,
+.calibration-movement-roll > summary::after {
   content: '+';
   display: grid;
   place-items: center;
@@ -92,11 +103,13 @@
   font-weight: 900;
 }
 
-.calibration-zone-accordion[open] > summary::after {
+.calibration-zone-accordion[open] > summary::after,
+.calibration-movement-roll[open] > summary::after {
   content: '−';
 }
 
-.calibration-zone-accordion small {
+.calibration-zone-accordion small,
+.calibration-movement-roll small {
   color: var(--muted);
   margin-left: auto;
 }
@@ -117,9 +130,8 @@
   display: grid;
   gap: 8px;
   padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.045);
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .calibration-movement-item strong {
@@ -153,6 +165,12 @@
   font-weight: 800;
 }
 
+.inline-calibration-grid label small {
+  margin-left: 0;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 .inline-calibration-grid select {
   min-height: 42px;
   width: 100%;
@@ -160,9 +178,14 @@
 }
 
 @media (max-width: 640px) {
-  .calibration-zone-accordion > summary {
+  .calibration-zone-accordion > summary,
+  .calibration-movement-roll > summary {
     align-items: center;
     padding: 12px;
+  }
+
+  .calibration-movement-roll > summary {
+    align-items: flex-start;
   }
 
   .calibration-zone-content {
@@ -171,7 +194,6 @@
 
   .calibration-movement-item {
     padding: 10px;
-    border-radius: 16px;
   }
 
   .inline-calibration-grid {
