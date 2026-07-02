@@ -4,6 +4,7 @@ import { estimateOneRepMax, generateTrainingPlan } from '../src/engine/training.
 import { calculateNutritionTargets, buildBudgetMenu } from '../src/engine/nutrition.js';
 import {
   buildCalibrationPlan,
+  buildCalibrationZones,
   calculateCalibrationEntry,
   summarizeCalibrationCoverage
 } from '../src/engine/calibration.js';
@@ -44,13 +45,17 @@ test('generates a training plan with sessions and progression rules', () => {
   assert.ok(plan.sessions[0].exercises.length >= 4);
 });
 
-test('builds guided calibration plan by level with gym-friendly labels', () => {
+test('builds guided calibration plan and zones by level', () => {
   const beginner = buildCalibrationPlan({ level: 'beginner' });
+  const beginnerZones = buildCalibrationZones({ level: 'beginner' });
   const veryAdvanced = buildCalibrationPlan({ level: 'very_advanced' });
+  const veryAdvancedZones = buildCalibrationZones({ level: 'very_advanced' });
 
   assert.equal(beginner.length, 3);
-  assert.ok(beginner.some((item) => item.label === 'Pecs — développé / chest press'));
+  assert.deepEqual(beginnerZones.map((zone) => zone.label), ['Pecs', 'Dos', 'Jambes']);
+  assert.ok(beginner.some((item) => item.zoneId === 'pecs' && item.movementLabel === 'Développé / chest press'));
   assert.ok(veryAdvanced.length > beginner.length);
+  assert.ok(veryAdvancedZones.some((zone) => zone.label === 'Bras'));
   assert.ok(veryAdvanced.some((item) => item.familyId === 'leg_press_pattern'));
   assert.ok(veryAdvanced.some((item) => item.familyId === 'elbow_extension'));
 });
@@ -66,6 +71,8 @@ test('calculates calibration confidence and working range', () => {
     technique: 'clean'
   });
 
+  assert.equal(entry.zoneLabel, 'Pecs');
+  assert.equal(entry.movementLabel, 'Développé / chest press');
   assert.equal(entry.familyLabel, 'Pecs — développé / chest press');
   assert.equal(entry.confidence.label, 'haute');
   assert.ok(entry.workingRange.low > 0);
