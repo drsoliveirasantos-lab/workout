@@ -9,6 +9,7 @@
       content="Workout Nykuto crée des repères d'entraînement et de nutrition personnalisés avec des formules transparentes, des sources scientifiques et des garde-fous de sécurité."
     />
     <link rel="stylesheet" href="src/styles.css" />
+    <link rel="stylesheet" href="src/glossary.css" />
   </head>
   <body>
     <div class="page-shell home-shell">
@@ -31,7 +32,8 @@
             <h1 id="hero-title">Ton entraînement <span>calculé, pas inventé.</span></h1>
             <p>
               Workout Nykuto aide à construire un programme de musculation et des repères nutritionnels
-              à partir de données simples : niveau, objectif, budget, matériel et série sous-maximale.
+              à partir de données simples : niveau, objectif, budget, matériel et
+              <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>.
               L'idée est claire : des formules lisibles, des limites affichées, et une progression prudente.
             </p>
             <div class="hero-actions">
@@ -48,12 +50,12 @@
             </p>
             <div class="metric-grid">
               <div class="metric">
-                <strong>e1RM</strong>
+                <strong><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button></strong>
                 <span>Estimation sous-maximale</span>
               </div>
               <div class="metric">
                 <strong>90%</strong>
-                <span>Training Max prudent</span>
+                <span><button class="glossary-term" type="button" data-glossary="trainingMax">Training Max</button> prudent</span>
               </div>
               <div class="metric">
                 <strong>2-5 j</strong>
@@ -72,5 +74,6 @@
         <p>Workout Nykuto est un outil éducatif. Il ne remplace pas un avis médical, diététique ou sportif individualisé.</p>
       </footer>
     </div>
+    <script type="module" src="src/glossary.js"></script>
   </body>
 </html>
