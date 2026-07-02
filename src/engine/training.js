@@ -146,7 +146,7 @@ function generateAdvancedPlan({ profile, calibrations }) {
   const level = profile.level || 'advanced';
   const days = Math.min(Math.max(Number(profile.daysPerWeek) || 4, 4), 5);
   const goal = profile.goal || 'hypertrophy';
-  const sourceSessions = buildAdvancedSessions({ daysPerWeek: days });
+  const sourceSessions = buildAdvancedSessions({ daysPerWeek: days, goal, profile });
   const metrics = calculateAdvancedMetrics(sourceSessions);
   const sessions = sourceSessions.map((session) => mapAdvancedSessionToUi(session, calibrations));
   const label = level === 'very_advanced' ? 'Très avancé' : 'Avancé';
@@ -160,17 +160,18 @@ function generateAdvancedPlan({ profile, calibrations }) {
     intensity: {
       label: `${label} ${intensity.label.toLowerCase()}`,
       percent: intensity.percent,
-      repRange: [8, 12],
-      rest: '45-150 s selon exercice et objectif',
-      cardio: `${metrics.cardioMinutes} min cardio/semaine si ${days} séances sont réalisées (${DIEGO_ADVANCED_ABCD.defaultCardioMinutes} min après séance).`
+      repRange: intensity.repRange,
+      rest: '45-180 s selon exercice, rôle et objectif',
+      cardio: `${metrics.cardioMinutes} min cardio/semaine intégrés au split dynamique.`
     },
     sessions,
     calculations: {
-      title: 'Calculs du split avancé',
+      title: 'Calculs du split avancé dynamique',
       totalValidSets: metrics.totalValidSets,
       totalPrepSets: metrics.totalPrepSets,
       cardioMinutes: metrics.cardioMinutes,
       byMuscle: metrics.byMuscle,
+      byFamily: metrics.byFamily,
       densityNote: metrics.densityNote,
       sourceNote: DIEGO_ADVANCED_ABCD.sourceNote,
       missingSessionNote: days >= 5 ? DIEGO_ADVANCED_ABCD.missingSessionNote : ''
@@ -182,13 +183,14 @@ function generateAdvancedPlan({ profile, calibrations }) {
 
 function mapAdvancedSessionToUi(session, calibrations = []) {
   const calibrationByFamily = Object.fromEntries(calibrations.map((entry) => [entry.familyId, entry]));
+  const sourceLabel = session.sourceLabel || (session.sourcePage ? `modèle PDF page ${session.sourcePage}` : 'split avancé généré dynamiquement');
 
   return {
     id: session.id,
     title: session.title,
     type: session.id,
-    warmup: `${session.subtitle} · modèle PDF page ${session.sourcePage}. Échauffements et ajustements inclus exercice par exercice.`,
-    cooldown: session.cardioMinutes ? `+ ${session.cardioMinutes} min cardio après la séance.` : 'Retour au calme léger.',
+    warmup: `${session.subtitle} · ${sourceLabel}. Échauffements et ajustements inclus exercice par exercice.`,
+    cooldown: session.cardioMinutes ? `+ ${session.cardioMinutes} min cardio facile ou incliné après la séance selon récupération.` : 'Retour au calme léger.',
     calculations: {
       validSets: sumSessionSets(session, 'validSets'),
       prepSets: sumSessionSets(session, 'prepSets'),
@@ -373,11 +375,11 @@ function buildProgressionRules(goal) {
 function buildAdvancedProgressionRules(goal, metrics) {
   return {
     method: goal === 'lean_bulk' ? 'Double progression avancée contrôlée' : 'Double progression avancée',
-    rule: 'Sur les séries valides 8-12 : quand toutes les séries atteignent 12 reps avec RIR 1-2 et technique propre, augmenter légèrement la charge.',
+    rule: 'Sur les séries valides : quand toutes les séries atteignent le haut de la fourchette avec RIR 1-2 et technique propre, augmenter légèrement la charge.',
     upperBody: '+1 à +2,5 kg ou +2,5 à 5 % selon machine/haltère/barre',
     lowerBody: '+2,5 à +5 kg ou +5 à 10 % selon exercice et tolérance articulaire',
     deload: 'Deload recommandé si performance en baisse sur 2 séances, sommeil bas, douleurs articulaires ou fatigue persistante : -30 à -50 % de séries valides pendant 5-7 jours.',
-    goalNote: `${metrics.totalValidSets} séries valides/semaine dans ce modèle. ${goal === 'fat_loss' ? 'En déficit, réduire le volume avant de forcer les charges.' : goal === 'lean_bulk' ? 'En prise de masse sèche, suivre poids/tour de taille et réduire le surplus si le gras monte trop vite.' : 'Réserver ce volume aux profils très entraînés.'}`
+    goalNote: `${metrics.totalValidSets} séries valides/semaine dans ce split dynamique. ${goal === 'fat_loss' ? 'En déficit, réduire le volume avant de forcer les charges.' : goal === 'lean_bulk' ? 'En prise de masse sèche, suivre poids/tour de taille et réduire le surplus si le gras monte trop vite.' : 'Ajuster le volume selon récupération et douleurs articulaires.'}`
   };
 }
 
