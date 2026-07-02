@@ -293,24 +293,32 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
   const container = document.querySelector(selectors.calibrationGuidance);
   if (!container) return;
 
-  const coverage = summarizeCalibrationCoverage(profile, state.calibrations);
-  const planByFamily = Object.fromEntries(coverage.required.map((item) => [item.familyId, item]));
+  const requiredCoverage = summarizeCalibrationCoverage(profile, state.calibrations);
+  const dashboardProfile = { ...profile, level: 'very_advanced' };
+  const dashboardPlan = buildCalibrationPlan(dashboardProfile);
+  const dashboardZones = buildCalibrationZones(dashboardProfile);
+  const planByFamily = Object.fromEntries(dashboardPlan.map((item) => [item.familyId, item]));
+  const completedDashboard = dashboardPlan.filter((item) => getCalibrationEntry(item.familyId)).length;
+  const dashboardScore = dashboardPlan.length ? Math.round((completedDashboard / dashboardPlan.length) * 100) : 0;
+  const minimumLine = requiredCoverage.total === dashboardPlan.length
+    ? `${completedDashboard}/${dashboardPlan.length} mouvements calibrés.`
+    : `Minimum conseillé : ${requiredCoverage.completed}/${requiredCoverage.total}. Tous les groupes avancés affichés : ${completedDashboard}/${dashboardPlan.length}.`;
 
   container.innerHTML = `
     <article class="mini-card calibration-dashboard">
       <div>
         <strong>Tableau de calibration</strong>
-        <span>${coverage.message}</span>
+        <span>${minimumLine} Les mouvements manquants seront prescrits en RIR au lieu de charge calculée.</span>
       </div>
       <div class="calibration-progress-row">
-        <strong>${coverage.score}%</strong>
-        <div class="calibration-progress" aria-label="Couverture calibration ${coverage.score}%">
-          <span style="width: ${coverage.score}%"></span>
+        <strong>${dashboardScore}%</strong>
+        <div class="calibration-progress" aria-label="Couverture calibration ${dashboardScore}%">
+          <span style="width: ${dashboardScore}%"></span>
         </div>
       </div>
     </article>
     <div class="calibration-zone-funnel">
-      ${coverage.zones.map((zone, index) => {
+      ${dashboardZones.map((zone, index) => {
         const doneCount = zone.availableFamilyIds.filter((familyId) => getCalibrationEntry(familyId)).length;
         const zoneScore = zone.availableFamilyIds.length ? Math.round((doneCount / zone.availableFamilyIds.length) * 100) : 0;
         return `
