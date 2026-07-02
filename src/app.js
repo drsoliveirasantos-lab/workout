@@ -15,6 +15,7 @@ const selectors = {
   profileForm: '#profile-form',
   calibrationForm: '#calibration-form',
   calibrationFamily: '#calibration-family',
+  calibrationExercise: '#calibration-exercise',
   calibrationGuidance: '#calibration-guidance',
   calibrationList: '#calibration-list',
   result: '#result'
@@ -58,7 +59,7 @@ function bindForms() {
 
   profileForm?.addEventListener('submit', handleProfileSubmit);
   calibrationForm?.addEventListener('submit', handleCalibrationSubmit);
-  calibrationFamily?.addEventListener('change', () => hydrateCalibrationExerciseFromSelection({ force: true }));
+  calibrationFamily?.addEventListener('change', () => hydrateCalibrationFieldsFromSelection({ force: true }));
   loadDemoButton?.addEventListener('click', loadDemo);
   buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
   clearCalibrationsButton?.addEventListener('click', () => {
@@ -66,6 +67,17 @@ function bindForms() {
     renderCalibrationList();
     refreshCalibrationPlan();
     renderNotice('Calibrations effacées.', 'success');
+  });
+
+  document.addEventListener('click', (event) => {
+    const quickPick = event.target.closest('[data-quick-pick]');
+    if (!quickPick) return;
+
+    const input = document.querySelector(`[name="${quickPick.dataset.target}"]`);
+    if (!input) return;
+
+    input.value = quickPick.dataset.value;
+    setActiveQuickPick(quickPick.parentElement, quickPick.dataset.value);
   });
 
   calibrationGuidance?.addEventListener('click', (event) => {
@@ -76,7 +88,7 @@ function bindForms() {
     if (!select) return;
 
     select.value = button.dataset.selectFamily;
-    hydrateCalibrationExerciseFromSelection({ force: true });
+    hydrateCalibrationFieldsFromSelection({ force: true });
     renderNotice(`Famille sélectionnée : ${select.options[select.selectedIndex]?.textContent || ''}`, 'success');
   });
 
@@ -111,24 +123,82 @@ function renderCalibrationSelect() {
     select.value = previousValue;
   }
 
-  hydrateCalibrationExerciseFromSelection({ force: false });
+  hydrateCalibrationFieldsFromSelection({ force: false });
+}
+
+function hydrateCalibrationFieldsFromSelection({ force = false } = {}) {
+  hydrateCalibrationExerciseFromSelection({ force });
+  renderCalibrationQuickPicks();
 }
 
 function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
-  const select = document.querySelector(selectors.calibrationFamily);
-  const input = document.querySelector('[name="calibrationExercise"]');
-  if (!select || !input) return;
+  const familySelect = document.querySelector(selectors.calibrationFamily);
+  const exerciseSelect = document.querySelector(selectors.calibrationExercise);
+  if (!familySelect || !exerciseSelect) return;
 
-  const selected = state.calibrationPlan.find((item) => item.familyId === select.value);
+  const selected = state.calibrationPlan.find((item) => item.familyId === familySelect.value);
   if (!selected) return;
 
-  const knownDefaultValues = state.calibrationPlan.map((item) => item.defaultTest);
-  const currentIsGeneratedDefault = knownDefaultValues.includes(input.value);
+  const previousValue = exerciseSelect.value;
+  const exercises = [selected.defaultTest, ...selected.alternatives, 'Autre exercice proche / machine équivalente'];
+  const uniqueExercises = [...new Set(exercises.filter(Boolean))];
 
-  if (force || !input.value || currentIsGeneratedDefault) {
-    input.value = selected.defaultTest;
-    input.placeholder = `Ex : ${selected.alternatives.join(', ')}`;
+  exerciseSelect.innerHTML = uniqueExercises.map((exercise) => `
+    <option value="${exercise}">${exercise}</option>
+  `).join('');
+
+  if (!force && previousValue && uniqueExercises.includes(previousValue)) {
+    exerciseSelect.value = previousValue;
+  } else {
+    exerciseSelect.value = selected.defaultTest;
   }
+}
+
+function renderCalibrationQuickPicks() {
+  const familySelect = document.querySelector(selectors.calibrationFamily);
+  const selectedFamily = familySelect?.value || 'horizontal_push';
+  renderQuickPicks('weight-quick-picks', 'calibrationWeight', getWeightPresets(selectedFamily));
+  renderQuickPicks('reps-quick-picks', 'calibrationReps', [5, 6, 7, 8, 9, 10, 11, 12]);
+}
+
+function getWeightPresets(familyId) {
+  if (['leg_press_pattern'].includes(familyId)) {
+    return [40, 60, 80, 100, 120, 140, 160, 180, 200, 240];
+  }
+
+  if (['calf_raise'].includes(familyId)) {
+    return [20, 40, 60, 80, 100, 120, 140, 160];
+  }
+
+  if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) {
+    return [5, 10, 15, 20, 25, 30, 35, 40, 50, 60];
+  }
+
+  if (['vertical_push'].includes(familyId)) {
+    return [10, 20, 30, 40, 50, 60, 70, 80];
+  }
+
+  return [20, 30, 40, 50, 60, 70, 80, 90, 100, 120];
+}
+
+function renderQuickPicks(containerId, targetName, values) {
+  const container = document.querySelector(`#${containerId}`);
+  const input = document.querySelector(`[name="${targetName}"]`);
+  if (!container || !input) return;
+
+  container.innerHTML = values.map((value) => `
+    <button class="quick-pick" type="button" data-quick-pick="true" data-target="${targetName}" data-value="${value}">${value}</button>
+  `).join('');
+
+  setActiveQuickPick(container, input.value);
+}
+
+function setActiveQuickPick(container, value) {
+  if (!container) return;
+
+  container.querySelectorAll('[data-quick-pick]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.value === String(value));
+  });
 }
 
 function renderCalibrationGuidance(profile = getProfileFromForm()) {
