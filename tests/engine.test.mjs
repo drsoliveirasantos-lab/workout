@@ -8,6 +8,7 @@ import {
   calculateCalibrationEntry,
   summarizeCalibrationCoverage
 } from '../src/engine/calibration.js';
+import { calculateExerciseTransfer } from '../src/data/exerciseProfiles.js';
 
 test('estimates e1RM and training max from a submaximal set', () => {
   const result = estimateOneRepMax({ weight: 60, reps: 5, rir: 0 });
@@ -60,7 +61,7 @@ test('builds guided calibration plan and zones by level', () => {
   assert.ok(veryAdvanced.some((item) => item.familyId === 'elbow_extension'));
 });
 
-test('calculates calibration confidence and working range', () => {
+test('calculates calibration confidence, source profile and working range', () => {
   const entry = calculateCalibrationEntry({
     familyId: 'horizontal_push',
     exerciseName: 'Développé couché',
@@ -74,9 +75,23 @@ test('calculates calibration confidence and working range', () => {
   assert.equal(entry.zoneLabel, 'Pecs');
   assert.equal(entry.movementLabel, 'Développé / chest press');
   assert.equal(entry.familyLabel, 'Pecs — développé / chest press');
+  assert.equal(entry.sourceProfileId, 'bench_press');
   assert.equal(entry.confidence.label, 'haute');
   assert.ok(entry.workingRange.low > 0);
   assert.ok(entry.workingRange.high > entry.workingRange.low);
+});
+
+test('scores exercise source to target transfer reliability', () => {
+  const direct = calculateExerciseTransfer({ sourceProfileId: 'hack_squat', targetProfileId: 'hack_squat', testConfidenceScore: 90 });
+  const close = calculateExerciseTransfer({ sourceProfileId: 'hack_squat', targetProfileId: 'smith_squat', testConfidenceScore: 90 });
+  const invalid = calculateExerciseTransfer({ sourceProfileId: 'hack_squat', targetProfileId: 'lying_leg_curl', testConfidenceScore: 90 });
+
+  assert.equal(direct.coefficient, 1);
+  assert.equal(direct.relation, 'direct');
+  assert.ok(close.coefficient > 0 && close.coefficient < 1);
+  assert.ok(close.reliabilityScore >= 50);
+  assert.equal(invalid.coefficient, null);
+  assert.equal(invalid.relation, 'non transférable');
 });
 
 test('beginner plan uses guided calibration ranges when available', () => {
@@ -106,11 +121,12 @@ test('beginner plan uses guided calibration ranges when available', () => {
   const lunge = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Fentes');
   const plank = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Gainage');
 
-  assert.match(squat.loadText, /Charge estimée/);
-  assert.match(bench.loadText, /Charge estimée/);
-  assert.match(row.loadText, /Charge estimée/);
+  assert.match(squat.loadText, /Charge estimée|charge estimée/);
+  assert.match(squat.note, /fiabilité/);
+  assert.match(bench.loadText, /Charge estimée|charge estimée/);
+  assert.match(row.loadText, /Charge estimée|charge estimée/);
   assert.match(lunge.loadText, /RIR 2-3/);
-  assert.match(lunge.note, /transfert non fiable/);
+  assert.match(lunge.note, /utiliser RIR/i);
   assert.match(plank.loadText, /Poids du corps/);
 });
 
@@ -146,6 +162,7 @@ test('generates Diego-style very advanced ABCD plan with calibration ranges', ()
   assert.equal(plan.calculations.byMuscle.triceps, 9);
   assert.match(plan.title, /Très avancé/);
   assert.match(bench.loadText, /charge estimée/);
+  assert.match(bench.note, /fiabilité/);
   assert.match(legPress.loadText, /charge estimée/);
   assert.match(lateralRaise.loadText, /RIR 1-2/);
   assert.ok(coverage.score > 0 && coverage.score < 100);
