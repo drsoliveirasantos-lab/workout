@@ -1,4 +1,4 @@
-name: Workout Nekouto validation
+name: Workout Nykuto validation
 
 on:
   pull_request:
@@ -28,5 +28,9 @@ jobs:
       - name: Check build output
         run: |
           test -f dist/index.html
+          test -f dist/plan.html
+          test -f dist/sources.html
+          test -f dist/evidence.html
           test -f dist/src/app.js
+          test -f dist/src/sources-page.js
           test -f dist/docs/evidence.md
