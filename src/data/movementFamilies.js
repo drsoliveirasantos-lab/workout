@@ -1,6 +1,48 @@
+export const CALIBRATION_ZONES = [
+  {
+    id: 'pecs',
+    label: 'Pecs',
+    description: 'Développés, chest press et variantes pectoraux.',
+    familyIds: ['horizontal_push']
+  },
+  {
+    id: 'dos',
+    label: 'Dos',
+    description: 'Rowing, tirage vertical et grands mouvements de tirage.',
+    familyIds: ['horizontal_pull', 'vertical_pull']
+  },
+  {
+    id: 'epaules',
+    label: 'Épaules',
+    description: 'Développé épaules et variantes de poussée verticale.',
+    familyIds: ['vertical_push']
+  },
+  {
+    id: 'jambes',
+    label: 'Jambes',
+    description: 'Squat, presse, quadriceps, ischios et fessiers.',
+    familyIds: ['leg_press_pattern', 'knee_extension', 'knee_flexion', 'hip_extension']
+  },
+  {
+    id: 'bras',
+    label: 'Bras',
+    description: 'Biceps et triceps.',
+    familyIds: ['elbow_flexion', 'elbow_extension']
+  },
+  {
+    id: 'mollets',
+    label: 'Mollets',
+    description: 'Mollets debout, mollets assis et presse à mollets.',
+    familyIds: ['calf_raise']
+  }
+];
+
 export const MOVEMENT_FAMILIES = {
   horizontal_push: {
+    zoneId: 'pecs',
     label: 'Pecs — développé / chest press',
+    zoneLabel: 'Pecs',
+    movementLabel: 'Développé / chest press',
     technicalLabel: 'Poussée horizontale',
     target: 'pectoraux / triceps / deltoïde antérieur',
     defaultTest: 'Développé couché',
@@ -15,7 +57,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   vertical_push: {
+    zoneId: 'epaules',
     label: 'Épaules — développé épaules',
+    zoneLabel: 'Épaules',
+    movementLabel: 'Développé épaules',
     technicalLabel: 'Poussée verticale',
     target: 'épaules / triceps',
     defaultTest: 'Développé assis',
@@ -29,7 +74,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   horizontal_pull: {
+    zoneId: 'dos',
     label: 'Dos — rowing',
+    zoneLabel: 'Dos',
+    movementLabel: 'Rowing',
     technicalLabel: 'Tirage horizontal',
     target: 'dos / rhomboïdes / biceps',
     defaultTest: 'Rowing machine ou rameur bas',
@@ -43,7 +91,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   vertical_pull: {
+    zoneId: 'dos',
     label: 'Dos — tirage vertical / pulley',
+    zoneLabel: 'Dos',
+    movementLabel: 'Tirage vertical / pulley',
     technicalLabel: 'Tirage vertical',
     target: 'grand dorsal / biceps',
     defaultTest: 'Tirage vertical / pulley avant',
@@ -56,7 +107,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   leg_press_pattern: {
+    zoneId: 'jambes',
     label: 'Jambes — squat / leg press',
+    zoneLabel: 'Jambes',
+    movementLabel: 'Squat / leg press',
     technicalLabel: 'Poussée jambes',
     target: 'quadriceps / fessiers',
     defaultTest: 'Leg press 45° ou squat Smith',
@@ -70,7 +124,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   knee_extension: {
+    zoneId: 'jambes',
     label: 'Quadriceps — leg extension',
+    zoneLabel: 'Jambes',
+    movementLabel: 'Quadriceps / leg extension',
     technicalLabel: 'Extension du genou',
     target: 'quadriceps',
     defaultTest: 'Leg extension',
@@ -81,7 +138,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   knee_flexion: {
+    zoneId: 'jambes',
     label: 'Ischios — leg curl',
+    zoneLabel: 'Jambes',
+    movementLabel: 'Ischios / leg curl',
     technicalLabel: 'Flexion du genou',
     target: 'ischio-jambiers',
     defaultTest: 'Leg curl couché',
@@ -93,7 +153,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   hip_extension: {
+    zoneId: 'jambes',
     label: 'Fessiers — hip thrust',
+    zoneLabel: 'Jambes',
+    movementLabel: 'Fessiers / hip thrust',
     technicalLabel: 'Extension de hanche',
     target: 'fessiers / chaîne postérieure',
     defaultTest: 'Hip thrust',
@@ -106,7 +169,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   elbow_flexion: {
+    zoneId: 'bras',
     label: 'Biceps — curl',
+    zoneLabel: 'Bras',
+    movementLabel: 'Biceps / curl',
     technicalLabel: 'Flexion du coude',
     target: 'biceps',
     defaultTest: 'Curl barre ou curl machine',
@@ -119,7 +185,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   elbow_extension: {
+    zoneId: 'bras',
     label: 'Triceps — corde / pushdown',
+    zoneLabel: 'Bras',
+    movementLabel: 'Triceps / corde ou pushdown',
     technicalLabel: 'Extension du coude',
     target: 'triceps',
     defaultTest: 'Extension triceps à la corde',
@@ -132,7 +201,10 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   calf_raise: {
+    zoneId: 'mollets',
     label: 'Mollets — calf raise',
+    zoneLabel: 'Mollets',
+    movementLabel: 'Calf raise / mollets',
     technicalLabel: 'Flexion plantaire / mollets',
     target: 'mollets',
     defaultTest: 'Mollets debout à la machine',
