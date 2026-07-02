@@ -20,17 +20,23 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains the generator, app module and glossary triggers', async () => {
+test('plan page contains the generator, advanced levels and glossary triggers', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
+  const advanced = await text('src/data/advancedPrograms.js');
 
   assert.match(html, /id="profile-form"/);
   assert.match(html, /id="strength-form"/);
+  assert.match(html, /value="advanced"/);
+  assert.match(html, /value="very_advanced"/);
   assert.match(html, /src\/app\.js/);
   assert.match(html, /src\/glossary\.js/);
   assert.match(html, /data-glossary="rir"/);
   assert.match(html, /data-glossary="bmr"/);
+  assert.match(app, /renderCalculations/);
   assert.match(app, /generateTrainingPlan/);
+  assert.match(advanced, /Split ABCD/);
+  assert.match(advanced, /Développé incliné/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
