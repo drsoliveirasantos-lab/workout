@@ -72,6 +72,41 @@ test('calculates calibration confidence and working range', () => {
   assert.ok(entry.workingRange.high > entry.workingRange.low);
 });
 
+test('beginner plan uses guided calibration ranges when available', () => {
+  const profile = {
+    sex: 'male',
+    age: 29,
+    heightCm: 175,
+    weightKg: 80,
+    level: 'beginner',
+    goal: 'recomposition',
+    daysPerWeek: 3,
+    equipment: 'basic',
+    injuries: '',
+    medicalFlags: ''
+  };
+
+  const calibrations = [
+    calculateCalibrationEntry({ familyId: 'horizontal_push', exerciseName: 'Développé haltères', weight: 35, reps: 10, rir: 2, pain: 0, technique: 'clean' }),
+    calculateCalibrationEntry({ familyId: 'horizontal_pull', exerciseName: 'Rowing barre', weight: 100, reps: 10, rir: 2, pain: 0, technique: 'clean' }),
+    calculateCalibrationEntry({ familyId: 'leg_press_pattern', exerciseName: 'Squat Smith', weight: 120, reps: 10, rir: 2, pain: 0, technique: 'clean' })
+  ];
+
+  const plan = generateTrainingPlan({ profile, strengthTests: [], calibrations });
+  const squat = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Squat');
+  const bench = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Développé couché');
+  const row = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Rowing');
+  const lunge = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Fentes');
+  const plank = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Gainage');
+
+  assert.match(squat.loadText, /Charge estimée/);
+  assert.match(bench.loadText, /Charge estimée/);
+  assert.match(row.loadText, /Charge estimée/);
+  assert.match(lunge.loadText, /RIR 2-3/);
+  assert.match(lunge.note, /transfert non fiable/);
+  assert.match(plank.loadText, /Poids du corps/);
+});
+
 test('generates Diego-style very advanced ABCD plan with calibration ranges', () => {
   const profile = {
     sex: 'male',
