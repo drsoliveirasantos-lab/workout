@@ -1,6 +1,6 @@
-# Workout Nekouto
+# Workout Nykuto
 
-Evidence-based workout and nutrition planning prototype for `workout.nekouto.com`.
+Evidence-based workout and nutrition planning prototype for `workout.nykuto.com`.
 
 ## Status
 
@@ -59,4 +59,4 @@ Output directory: dist
 
 ## Safety disclaimer
 
-Workout Nekouto is an educational tool. It does not replace medical, dietetic, physiotherapy or professional coaching advice.
+Workout Nykuto is an educational tool. It does not replace medical, dietetic, physiotherapy or professional coaching advice.
