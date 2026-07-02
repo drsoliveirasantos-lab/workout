@@ -7,7 +7,7 @@
   border: 1px solid var(--line);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.055);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .builder-step[open] {
@@ -143,6 +143,25 @@
   font-size: 0.9rem;
 }
 
+.manual-calibration-panel {
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.manual-calibration-panel > summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 800;
+  list-style-position: inside;
+}
+
+.manual-calibration-panel[open] > summary {
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
 @media (max-width: 640px) {
   .builder-steps {
     gap: 12px;
@@ -170,9 +189,21 @@
     padding: 0 14px 14px;
   }
 
+  .help-popover[open] > summary {
+    position: relative;
+    z-index: 41;
+  }
+
   .help-content {
-    left: auto;
-    right: 0;
-    width: min(300px, 82vw);
+    position: fixed;
+    z-index: 40;
+    top: 18vh;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-height: 62vh;
+    overflow: auto;
+    padding: 16px;
+    border-radius: 20px;
   }
 }
