@@ -54,7 +54,13 @@ function getCaloriesByGoal(maintenance, goal) {
       label: 'Surplus modéré',
       min: maintenance + 150,
       max: maintenance + 300,
-      note: 'Objectif : faciliter la progression musculaire en limitant la prise de gras.'
+      note: 'Objectif : faciliter la progression musculaire en acceptant une petite prise de poids.'
+    },
+    lean_bulk: {
+      label: 'Prise de masse sèche',
+      min: maintenance + 75,
+      max: maintenance + 200,
+      note: 'Objectif : gagner du muscle proprement avec un surplus contrôlé et une prise de gras limitée.'
     },
     strength: {
       label: 'Maintenance à léger surplus',
@@ -83,6 +89,7 @@ function getProteinTarget(weightKg, goal) {
   const ranges = {
     fat_loss: [1.6, 2.0],
     hypertrophy: [1.6, 2.0],
+    lean_bulk: [1.8, 2.2],
     strength: [1.4, 2.0],
     recomposition: [1.6, 2.0],
     general_health: [1.2, 1.6]
