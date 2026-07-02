@@ -73,6 +73,13 @@ export function getIntensityByGoal(goal, level) {
       rest: advanced ? '60-150 s selon exercice' : '90-150 s',
       cardio: 'Optionnel : 1-2 séances faciles pour santé cardiovasculaire'
     },
+    lean_bulk: {
+      label: 'Prise de masse sèche',
+      percent: beginner ? 0.66 : advanced ? 0.74 : 0.72,
+      repRange: [6, 12],
+      rest: advanced ? '60-150 s selon exercice' : '90-150 s',
+      cardio: '1-2 séances faciles pour santé et contrôle de la prise de gras'
+    },
     strength: {
       label: 'Force',
       percent: beginner ? 0.7 : advanced ? 0.82 : 0.78,
@@ -143,6 +150,7 @@ function generateAdvancedPlan({ profile, calibrations }) {
   const metrics = calculateAdvancedMetrics(sourceSessions);
   const sessions = sourceSessions.map((session) => mapAdvancedSessionToUi(session, calibrations));
   const label = level === 'very_advanced' ? 'Très avancé' : 'Avancé';
+  const intensity = getIntensityByGoal(goal, level);
 
   return {
     title: `${label} — ${DIEGO_ADVANCED_ABCD.label} — ${days} séances/semaine`,
@@ -150,8 +158,8 @@ function generateAdvancedPlan({ profile, calibrations }) {
     daysPerWeek: days,
     goal,
     intensity: {
-      label: `${label} hypertrophie/volume`,
-      percent: 0.7,
+      label: `${label} ${intensity.label.toLowerCase()}`,
+      percent: intensity.percent,
       repRange: [8, 12],
       rest: '45-150 s selon exercice et objectif',
       cardio: `${metrics.cardioMinutes} min cardio/semaine si ${days} séances sont réalisées (${DIEGO_ADVANCED_ABCD.defaultCardioMinutes} min après séance).`
@@ -221,14 +229,12 @@ function buildAdvancedPrescription(exercise, calibration) {
     };
   }
 
-  const transferPrescription = buildTransferPrescription({
+  return buildTransferPrescription({
     calibration,
     targetProfileId: exercise.transferKey,
     rirFallback: 'RIR 1-2',
     basePrefix: `${baseParts.join(' · ')} · `
   });
-
-  return transferPrescription;
 }
 
 function buildTransferPrescription({ calibration, targetProfileId, rirFallback, basePrefix = '' }) {
@@ -351,25 +357,27 @@ function buildWarmup(equipment) {
 
 function buildProgressionRules(goal) {
   return {
-    method: 'Double progression',
+    method: goal === 'lean_bulk' ? 'Double progression contrôlée' : 'Double progression',
     rule: 'Quand toutes les séries atteignent le haut de la fourchette avec technique propre, augmenter la charge à la prochaine séance.',
     upperBody: '+2 à +2,5 kg ou +2,5 à 5 %',
     lowerBody: '+2,5 à +5 kg ou +5 à 10 %',
     deload: 'Si fatigue élevée, douleur ou baisse de performance sur 2 séances : réduire le volume de 20-40 % pendant 1 semaine.',
     goalNote: goal === 'fat_loss'
       ? 'En déficit calorique, la priorité est de maintenir la force et la technique plutôt que de forcer la progression.'
-      : 'La progression doit rester lente, mesurable et compatible avec la récupération.'
+      : goal === 'lean_bulk'
+        ? 'Prise de masse sèche : viser une progression lente, un surplus faible et un suivi du poids pour limiter la prise de gras.'
+        : 'La progression doit rester lente, mesurable et compatible avec la récupération.'
   };
 }
 
 function buildAdvancedProgressionRules(goal, metrics) {
   return {
-    method: 'Double progression avancée',
+    method: goal === 'lean_bulk' ? 'Double progression avancée contrôlée' : 'Double progression avancée',
     rule: 'Sur les séries valides 8-12 : quand toutes les séries atteignent 12 reps avec RIR 1-2 et technique propre, augmenter légèrement la charge.',
     upperBody: '+1 à +2,5 kg ou +2,5 à 5 % selon machine/haltère/barre',
     lowerBody: '+2,5 à +5 kg ou +5 à 10 % selon exercice et tolérance articulaire',
     deload: 'Deload recommandé si performance en baisse sur 2 séances, sommeil bas, douleurs articulaires ou fatigue persistante : -30 à -50 % de séries valides pendant 5-7 jours.',
-    goalNote: `${metrics.totalValidSets} séries valides/semaine dans ce modèle. ${goal === 'fat_loss' ? 'En déficit, réduire le volume avant de forcer les charges.' : 'Réserver ce volume aux profils très entraînés.'}`
+    goalNote: `${metrics.totalValidSets} séries valides/semaine dans ce modèle. ${goal === 'fat_loss' ? 'En déficit, réduire le volume avant de forcer les charges.' : goal === 'lean_bulk' ? 'En prise de masse sèche, suivre poids/tour de taille et réduire le surplus si le gras monte trop vite.' : 'Réserver ce volume aux profils très entraînés.'}`
   };
 }
 
