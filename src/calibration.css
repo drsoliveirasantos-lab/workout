@@ -32,9 +32,38 @@
   font-size: 0.88rem;
 }
 
-.mini-card.is-complete {
+.mini-card.is-complete,
+.calibration-movement-item.is-complete {
   border-color: rgba(167, 243, 208, 0.36);
   background: rgba(167, 243, 208, 0.08);
+}
+
+.calibration-zone-card {
+  gap: 14px;
+}
+
+.calibration-movement-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.calibration-movement-item {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.calibration-movement-item strong {
+  color: var(--text);
+}
+
+.calibration-movement-item span,
+.calibration-movement-item small {
+  color: var(--muted);
 }
 
 @media (max-width: 640px) {
@@ -46,5 +75,10 @@
     min-height: 34px;
     padding: 0 10px;
     font-size: 0.9rem;
+  }
+
+  .calibration-movement-item {
+    padding: 10px;
+    border-radius: 16px;
   }
 }
