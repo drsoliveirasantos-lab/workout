@@ -2,18 +2,21 @@ import { generateTrainingPlan } from './engine/training.js';
 import { calculateNutritionTargets, buildBudgetMenu } from './engine/nutrition.js';
 import {
   buildCalibrationPlan,
+  buildCalibrationZones,
   calculateCalibrationEntry,
   summarizeCalibrationCoverage
 } from './engine/calibration.js';
 
 const state = {
   calibrations: [],
-  calibrationPlan: []
+  calibrationPlan: [],
+  calibrationZones: []
 };
 
 const selectors = {
   profileForm: '#profile-form',
   calibrationForm: '#calibration-form',
+  calibrationZone: '#calibration-zone',
   calibrationFamily: '#calibration-family',
   calibrationExercise: '#calibration-exercise',
   calibrationGuidance: '#calibration-guidance',
@@ -51,6 +54,7 @@ function getProfileFromForm() {
 function bindForms() {
   const profileForm = document.querySelector(selectors.profileForm);
   const calibrationForm = document.querySelector(selectors.calibrationForm);
+  const calibrationZone = document.querySelector(selectors.calibrationZone);
   const calibrationFamily = document.querySelector(selectors.calibrationFamily);
   const loadDemoButton = document.querySelector('#load-demo');
   const buildCalibrationButton = document.querySelector('#build-calibration');
@@ -59,6 +63,10 @@ function bindForms() {
 
   profileForm?.addEventListener('submit', handleProfileSubmit);
   calibrationForm?.addEventListener('submit', handleCalibrationSubmit);
+  calibrationZone?.addEventListener('change', () => {
+    renderMovementSelect({ force: true });
+    hydrateCalibrationFieldsFromSelection({ force: true });
+  });
   calibrationFamily?.addEventListener('change', () => hydrateCalibrationFieldsFromSelection({ force: true }));
   loadDemoButton?.addEventListener('click', loadDemo);
   buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
@@ -84,12 +92,15 @@ function bindForms() {
     const button = event.target.closest('[data-select-family]');
     if (!button) return;
 
-    const select = document.querySelector(selectors.calibrationFamily);
-    if (!select) return;
+    const zoneSelect = document.querySelector(selectors.calibrationZone);
+    const familySelect = document.querySelector(selectors.calibrationFamily);
+    if (!zoneSelect || !familySelect) return;
 
-    select.value = button.dataset.selectFamily;
+    zoneSelect.value = button.dataset.selectZone;
+    renderMovementSelect({ force: true });
+    familySelect.value = button.dataset.selectFamily;
     hydrateCalibrationFieldsFromSelection({ force: true });
-    renderNotice(`Famille sélectionnée : ${select.options[select.selectedIndex]?.textContent || ''}`, 'success');
+    renderNotice(`Sélection : ${button.dataset.selectLabel || ''}`, 'success');
   });
 
   profileForm?.addEventListener('change', (event) => {
@@ -102,28 +113,55 @@ function bindForms() {
 function refreshCalibrationPlan() {
   const profile = getProfileFromForm();
   state.calibrationPlan = buildCalibrationPlan(profile);
-  renderCalibrationSelect();
+  state.calibrationZones = buildCalibrationZones(profile);
+  renderZoneSelect();
+  renderMovementSelect({ force: false });
   renderCalibrationGuidance(profile);
 }
 
-function renderCalibrationSelect() {
-  const select = document.querySelector(selectors.calibrationFamily);
-  if (!select) return;
+function renderZoneSelect() {
+  const zoneSelect = document.querySelector(selectors.calibrationZone);
+  if (!zoneSelect) return;
 
-  const previousValue = select.value;
-  const nextOptions = state.calibrationPlan.length
-    ? state.calibrationPlan
-    : buildCalibrationPlan({ level: 'beginner' });
+  const previousValue = zoneSelect.value;
+  const zones = state.calibrationZones.length ? state.calibrationZones : buildCalibrationZones({ level: 'beginner' });
 
-  select.innerHTML = nextOptions.map((item) => `
-    <option value="${item.familyId}">${item.label}</option>
+  zoneSelect.innerHTML = zones.map((zone) => `
+    <option value="${zone.id}">${zone.label}</option>
   `).join('');
 
-  if (previousValue && nextOptions.some((item) => item.familyId === previousValue)) {
-    select.value = previousValue;
+  if (previousValue && zones.some((zone) => zone.id === previousValue)) {
+    zoneSelect.value = previousValue;
+  } else if (zones[0]) {
+    zoneSelect.value = zones[0].id;
   }
+}
 
-  hydrateCalibrationFieldsFromSelection({ force: false });
+function getSelectedZoneId() {
+  return document.querySelector(selectors.calibrationZone)?.value || state.calibrationZones[0]?.id || 'pecs';
+}
+
+function getMovementOptionsForSelectedZone() {
+  const selectedZoneId = getSelectedZoneId();
+  return state.calibrationPlan.filter((item) => item.zoneId === selectedZoneId);
+}
+
+function renderMovementSelect({ force = false } = {}) {
+  const familySelect = document.querySelector(selectors.calibrationFamily);
+  if (!familySelect) return;
+
+  const previousValue = familySelect.value;
+  const options = getMovementOptionsForSelectedZone();
+
+  familySelect.innerHTML = options.map((item) => `
+    <option value="${item.familyId}">${item.movementLabel}</option>
+  `).join('');
+
+  if (!force && previousValue && options.some((item) => item.familyId === previousValue)) {
+    familySelect.value = previousValue;
+  } else if (options[0]) {
+    familySelect.value = options[0].familyId;
+  }
 }
 
 function hydrateCalibrationFieldsFromSelection({ force = false } = {}) {
@@ -131,12 +169,16 @@ function hydrateCalibrationFieldsFromSelection({ force = false } = {}) {
   renderCalibrationQuickPicks();
 }
 
-function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
+function getSelectedMovement() {
   const familySelect = document.querySelector(selectors.calibrationFamily);
-  const exerciseSelect = document.querySelector(selectors.calibrationExercise);
-  if (!familySelect || !exerciseSelect) return;
+  return state.calibrationPlan.find((item) => item.familyId === familySelect?.value);
+}
 
-  const selected = state.calibrationPlan.find((item) => item.familyId === familySelect.value);
+function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
+  const exerciseSelect = document.querySelector(selectors.calibrationExercise);
+  if (!exerciseSelect) return;
+
+  const selected = getSelectedMovement();
   if (!selected) return;
 
   const previousValue = exerciseSelect.value;
@@ -155,8 +197,8 @@ function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
 }
 
 function renderCalibrationQuickPicks() {
-  const familySelect = document.querySelector(selectors.calibrationFamily);
-  const selectedFamily = familySelect?.value || 'horizontal_push';
+  const selectedMovement = getSelectedMovement();
+  const selectedFamily = selectedMovement?.familyId || 'horizontal_push';
   renderQuickPicks('weight-quick-picks', 'calibrationWeight', getWeightPresets(selectedFamily));
   renderQuickPicks('reps-quick-picks', 'calibrationReps', [5, 6, 7, 8, 9, 10, 11, 12]);
 }
@@ -206,6 +248,7 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
   if (!container) return;
 
   const coverage = summarizeCalibrationCoverage(profile, state.calibrations);
+  const planByFamily = Object.fromEntries(coverage.required.map((item) => [item.familyId, item]));
 
   container.innerHTML = `
     <article class="mini-card">
@@ -213,18 +256,26 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
       <span>${coverage.message}</span>
       <span>Couverture : ${coverage.score}%</span>
     </article>
-    ${coverage.required.map((item) => {
-      const done = state.calibrations.find((entry) => entry.familyId === item.familyId);
-      return `
-        <article class="mini-card ${done ? 'is-complete' : ''}">
-          <strong>${done ? '✓ ' : ''}${item.label}</strong>
-          <span>${item.target}</span>
-          <span>${item.instruction}</span>
-          <small>Alternatives : ${item.alternatives.join(', ')}</small>
-          <button class="btn ghost mini-action" type="button" data-select-family="${item.familyId}">${done ? 'Modifier cette famille' : 'Utiliser cette famille'}</button>
-        </article>
-      `;
-    }).join('')}
+    ${coverage.zones.map((zone) => `
+      <article class="mini-card calibration-zone-card">
+        <strong>${zone.label}</strong>
+        <span>${zone.description}</span>
+        <div class="calibration-movement-list">
+          ${zone.availableFamilyIds.map((familyId) => {
+            const item = planByFamily[familyId];
+            const done = state.calibrations.find((entry) => entry.familyId === familyId);
+            return `
+              <div class="calibration-movement-item ${done ? 'is-complete' : ''}">
+                <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
+                <span>${item.instruction}</span>
+                <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
+                <button class="btn ghost mini-action" type="button" data-select-zone="${zone.id}" data-select-family="${item.familyId}" data-select-label="${zone.label} — ${item.movementLabel}">${done ? 'Modifier ce test' : 'Utiliser ce test'}</button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </article>
+    `).join('')}
   `;
 }
 
@@ -247,7 +298,7 @@ function handleCalibrationSubmit(event) {
     state.calibrations.push(entry);
     renderCalibrationList();
     refreshCalibrationPlan();
-    renderNotice(`Calibration ajoutée : ${entry.familyLabel}, confiance ${entry.confidence.label}.`, 'success');
+    renderNotice(`Calibration ajoutée : ${entry.zoneLabel} — ${entry.movementLabel}, confiance ${entry.confidence.label}.`, 'success');
   } catch (error) {
     renderNotice(error.message, 'error');
   }
@@ -258,13 +309,13 @@ function renderCalibrationList() {
   if (!container) return;
 
   if (!state.calibrations.length) {
-    container.innerHTML = '<p class="muted">Aucune calibration ajoutée. Les charges seront prescrites en RIR quand la famille n’est pas calibrée.</p>';
+    container.innerHTML = '<p class="muted">Aucune calibration ajoutée. Les charges seront prescrites en RIR quand le mouvement n’est pas calibré.</p>';
     return;
   }
 
   container.innerHTML = state.calibrations.map((entry) => `
     <article class="mini-card">
-      <strong>${entry.familyLabel} — ${entry.exerciseName}</strong>
+      <strong>${entry.zoneLabel} — ${entry.movementLabel} — ${entry.exerciseName}</strong>
       <span>${entry.inputWeight} kg × ${entry.inputReps} reps + RIR ${entry.rir}</span>
       <span>e1RM ≈ ${entry.estimatedOneRm} kg · Training Max ${entry.trainingMax} kg · confiance ${entry.confidence.label} (${entry.confidence.score}%)</span>
       <span>Plage 8-12 reps : ${entry.workingRange.low}-${entry.workingRange.high} kg</span>
@@ -314,7 +365,7 @@ function renderPlan(plan, nutrition, menu, profile) {
   const reliabilityContent = `
     <div class="metric-grid">
       <div class="metric"><strong>${coverage.score}%</strong><span>couverture calibration</span></div>
-      <div class="metric"><strong>${coverage.completed}/${coverage.total}</strong><span>familles calibrées</span></div>
+      <div class="metric"><strong>${coverage.completed}/${coverage.total}</strong><span>mouvements calibrés</span></div>
       <div class="metric"><strong>${state.calibrations.length}</strong><span>tests enregistrés</span></div>
       <div class="metric"><strong>RIR</strong><span>fallback si non calibré</span></div>
     </div>
@@ -463,7 +514,7 @@ function renderEmptyState() {
   result.innerHTML = `
     <p class="eyebrow">Résultat</p>
     <h2>Génère les tests conseillés ou lance directement le programme.</h2>
-    <p>Les familles calibrées auront une plage de charge. Les familles non calibrées resteront prescrites avec une logique RIR 1-3.</p>
+    <p>Les mouvements calibrés auront une plage de charge. Les mouvements non calibrés resteront prescrits avec une logique RIR 1-3.</p>
   `;
 }
 
