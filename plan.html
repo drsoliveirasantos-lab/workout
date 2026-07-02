@@ -8,10 +8,11 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux6" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux6" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux6" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux6" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux7" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux7" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux7" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux7" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux7" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,176 +34,193 @@
           <p class="eyebrow">Créer un plan</p>
           <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
           <p class="muted">
-            Le moteur utilise une calibration guidée en trois niveaux : zone musculaire, mouvement à tester, puis exercice exact.
+            Remplis les étapes dans des menus déroulants, ferme celles que tu as terminées, puis génère le plan à la fin.
           </p>
           <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
         </section>
 
         <section class="builder-grid" aria-label="Générateur de programme">
-          <div>
-            <div id="notice" class="notice" aria-live="polite">Remplis le profil, génère les tests conseillés, puis ajoute les calibrations que tu connais.</div>
+          <div class="builder-steps">
+            <div id="notice" class="notice" aria-live="polite">Remplis le profil, ajoute les calibrations utiles, puis génère le plan.</div>
 
-            <section class="panel" aria-labelledby="profile-title">
-              <p class="eyebrow">Étape 1</p>
-              <h2 id="profile-title">Profil, niveau et objectif</h2>
-              <form id="profile-form">
-                <div class="form-grid">
-                  <label class="field">
-                    <span>Sexe biologique pour <button class="glossary-term" type="button" data-glossary="bmr">BMR</button></span>
-                    <select name="sex">
-                      <option value="male">Homme</option>
-                      <option value="female">Femme</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Âge
-                    <input name="age" type="number" min="14" max="90" value="29" required />
-                  </label>
-                  <label class="field">
-                    Taille (cm)
-                    <input name="heightCm" type="number" min="120" max="230" value="175" required />
-                  </label>
-                  <label class="field">
-                    Poids (kg)
-                    <input name="weightKg" type="number" min="35" max="250" step="0.1" value="80" required />
-                  </label>
-                  <label class="field">
-                    Niveau
-                    <select name="level">
-                      <option value="beginner">Débutant</option>
-                      <option value="intermediate">Intermédiaire</option>
-                      <option value="advanced">Avancé</option>
-                      <option value="very_advanced">Très avancé — split ABCD</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Objectif
-                    <select name="goal">
-                      <option value="recomposition">Recomposition</option>
-                      <option value="fat_loss">Perte de gras</option>
-                      <option value="hypertrophy">Prise de muscle</option>
-                      <option value="strength">Force</option>
-                      <option value="general_health">Santé générale</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Séances/semaine
-                    <select name="daysPerWeek">
-                      <option value="2">2</option>
-                      <option value="3" selected>3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Activité hors muscu
-                    <select name="activity">
-                      <option value="sedentary">Sédentaire</option>
-                      <option value="light" selected>Légère</option>
-                      <option value="moderate">Modérée</option>
-                      <option value="high">Élevée</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Budget nutrition
-                    <select name="budget">
-                      <option value="very_low">Très serré</option>
-                      <option value="moderate">Moyen</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Matériel
-                    <select name="equipment">
-                      <option value="basic">Salle basique</option>
-                      <option value="bodyweight">Poids du corps</option>
-                      <option value="full_gym">Salle complète</option>
-                    </select>
-                  </label>
-                  <label class="field full">
-                    Blessures ou douleurs à prendre en compte
-                    <textarea name="injuries" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
-                  </label>
-                  <label class="field full">
-                    Signaux médicaux importants
-                    <textarea name="medicalFlags" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
-                  </label>
-                </div>
-                <div class="form-actions">
-                  <button class="btn ghost" id="build-calibration" type="button">Générer les tests conseillés</button>
-                  <button class="btn primary" type="submit">Générer mon plan</button>
-                </div>
-              </form>
-            </section>
+            <details class="builder-step" open>
+              <summary class="builder-step-summary">
+                <span class="builder-step-title">
+                  <strong>Étape 1 — Profil</strong>
+                  <span>Âge, taille, poids, niveau, objectif et matériel.</span>
+                </span>
+              </summary>
+              <div class="builder-step-content">
+                <form id="profile-form">
+                  <div class="form-grid">
+                    <label class="field">
+                      <span>Sexe biologique pour <button class="glossary-term" type="button" data-glossary="bmr">BMR</button></span>
+                      <select name="sex">
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Âge
+                      <select name="age" data-range-select data-min="14" data-max="90" data-step="1" data-default="29" required></select>
+                    </label>
+                    <label class="field">
+                      Taille (cm)
+                      <select name="heightCm" data-range-select data-min="120" data-max="230" data-step="1" data-default="175" required></select>
+                    </label>
+                    <label class="field">
+                      Poids (kg)
+                      <select name="weightKg" data-range-select data-min="35" data-max="250" data-step="1" data-default="80" required></select>
+                    </label>
+                    <label class="field">
+                      Niveau
+                      <select name="level">
+                        <option value="beginner">Débutant</option>
+                        <option value="intermediate">Intermédiaire</option>
+                        <option value="advanced">Avancé</option>
+                        <option value="very_advanced">Très avancé — split ABCD</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Objectif
+                      <select name="goal">
+                        <option value="recomposition">Recomposition</option>
+                        <option value="fat_loss">Perte de gras</option>
+                        <option value="hypertrophy">Prise de muscle</option>
+                        <option value="strength">Force</option>
+                        <option value="general_health">Santé générale</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Séances/semaine
+                      <select name="daysPerWeek">
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Activité hors muscu
+                      <select name="activity">
+                        <option value="sedentary">Sédentaire</option>
+                        <option value="light" selected>Légère</option>
+                        <option value="moderate">Modérée</option>
+                        <option value="high">Élevée</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Budget nutrition
+                      <select name="budget">
+                        <option value="very_low">Très serré</option>
+                        <option value="moderate">Moyen</option>
+                        <option value="flexible">Flexible</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Matériel
+                      <select name="equipment">
+                        <option value="basic">Salle basique</option>
+                        <option value="bodyweight">Poids du corps</option>
+                        <option value="full_gym">Salle complète</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      Blessures ou douleurs à prendre en compte
+                      <textarea name="injuries" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
+                    </label>
+                    <label class="field full">
+                      Signaux médicaux importants
+                      <textarea name="medicalFlags" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
+                    </label>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn ghost" id="build-calibration" type="button">Mettre à jour les tests conseillés</button>
+                  </div>
+                </form>
+              </div>
+            </details>
 
-            <section class="panel" aria-labelledby="calibration-title">
-              <p class="eyebrow">Étape 2</p>
-              <h2 id="calibration-title">Calibration guidée des charges</h2>
-              <p class="muted">
-                Choisis d'abord la zone musculaire, puis le mouvement à tester. Fais un test sous-maximal : 5-10 répétitions propres,
-                avec <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2.
-              </p>
-              <form id="calibration-form">
-                <div class="form-grid">
-                  <label class="field full">
-                    Zone à calibrer
-                    <select id="calibration-zone" name="zoneId" required>
-                      <option value="pecs">Pecs</option>
-                      <option value="dos">Dos</option>
-                      <option value="jambes">Jambes</option>
-                    </select>
-                  </label>
-                  <label class="field full">
-                    Mouvement / test à calibrer
-                    <select id="calibration-family" name="familyId" required>
-                      <option value="horizontal_push">Développé / chest press</option>
-                      <option value="horizontal_pull">Rowing</option>
-                      <option value="leg_press_pattern">Squat / leg press</option>
-                    </select>
-                  </label>
-                  <label class="field full">
-                    Exercice réellement utilisé
-                    <select id="calibration-exercise" name="calibrationExercise" required>
-                      <option value="Développé couché">Développé couché</option>
-                      <option value="Chest press machine">Chest press machine</option>
-                      <option value="Développé incliné">Développé incliné</option>
-                      <option value="Développé haltères">Développé haltères</option>
-                    </select>
-                  </label>
-                  <label class="field full">
-                    Charge utilisée (kg)
-                    <input name="calibrationWeight" type="number" min="1" step="0.5" value="60" required />
-                    <div id="weight-quick-picks" class="quick-picks" aria-label="Choix rapide du poids"></div>
-                  </label>
-                  <label class="field full">
-                    Répétitions propres
-                    <input name="calibrationReps" type="number" min="1" max="30" value="8" required />
-                    <div id="reps-quick-picks" class="quick-picks" aria-label="Choix rapide des répétitions"></div>
-                  </label>
-                  <label class="field">
-                    RIR réel
-                    <input name="calibrationRir" type="number" min="0" max="5" value="2" required />
-                  </label>
-                  <label class="field">
-                    Douleur 0-10
-                    <input name="calibrationPain" type="number" min="0" max="10" value="0" required />
-                  </label>
-                  <label class="field full">
-                    Technique
-                    <select name="calibrationTechnique">
-                      <option value="clean">Propre</option>
-                      <option value="unstable">Instable / amplitude douteuse</option>
-                      <option value="failed">Trop lourd / échec technique</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="form-actions">
-                  <button class="btn primary" type="submit">Ajouter cette calibration</button>
-                  <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
-                </div>
-              </form>
-              <div id="calibration-guidance" class="tests-list" aria-live="polite"></div>
-              <div id="calibration-list" class="tests-list" aria-live="polite"></div>
+            <details class="builder-step" open>
+              <summary class="builder-step-summary">
+                <span class="builder-step-title">
+                  <strong>Étape 2 — Calibration</strong>
+                  <span>Zone musculaire, mouvement, exercice exact et test sous-maximal.</span>
+                </span>
+              </summary>
+              <div class="builder-step-content">
+                <p class="muted">
+                  Choisis d'abord la zone musculaire, puis le mouvement à tester. Fais un test sous-maximal : 5-10 répétitions propres,
+                  avec <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2.
+                </p>
+                <form id="calibration-form">
+                  <div class="form-grid">
+                    <label class="field full">
+                      Zone à calibrer
+                      <select id="calibration-zone" name="zoneId" required>
+                        <option value="pecs">Pecs</option>
+                        <option value="dos">Dos</option>
+                        <option value="jambes">Jambes</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      Mouvement / test à calibrer
+                      <select id="calibration-family" name="familyId" required>
+                        <option value="horizontal_push">Développé / chest press</option>
+                        <option value="horizontal_pull">Rowing</option>
+                        <option value="leg_press_pattern">Squat / leg press</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      Exercice réellement utilisé
+                      <select id="calibration-exercise" name="calibrationExercise" required>
+                        <option value="Développé couché">Développé couché</option>
+                        <option value="Chest press machine">Chest press machine</option>
+                        <option value="Développé incliné">Développé incliné</option>
+                        <option value="Développé haltères">Développé haltères</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      Charge utilisée (kg)
+                      <select name="calibrationWeight" id="calibration-weight" required></select>
+                      <small class="select-hint">La liste s’adapte au mouvement choisi.</small>
+                    </label>
+                    <label class="field full">
+                      Répétitions propres
+                      <select name="calibrationReps" id="calibration-reps" required></select>
+                    </label>
+                    <label class="field">
+                      RIR réel
+                      <select name="calibrationRir" id="calibration-rir" required></select>
+                    </label>
+                    <label class="field">
+                      Douleur 0-10
+                      <select name="calibrationPain" id="calibration-pain" required></select>
+                    </label>
+                    <label class="field full">
+                      Technique
+                      <select name="calibrationTechnique">
+                        <option value="clean">Propre</option>
+                        <option value="unstable">Instable / amplitude douteuse</option>
+                        <option value="failed">Trop lourd / échec technique</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn primary" type="submit">Ajouter cette calibration</button>
+                    <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
+                  </div>
+                </form>
+                <div id="calibration-guidance" class="tests-list" aria-live="polite"></div>
+                <div id="calibration-list" class="tests-list" aria-live="polite"></div>
+              </div>
+            </details>
+
+            <section class="panel generation-panel" aria-labelledby="generate-title">
+              <p class="eyebrow">Étape 3</p>
+              <h2 id="generate-title">Générer le programme</h2>
+              <p class="muted">Quand le profil est rempli et que les calibrations utiles sont ajoutées, génère le plan final.</p>
+              <button class="btn primary" id="generate-plan" type="button">Générer mon plan</button>
             </section>
           </div>
 
@@ -215,7 +233,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux6"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux6"></script>
+    <script type="module" src="src/app.js?v=20260702-ux7"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux7"></script>
   </body>
 </html>
