@@ -8,10 +8,10 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux5" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux5" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux5" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux5" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux6" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux6" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux6" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux6" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,8 +33,7 @@
           <p class="eyebrow">Créer un plan</p>
           <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
           <p class="muted">
-            Le moteur utilise maintenant une calibration guidée : le site propose les familles de mouvement à tester
-            selon ton niveau et ton split, au lieu de te demander un exercice au hasard.
+            Le moteur utilise une calibration guidée en trois niveaux : zone musculaire, mouvement à tester, puis exercice exact.
           </p>
           <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
         </section>
@@ -140,18 +139,25 @@
               <p class="eyebrow">Étape 2</p>
               <h2 id="calibration-title">Calibration guidée des charges</h2>
               <p class="muted">
-                Fais un test sous-maximal par famille importante : 5-10 répétitions propres, avec
-                <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2. Si tu ne connais pas une charge,
-                laisse la famille vide : le programme utilisera une prescription en RIR.
+                Choisis d'abord la zone musculaire, puis le mouvement à tester. Fais un test sous-maximal : 5-10 répétitions propres,
+                avec <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2.
               </p>
               <form id="calibration-form">
                 <div class="form-grid">
                   <label class="field full">
-                    Famille à calibrer
+                    Zone à calibrer
+                    <select id="calibration-zone" name="zoneId" required>
+                      <option value="pecs">Pecs</option>
+                      <option value="dos">Dos</option>
+                      <option value="jambes">Jambes</option>
+                    </select>
+                  </label>
+                  <label class="field full">
+                    Mouvement / test à calibrer
                     <select id="calibration-family" name="familyId" required>
-                      <option value="horizontal_push">Pecs — développé / chest press</option>
-                      <option value="horizontal_pull">Dos — rowing</option>
-                      <option value="leg_press_pattern">Jambes — squat / leg press</option>
+                      <option value="horizontal_push">Développé / chest press</option>
+                      <option value="horizontal_pull">Rowing</option>
+                      <option value="leg_press_pattern">Squat / leg press</option>
                     </select>
                   </label>
                   <label class="field full">
@@ -209,7 +215,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux5"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux5"></script>
+    <script type="module" src="src/app.js?v=20260702-ux6"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux6"></script>
   </body>
 </html>
