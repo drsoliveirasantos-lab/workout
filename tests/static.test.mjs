@@ -36,7 +36,8 @@ test('plan page contains selectable calibration exercise and quick picks', async
   assert.match(html, /id="reps-quick-picks"/);
   assert.match(html, /src\/calibration\.css/);
   assert.match(html, /value="horizontal_push"/);
-  assert.match(html, /Poussée horizontale/);
+  assert.match(html, /Pecs — développé/);
+  assert.match(html, /Jambes — squat/);
   assert.match(html, /Générer les tests conseillés/);
   assert.match(html, /value="advanced"/);
   assert.match(html, /value="very_advanced"/);
@@ -53,7 +54,8 @@ test('plan page contains selectable calibration exercise and quick picks', async
   assert.match(app, /generateTrainingPlan/);
   assert.match(advanced, /Split ABCD/);
   assert.match(advanced, /familyId: 'horizontal_push'/);
-  assert.match(families, /Poussée horizontale/);
+  assert.match(families, /Pecs — développé/);
+  assert.match(families, /technicalLabel: 'Poussée horizontale'/);
   assert.match(calibration, /confidence/);
   assert.match(calibrationCss, /quick-pick/);
 });
