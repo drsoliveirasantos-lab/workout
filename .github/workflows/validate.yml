@@ -1,0 +1,32 @@
+name: Workout Nekouto validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - preview
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Check build output
+        run: |
+          test -f dist/index.html
+          test -f dist/src/app.js
+          test -f dist/docs/evidence.md
