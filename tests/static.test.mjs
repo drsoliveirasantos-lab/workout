@@ -90,6 +90,9 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(advanced, /Split ABCD/);
   assert.match(advanced, /familyId: 'shoulder_abduction'/);
   assert.match(families, /CALIBRATION_ZONES/);
+  assert.match(families, /familyIds: \['horizontal_push', 'pec_isolation'\]/);
+  assert.match(families, /movementLabel: 'Écarté \/ pec deck'/);
+  assert.match(families, /'pec_isolation'/);
   assert.match(families, /movementLabel: 'Squat \/ leg press'/);
   assert.match(families, /shoulder_abduction/);
   assert.match(families, /technicalLabel: 'Poussée horizontale/);
