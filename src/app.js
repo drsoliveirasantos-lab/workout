@@ -298,6 +298,76 @@ function renderPlan(plan, nutrition, menu, profile) {
   const coverage = summarizeCalibrationCoverage(profile, state.calibrations);
   result.classList.remove('empty');
 
+  const safetyContent = plan.safety.flags.length ? `
+    <div class="alert alert-warning">
+      <strong>Prudence médicale</strong>
+      <p>${plan.safety.message}</p>
+      <small>Détecté : ${plan.safety.flags.join(', ')}</small>
+    </div>
+  ` : `
+    <div class="alert alert-neutral">
+      <strong>Sécurité</strong>
+      <p>${plan.safety.message}</p>
+    </div>
+  `;
+
+  const reliabilityContent = `
+    <div class="metric-grid">
+      <div class="metric"><strong>${coverage.score}%</strong><span>couverture calibration</span></div>
+      <div class="metric"><strong>${coverage.completed}/${coverage.total}</strong><span>familles calibrées</span></div>
+      <div class="metric"><strong>${state.calibrations.length}</strong><span>tests enregistrés</span></div>
+      <div class="metric"><strong>RIR</strong><span>fallback si non calibré</span></div>
+    </div>
+    <p class="muted">${coverage.message}</p>
+  `;
+
+  const trainingContent = `
+    <div class="sessions-grid">
+      ${plan.sessions.map(renderSession).join('')}
+    </div>
+  `;
+
+  const progressionContent = `
+    <ul class="clean-list">
+      <li><strong>Méthode :</strong> ${plan.progression.method}</li>
+      <li>${plan.progression.rule}</li>
+      <li><strong>Haut du corps :</strong> ${plan.progression.upperBody}</li>
+      <li><strong>Bas du corps :</strong> ${plan.progression.lowerBody}</li>
+      <li><strong>Deload :</strong> ${plan.progression.deload}</li>
+      <li>${plan.progression.goalNote}</li>
+    </ul>
+  `;
+
+  const nutritionContent = `
+    <ul class="clean-list">
+      <li><strong>BMR estimé :</strong> ${nutrition.bmr} kcal/jour</li>
+      <li><strong>Maintenance :</strong> ${nutrition.maintenance} kcal/jour</li>
+      <li><strong>Cible :</strong> ${nutrition.calories.min}-${nutrition.calories.max} kcal/jour</li>
+      <li><strong>Protéines :</strong> ${nutrition.protein.min}-${nutrition.protein.max} g/jour</li>
+      <li>${nutrition.calories.note}</li>
+    </ul>
+  `;
+
+  const menuContent = `
+    <h4>${menu.title}</h4>
+    <p><strong>Budget indicatif :</strong> ${menu.budget}</p>
+    <p class="muted">${menu.note}</p>
+    <div class="food-grid">
+      ${menu.staples.map((food) => `
+        <article class="food-card">
+          <strong>${food.name}</strong>
+          <span>${food.role}</span>
+          <small>${food.protein}</small>
+        </article>
+      `).join('')}
+    </div>
+    <h4>Journée type</h4>
+    <ol class="clean-list ordered">
+      ${menu.dayTemplate.map((item) => `<li>${item}</li>`).join('')}
+    </ol>
+    <p>${menu.proteinTargetText}</p>
+  `;
+
   result.innerHTML = `
     <div class="result-header">
       <p class="eyebrow">Programme généré</p>
@@ -305,102 +375,48 @@ function renderPlan(plan, nutrition, menu, profile) {
       <p>${plan.intensity.cardio}</p>
     </div>
 
-    ${plan.safety.flags.length ? `
-      <div class="alert alert-warning">
-        <strong>Prudence médicale</strong>
-        <p>${plan.safety.message}</p>
-        <small>Détecté : ${plan.safety.flags.join(', ')}</small>
-      </div>
-    ` : `
-      <div class="alert alert-neutral">
-        <strong>Sécurité</strong>
-        <p>${plan.safety.message}</p>
-      </div>
-    `}
+    <div class="accordion-stack">
+      ${renderAccordion({ title: 'Sécurité', badge: plan.safety.flags.length ? 'prudence' : 'ok', content: safetyContent, open: true })}
+      ${renderAccordion({ title: 'Fiabilité des charges', badge: `${coverage.score}%`, content: reliabilityContent, open: true })}
+      ${renderCalculations(plan.calculations)}
+      ${renderAccordion({ title: 'Entraînement', badge: `${plan.sessions.length} séances`, content: trainingContent })}
+      ${renderAccordion({ title: 'Progression', badge: plan.progression.method, content: progressionContent })}
+      ${renderAccordion({ title: 'Diète / calories', badge: `${nutrition.calories.min}-${nutrition.calories.max} kcal`, content: nutritionContent })}
+      ${renderAccordion({ title: 'Menu budget / journée type', badge: menu.budget, content: menuContent })}
+    </div>
+  `;
+}
 
-    <section class="result-section calculations-card">
-      <h3>Fiabilité des charges</h3>
-      <div class="metric-grid">
-        <div class="metric"><strong>${coverage.score}%</strong><span>couverture calibration</span></div>
-        <div class="metric"><strong>${coverage.completed}/${coverage.total}</strong><span>familles calibrées</span></div>
-        <div class="metric"><strong>${state.calibrations.length}</strong><span>tests enregistrés</span></div>
-        <div class="metric"><strong>RIR</strong><span>fallback si non calibré</span></div>
+function renderAccordion({ title, badge = '', content, open = false }) {
+  return `
+    <details class="accordion-section" ${open ? 'open' : ''}>
+      <summary class="accordion-summary">
+        <span>${title}</span>
+        ${badge ? `<small>${badge}</small>` : ''}
+      </summary>
+      <div class="accordion-content">
+        ${content}
       </div>
-      <p class="muted">${coverage.message}</p>
-    </section>
-
-    ${renderCalculations(plan.calculations)}
-
-    <section class="result-section">
-      <h3>Entraînement</h3>
-      <div class="sessions-grid">
-        ${plan.sessions.map(renderSession).join('')}
-      </div>
-    </section>
-
-    <section class="result-section two-columns">
-      <div>
-        <h3>Progression</h3>
-        <ul class="clean-list">
-          <li><strong>Méthode :</strong> ${plan.progression.method}</li>
-          <li>${plan.progression.rule}</li>
-          <li><strong>Haut du corps :</strong> ${plan.progression.upperBody}</li>
-          <li><strong>Bas du corps :</strong> ${plan.progression.lowerBody}</li>
-          <li><strong>Deload :</strong> ${plan.progression.deload}</li>
-          <li>${plan.progression.goalNote}</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Nutrition</h3>
-        <ul class="clean-list">
-          <li><strong>BMR estimé :</strong> ${nutrition.bmr} kcal/jour</li>
-          <li><strong>Maintenance :</strong> ${nutrition.maintenance} kcal/jour</li>
-          <li><strong>Cible :</strong> ${nutrition.calories.min}-${nutrition.calories.max} kcal/jour</li>
-          <li><strong>Protéines :</strong> ${nutrition.protein.min}-${nutrition.protein.max} g/jour</li>
-          <li>${nutrition.calories.note}</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="result-section">
-      <h3>${menu.title}</h3>
-      <p><strong>Budget indicatif :</strong> ${menu.budget}</p>
-      <p class="muted">${menu.note}</p>
-      <div class="food-grid">
-        ${menu.staples.map((food) => `
-          <article class="food-card">
-            <strong>${food.name}</strong>
-            <span>${food.role}</span>
-            <small>${food.protein}</small>
-          </article>
-        `).join('')}
-      </div>
-      <h4>Journée type</h4>
-      <ol class="clean-list ordered">
-        ${menu.dayTemplate.map((item) => `<li>${item}</li>`).join('')}
-      </ol>
-      <p>${menu.proteinTargetText}</p>
-    </section>
+    </details>
   `;
 }
 
 function renderCalculations(calculations) {
   if (!calculations) return '';
 
-  return `
-    <section class="result-section calculations-card">
-      <h3>${calculations.title}</h3>
-      <div class="metric-grid">
-        <div class="metric"><strong>${calculations.totalValidSets}</strong><span>séries valides/semaine</span></div>
-        <div class="metric"><strong>${calculations.totalPrepSets}</strong><span>séries échauffement/ajustement</span></div>
-        <div class="metric"><strong>${calculations.cardioMinutes} min</strong><span>cardio/semaine</span></div>
-        <div class="metric"><strong>${Object.keys(calculations.byMuscle || {}).length}</strong><span>groupes suivis</span></div>
-      </div>
-      <p class="muted">${calculations.densityNote}</p>
-      ${calculations.missingSessionNote ? `<p class="muted">${calculations.missingSessionNote}</p>` : ''}
-      ${renderMuscleVolume(calculations.byMuscle)}
-    </section>
+  const content = `
+    <div class="metric-grid">
+      <div class="metric"><strong>${calculations.totalValidSets}</strong><span>séries valides/semaine</span></div>
+      <div class="metric"><strong>${calculations.totalPrepSets}</strong><span>séries échauffement/ajustement</span></div>
+      <div class="metric"><strong>${calculations.cardioMinutes} min</strong><span>cardio/semaine</span></div>
+      <div class="metric"><strong>${Object.keys(calculations.byMuscle || {}).length}</strong><span>groupes suivis</span></div>
+    </div>
+    <p class="muted">${calculations.densityNote}</p>
+    ${calculations.missingSessionNote ? `<p class="muted">${calculations.missingSessionNote}</p>` : ''}
+    ${renderMuscleVolume(calculations.byMuscle)}
   `;
+
+  return renderAccordion({ title: calculations.title, badge: `${calculations.totalValidSets} séries`, content });
 }
 
 function renderMuscleVolume(byMuscle = {}) {
@@ -413,31 +429,30 @@ function renderMuscleVolume(byMuscle = {}) {
 }
 
 function renderSession(session) {
-  return `
-    <article class="session-card">
-      <h4>${session.title}</h4>
-      <p class="muted">${session.warmup}</p>
-      ${session.calculations ? `<p class="muted">Calcul séance : ${session.calculations.validSets} séries valides · ${session.calculations.prepSets} préparatoires · ${session.calculations.cardioMinutes} min cardio.</p>` : ''}
-      <div class="exercise-list">
-        ${session.exercises.map((exercise) => `
-          <div class="exercise-row">
-            <div>
-              <strong>${exercise.name}</strong>
-              <span>${exercise.muscles.join(', ')}</span>
-              <small>${exercise.supportLabel || 'Alternative débutant'} : ${exercise.alternative}</small>
-              ${exercise.note ? `<small>${exercise.note}</small>` : ''}
-            </div>
-            <div class="exercise-dose">
-              <strong>${exercise.sets}×${exercise.repRange[0]}-${exercise.repRange[1]}</strong>
-              <span>${exercise.loadText}</span>
-              <small>${exercise.rest}</small>
-            </div>
-          </div>
-        `).join('')}
+  const exercises = session.exercises.map((exercise) => `
+    <div class="exercise-row">
+      <div>
+        <strong>${exercise.name}</strong>
+        <span>${exercise.muscles.join(', ')}</span>
+        <small>${exercise.supportLabel || 'Alternative débutant'} : ${exercise.alternative}</small>
+        ${exercise.note ? `<small>${exercise.note}</small>` : ''}
       </div>
-      <p class="muted">${session.cooldown}</p>
-    </article>
+      <div class="exercise-dose">
+        <strong>${exercise.sets}×${exercise.repRange[0]}-${exercise.repRange[1]}</strong>
+        <span>${exercise.loadText}</span>
+        <small>${exercise.rest}</small>
+      </div>
+    </div>
+  `).join('');
+
+  const sessionContent = `
+    <p class="muted">${session.warmup}</p>
+    ${session.calculations ? `<p class="muted">Calcul séance : ${session.calculations.validSets} séries valides · ${session.calculations.prepSets} préparatoires · ${session.calculations.cardioMinutes} min cardio.</p>` : ''}
+    <div class="exercise-list">${exercises}</div>
+    <p class="muted">${session.cooldown}</p>
   `;
+
+  return renderAccordion({ title: session.title, badge: `${session.exercises.length} exercices`, content: sessionContent });
 }
 
 function renderEmptyState() {
