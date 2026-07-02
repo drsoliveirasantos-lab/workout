@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sources — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Sources officielles et scientifiques utilisées par Workout Nykuto pour les repères d'entraînement, nutrition et prix."
+    />
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="sources.html" aria-current="page">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="sources-title">
+          <p class="eyebrow">Transparence</p>
+          <h1 id="sources-title">Sources utilisées</h1>
+          <p class="muted">
+            Cette page liste les organismes et bases utilisés comme références du MVP. Les formules et règles
+            internes détaillées sont dans la page Evidence base.
+          </p>
+        </section>
+
+        <section class="panel" aria-label="Liste des sources">
+          <ul id="sources-list" class="sources-list"></ul>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Les sources guident le moteur, mais ne remplacent pas une évaluation individuelle par un professionnel.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="src/sources-page.js"></script>
+  </body>
+</html>
