@@ -83,18 +83,24 @@ function bindForms() {
   });
 
   calibrationGuidance?.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-select-family]');
-    if (!button) return;
+    const saveButton = event.target.closest('[data-save-inline-calibration]');
+    if (saveButton) {
+      saveInlineCalibration(saveButton.closest('[data-calibration-inline]'));
+      return;
+    }
+
+    const selectButton = event.target.closest('[data-select-family]');
+    if (!selectButton) return;
 
     const zoneSelect = document.querySelector(selectors.calibrationZone);
     const familySelect = document.querySelector(selectors.calibrationFamily);
     if (!zoneSelect || !familySelect) return;
 
-    zoneSelect.value = button.dataset.selectZone;
+    zoneSelect.value = selectButton.dataset.selectZone;
     renderMovementSelect({ force: true });
-    familySelect.value = button.dataset.selectFamily;
+    familySelect.value = selectButton.dataset.selectFamily;
     hydrateCalibrationFieldsFromSelection({ force: true });
-    renderNotice(`Sélection : ${button.dataset.selectLabel || ''}`, 'success');
+    renderNotice(`Sélection : ${selectButton.dataset.selectLabel || ''}`, 'success');
   });
 
   profileForm?.addEventListener('change', (event) => {
@@ -250,10 +256,7 @@ function setSelectOptions(select, values, defaultValue, formatter = formatNumber
 
   const previousValue = select.value;
   const stringValues = values.map((value) => String(value));
-
-  select.innerHTML = values.map((value) => `
-    <option value="${value}">${formatter(value)}</option>
-  `).join('');
+  select.innerHTML = buildOptions(values, defaultValue, formatter);
 
   if (options.preserve && previousValue && stringValues.includes(previousValue)) {
     select.value = previousValue;
@@ -264,8 +267,26 @@ function setSelectOptions(select, values, defaultValue, formatter = formatNumber
   }
 }
 
+function buildOptions(values, selectedValue, formatter = formatNumber) {
+  return values.map((value) => `
+    <option value="${value}" ${String(value) === String(selectedValue) ? 'selected' : ''}>${formatter(value)}</option>
+  `).join('');
+}
+
+function buildExerciseOptions(item, selectedExercise) {
+  const exercises = [item.defaultTest, ...item.alternatives, 'Autre exercice proche / machine équivalente'];
+  const uniqueExercises = [...new Set(exercises.filter(Boolean))];
+  return uniqueExercises.map((exercise) => `
+    <option value="${exercise}" ${exercise === selectedExercise ? 'selected' : ''}>${exercise}</option>
+  `).join('');
+}
+
 function formatNumber(value) {
   return Number(value).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+}
+
+function getCalibrationEntry(familyId) {
+  return state.calibrations.find((entry) => entry.familyId === familyId);
 }
 
 function renderCalibrationGuidance(profile = getProfileFromForm()) {
@@ -276,39 +297,112 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
   const planByFamily = Object.fromEntries(coverage.required.map((item) => [item.familyId, item]));
 
   container.innerHTML = `
-    <article class="mini-card">
-      <strong>Plan de calibration conseillé</strong>
-      <span>${coverage.message}</span>
-      <span>Couverture : ${coverage.score}%</span>
+    <article class="mini-card calibration-dashboard">
+      <div>
+        <strong>Tableau de calibration</strong>
+        <span>${coverage.message}</span>
+      </div>
+      <div class="calibration-progress-row">
+        <strong>${coverage.score}%</strong>
+        <div class="calibration-progress" aria-label="Couverture calibration ${coverage.score}%">
+          <span style="width: ${coverage.score}%"></span>
+        </div>
+      </div>
     </article>
     <div class="calibration-zone-funnel">
-      ${coverage.zones.map((zone, index) => `
-        <details class="calibration-zone-accordion" ${index === 0 ? 'open' : ''}>
-          <summary>
-            <strong>${zone.label}</strong>
-            <small>${zone.availableFamilyIds.length} test(s)</small>
-          </summary>
-          <div class="calibration-zone-content">
-            <p class="muted">${zone.description}</p>
-            <div class="calibration-movement-list">
-              ${zone.availableFamilyIds.map((familyId) => {
-                const item = planByFamily[familyId];
-                const done = state.calibrations.find((entry) => entry.familyId === familyId);
-                return `
-                  <div class="calibration-movement-item ${done ? 'is-complete' : ''}">
-                    <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
-                    <span>${item.instruction}</span>
-                    <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
-                    <button class="btn ghost mini-action" type="button" data-select-zone="${zone.id}" data-select-family="${item.familyId}" data-select-label="${zone.label} — ${item.movementLabel}">${done ? 'Modifier ce test' : 'Utiliser ce test'}</button>
-                  </div>
-                `;
-              }).join('')}
+      ${coverage.zones.map((zone, index) => {
+        const doneCount = zone.availableFamilyIds.filter((familyId) => getCalibrationEntry(familyId)).length;
+        const zoneScore = zone.availableFamilyIds.length ? Math.round((doneCount / zone.availableFamilyIds.length) * 100) : 0;
+        return `
+          <details class="calibration-zone-accordion" ${index === 0 || doneCount < zone.availableFamilyIds.length ? 'open' : ''}>
+            <summary>
+              <strong>${zone.label}</strong>
+              <small>${doneCount}/${zone.availableFamilyIds.length} · ${zoneScore}%</small>
+            </summary>
+            <div class="calibration-zone-content">
+              <p class="muted">${zone.description}</p>
+              <div class="calibration-zone-mini-progress"><span style="width: ${zoneScore}%"></span></div>
+              <div class="calibration-movement-list">
+                ${zone.availableFamilyIds.map((familyId) => renderInlineCalibrationCard({ zone, item: planByFamily[familyId] })).join('')}
+              </div>
             </div>
-          </div>
-        </details>
-      `).join('')}
+          </details>
+        `;
+      }).join('')}
     </div>
   `;
+}
+
+function renderInlineCalibrationCard({ zone, item }) {
+  const done = getCalibrationEntry(item.familyId);
+  const selectedExercise = done?.exerciseName || item.defaultTest;
+  const selectedWeight = done?.inputWeight || getDefaultWeight(item.familyId);
+  const selectedReps = done?.inputReps || 8;
+  const selectedRir = done?.rir || 2;
+  const selectedPain = done?.pain || 0;
+  const selectedTechnique = done?.technique || 'clean';
+
+  return `
+    <div class="calibration-movement-item ${done ? 'is-complete' : ''}" data-calibration-inline="true" data-family-id="${item.familyId}" data-zone-id="${zone.id}">
+      <div class="inline-calibration-head">
+        <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
+        <small>${done ? 'test enregistré' : 'à remplir'}</small>
+      </div>
+      <span>${item.instruction}</span>
+      <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
+      <div class="inline-calibration-grid">
+        <label>Exercice
+          <select name="inlineExercise">${buildExerciseOptions(item, selectedExercise)}</select>
+        </label>
+        <label>Charge
+          <select name="inlineWeight">${buildOptions(getWeightOptions(item.familyId), selectedWeight, (value) => `${formatNumber(value)} kg`)}</select>
+        </label>
+        <label>Reps
+          <select name="inlineReps">${buildOptions(buildRange(1, 30, 1), selectedReps, (value) => `${formatNumber(value)} reps`)}</select>
+        </label>
+        <label>RIR
+          <select name="inlineRir">${buildOptions(buildRange(0, 5, 1), selectedRir, (value) => `${formatNumber(value)}`)}</select>
+        </label>
+        <label>Douleur
+          <select name="inlinePain">${buildOptions(buildRange(0, 10, 1), selectedPain, (value) => `${formatNumber(value)}/10`)}</select>
+        </label>
+        <label>Technique
+          <select name="inlineTechnique">
+            <option value="clean" ${selectedTechnique === 'clean' ? 'selected' : ''}>Propre</option>
+            <option value="unstable" ${selectedTechnique === 'unstable' ? 'selected' : ''}>Instable</option>
+            <option value="failed" ${selectedTechnique === 'failed' ? 'selected' : ''}>Trop lourd</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn primary mini-action" type="button" data-save-inline-calibration="true">${done ? 'Mettre à jour ce test' : 'Enregistrer ce test'}</button>
+      ${done ? `<small>e1RM ≈ ${done.estimatedOneRm} kg · confiance ${done.confidence.label} (${done.confidence.score}%).</small>` : ''}
+    </div>
+  `;
+}
+
+function saveInlineCalibration(card) {
+  if (!card) return;
+
+  try {
+    const familyId = card.dataset.familyId;
+    const entry = calculateCalibrationEntry({
+      familyId,
+      exerciseName: card.querySelector('[name="inlineExercise"]')?.value,
+      weight: card.querySelector('[name="inlineWeight"]')?.value,
+      reps: card.querySelector('[name="inlineReps"]')?.value,
+      rir: card.querySelector('[name="inlineRir"]')?.value,
+      pain: card.querySelector('[name="inlinePain"]')?.value,
+      technique: card.querySelector('[name="inlineTechnique"]')?.value
+    });
+
+    state.calibrations = state.calibrations.filter((item) => item.familyId !== entry.familyId);
+    state.calibrations.push(entry);
+    renderCalibrationList();
+    refreshCalibrationPlan();
+    renderNotice(`Test enregistré : ${entry.zoneLabel} — ${entry.movementLabel}. Couverture mise à jour.`, 'success');
+  } catch (error) {
+    renderNotice(error.message, 'error');
+  }
 }
 
 function handleCalibrationSubmit(event) {
