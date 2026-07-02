@@ -2,8 +2,8 @@ export const CALIBRATION_ZONES = [
   {
     id: 'pecs',
     label: 'Pecs',
-    description: 'Développés, chest press et variantes pectoraux.',
-    familyIds: ['horizontal_push']
+    description: 'Développés, chest press, écartés et variantes pectoraux.',
+    familyIds: ['horizontal_push', 'pec_isolation']
   },
   {
     id: 'dos',
@@ -46,7 +46,7 @@ export const MOVEMENT_FAMILIES = {
     technicalLabel: 'Poussée horizontale / inclinée',
     target: 'pectoraux / triceps / deltoïde antérieur',
     defaultTest: 'Développé couché',
-    alternatives: ['Chest press machine', 'Développé incliné barre', 'Développé incliné haltères', 'Développé haltères', 'Pec deck', 'Écarté poulie'],
+    alternatives: ['Chest press machine', 'Développé incliné barre', 'Développé incliné haltères', 'Développé haltères', 'Développé décliné'],
     recommendedRepRange: [5, 10],
     transfer: {
       bench_press: 1,
@@ -57,6 +57,24 @@ export const MOVEMENT_FAMILIES = {
       pec_deck: null,
       cable_fly: null,
       triceps_pushdown: null
+    }
+  },
+  pec_isolation: {
+    zoneId: 'pecs',
+    label: 'Pecs — écarté / pec deck',
+    zoneLabel: 'Pecs',
+    movementLabel: 'Écarté / pec deck',
+    technicalLabel: 'Adduction horizontale de l’épaule',
+    target: 'pectoraux avec faible triceps',
+    defaultTest: 'Pec deck',
+    alternatives: ['Écarté poulie', 'Cable fly', 'Butterfly machine'],
+    recommendedRepRange: [8, 15],
+    transfer: {
+      pec_deck: 1,
+      cable_fly: 0.85,
+      bench_press: null,
+      incline_barbell_press: null,
+      incline_dumbbell_press: null
     }
   },
   vertical_push: {
@@ -251,6 +269,7 @@ export const MOVEMENT_FAMILIES = {
 
 export const ADVANCED_REQUIRED_FAMILIES = [
   'horizontal_push',
+  'pec_isolation',
   'horizontal_pull',
   'vertical_pull',
   'vertical_push',
