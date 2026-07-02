@@ -12,7 +12,7 @@ export const DIEGO_ADVANCED_ABCD = {
       sourcePage: 2,
       cardioMinutes: 25,
       exercises: [
-        { name: 'Développé incliné', familyId: 'horizontal_push', transferKey: 'incline_press', muscles: ['pectoraux'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Développé incliné', familyId: 'horizontal_push', transferKey: 'incline_barbell_press', muscles: ['pectoraux'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
         { name: 'Développé couché', familyId: 'horizontal_push', transferKey: 'bench_press', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
         { name: 'Développé décliné', familyId: 'horizontal_push', transferKey: 'decline_press', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
         { name: 'Extension triceps à la corde', familyId: 'elbow_extension', transferKey: 'rope_pushdown', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
@@ -47,8 +47,8 @@ export const DIEGO_ADVANCED_ABCD = {
       exercises: [
         { name: 'Développé assis', familyId: 'vertical_push', transferKey: 'seated_press', muscles: ['épaules'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
         { name: 'Élévation frontale à la corde', familyId: 'vertical_push', transferKey: 'front_raise_cable', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Élévation latérale assise avec haltère', familyId: 'vertical_push', transferKey: 'lateral_raise', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Élévation latérale unilatérale avec câble', familyId: 'vertical_push', transferKey: 'lateral_raise', muscles: ['épaules'], prepSets: 0, validSets: 4, reps: [8, 12], rest: '45 s par bras', warmup: 'Charge contrôlée' },
+        { name: 'Élévation latérale assise avec haltère', familyId: 'shoulder_abduction', transferKey: 'lateral_raise', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Élévation latérale unilatérale avec câble', familyId: 'shoulder_abduction', transferKey: 'cable_lateral_raise', muscles: ['épaules'], prepSets: 0, validSets: 4, reps: [8, 12], rest: '45 s par bras', warmup: 'Charge contrôlée' },
         { name: 'Curl barre debout', familyId: 'elbow_flexion', transferKey: 'barbell_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
         { name: 'Curl Scott à la machine ou cross', familyId: 'elbow_flexion', transferKey: 'machine_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
         { name: 'Curl direct au cross avec corde', familyId: 'elbow_flexion', transferKey: 'cable_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' }
