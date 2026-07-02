@@ -1,4 +1,4 @@
-# Workout Nekouto — checklist de stabilité
+# Workout Nykuto — checklist de stabilité
 
 Date initiale : 2026-07-02
 Branche de travail : `preview`
