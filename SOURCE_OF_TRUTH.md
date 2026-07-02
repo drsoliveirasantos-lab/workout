@@ -1,4 +1,4 @@
-# Workout Nekouto — source of truth
+# Workout Nykuto — source of truth
 
 Ce fichier est la première référence à lire avant toute modification du repository.
 
@@ -6,12 +6,12 @@ Ce fichier est la première référence à lire avant toute modification du repo
 
 ## Produit
 
-Nom public : **Workout Nekouto**
+Nom public : **Workout Nykuto**
 
 Domaine cible :
 
 ```txt
-workout.nekouto.com
+workout.nykuto.com
 ```
 
 Positionnement :
