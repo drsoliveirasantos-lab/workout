@@ -8,11 +8,11 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux7" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux7" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux7" />
-    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux7" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux7" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux8" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux8" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux8" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux8" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux8" />
   </head>
   <body>
     <div class="page-shell">
@@ -87,6 +87,7 @@
                         <option value="recomposition">Recomposition</option>
                         <option value="fat_loss">Perte de gras</option>
                         <option value="hypertrophy">Prise de muscle</option>
+                        <option value="lean_bulk">Prise de masse sèche</option>
                         <option value="strength">Force</option>
                         <option value="general_health">Santé générale</option>
                       </select>
@@ -134,9 +135,6 @@
                       <textarea name="medicalFlags" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
                     </label>
                   </div>
-                  <div class="form-actions">
-                    <button class="btn ghost" id="build-calibration" type="button">Mettre à jour les tests conseillés</button>
-                  </div>
                 </form>
               </div>
             </details>
@@ -150,7 +148,7 @@
               </summary>
               <div class="builder-step-content">
                 <p class="muted">
-                  Choisis d'abord la zone musculaire, puis le mouvement à tester. Fais un test sous-maximal : 5-10 répétitions propres,
+                  Les tests conseillés se mettent à jour automatiquement quand tu changes le niveau, l’objectif ou le nombre de séances. Fais un test sous-maximal : 5-10 répétitions propres,
                   avec <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2.
                 </p>
                 <form id="calibration-form">
@@ -176,8 +174,8 @@
                       <select id="calibration-exercise" name="calibrationExercise" required>
                         <option value="Développé couché">Développé couché</option>
                         <option value="Chest press machine">Chest press machine</option>
-                        <option value="Développé incliné">Développé incliné</option>
-                        <option value="Développé haltères">Développé haltères</option>
+                        <option value="Développé incliné barre">Développé incliné barre</option>
+                        <option value="Développé incliné haltères">Développé incliné haltères</option>
                       </select>
                     </label>
                     <label class="field full">
@@ -233,7 +231,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux7"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux7"></script>
+    <script type="module" src="src/app.js?v=20260702-ux8"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux8"></script>
   </body>
 </html>
