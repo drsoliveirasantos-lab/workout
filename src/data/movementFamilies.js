@@ -1,6 +1,7 @@
 export const MOVEMENT_FAMILIES = {
   horizontal_push: {
-    label: 'Poussée horizontale',
+    label: 'Pecs — développé / chest press',
+    technicalLabel: 'Poussée horizontale',
     target: 'pectoraux / triceps / deltoïde antérieur',
     defaultTest: 'Développé couché',
     alternatives: ['Chest press machine', 'Développé incliné', 'Développé haltères'],
@@ -14,7 +15,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   vertical_push: {
-    label: 'Poussée verticale',
+    label: 'Épaules — développé épaules',
+    technicalLabel: 'Poussée verticale',
     target: 'épaules / triceps',
     defaultTest: 'Développé assis',
     alternatives: ['Shoulder press machine', 'Développé militaire', 'Développé haltères assis'],
@@ -27,7 +29,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   horizontal_pull: {
-    label: 'Tirage horizontal',
+    label: 'Dos — rowing',
+    technicalLabel: 'Tirage horizontal',
     target: 'dos / rhomboïdes / biceps',
     defaultTest: 'Rowing machine ou rameur bas',
     alternatives: ['Rowing barre', 'Rameur bas prise triangle', 'Rowing haltère appuyé'],
@@ -40,7 +43,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   vertical_pull: {
-    label: 'Tirage vertical',
+    label: 'Dos — tirage vertical / pulley',
+    technicalLabel: 'Tirage vertical',
     target: 'grand dorsal / biceps',
     defaultTest: 'Tirage vertical / pulley avant',
     alternatives: ['Tirage supination', 'Tractions assistées', 'Lat pulldown machine'],
@@ -52,7 +56,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   leg_press_pattern: {
-    label: 'Poussée jambes',
+    label: 'Jambes — squat / leg press',
+    technicalLabel: 'Poussée jambes',
     target: 'quadriceps / fessiers',
     defaultTest: 'Leg press 45° ou squat Smith',
     alternatives: ['Squat Smith', 'Hack squat', 'Goblet squat', 'Presse horizontale'],
@@ -65,17 +70,19 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   knee_extension: {
-    label: 'Extension genou',
+    label: 'Quadriceps — leg extension',
+    technicalLabel: 'Extension du genou',
     target: 'quadriceps',
-    defaultTest: 'Extension des jambes à la machine',
-    alternatives: ['Leg extension unilatéral', 'Leg extension bilatéral'],
+    defaultTest: 'Leg extension',
+    alternatives: ['Leg extension unilatéral', 'Leg extension bilatéral', 'Extension des jambes à la machine'],
     recommendedRepRange: [8, 12],
     transfer: {
       leg_extension: 1
     }
   },
   knee_flexion: {
-    label: 'Flexion genou',
+    label: 'Ischios — leg curl',
+    technicalLabel: 'Flexion du genou',
     target: 'ischio-jambiers',
     defaultTest: 'Leg curl couché',
     alternatives: ['Leg curl assis', 'Leg curl debout'],
@@ -86,10 +93,11 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   hip_extension: {
-    label: 'Extension hanche',
+    label: 'Fessiers — hip thrust',
+    technicalLabel: 'Extension de hanche',
     target: 'fessiers / chaîne postérieure',
-    defaultTest: 'Hip thrust / élévation des hanches',
-    alternatives: ['Hip thrust machine', 'RDL haltères', 'Glute bridge'],
+    defaultTest: 'Hip thrust',
+    alternatives: ['Hip thrust machine', 'Élévation des hanches', 'RDL haltères', 'Glute bridge'],
     recommendedRepRange: [6, 12],
     transfer: {
       hip_thrust: 1,
@@ -98,7 +106,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   elbow_flexion: {
-    label: 'Flexion coude',
+    label: 'Biceps — curl',
+    technicalLabel: 'Flexion du coude',
     target: 'biceps',
     defaultTest: 'Curl barre ou curl machine',
     alternatives: ['Curl Scott machine', 'Curl câble', 'Curl haltères'],
@@ -110,7 +119,8 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   elbow_extension: {
-    label: 'Extension coude',
+    label: 'Triceps — corde / pushdown',
+    technicalLabel: 'Extension du coude',
     target: 'triceps',
     defaultTest: 'Extension triceps à la corde',
     alternatives: ['Pushdown barre', 'Extension machine', 'Triceps français léger'],
@@ -122,8 +132,9 @@ export const MOVEMENT_FAMILIES = {
     }
   },
   calf_raise: {
-    label: 'Mollets',
-    target: 'triceps sural / mollets',
+    label: 'Mollets — calf raise',
+    technicalLabel: 'Flexion plantaire / mollets',
+    target: 'mollets',
     defaultTest: 'Mollets debout à la machine',
     alternatives: ['Mollets assis', 'Presse à mollets'],
     recommendedRepRange: [8, 15],
