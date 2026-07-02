@@ -31,55 +31,19 @@
           <p class="eyebrow">Créer un plan</p>
           <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
           <p class="muted">
-            Ajoute une <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>
-            si tu connais une charge réalisable proprement. Sinon, le moteur génère le plan avec une logique
-            <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 2-3 au lieu d'imposer un vrai test
-            <button class="glossary-term" type="button" data-glossary="oneRm">1RM</button>.
+            Le moteur utilise maintenant une calibration guidée : le site propose les familles de mouvement à tester
+            selon ton niveau et ton split, au lieu de te demander un exercice au hasard.
           </p>
           <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
         </section>
 
         <section class="builder-grid" aria-label="Générateur de programme">
           <div>
-            <div id="notice" class="notice" aria-live="polite">Remplis le profil, ajoute un test si tu en as un, puis génère le plan.</div>
-
-            <section class="panel" aria-labelledby="strength-title">
-              <p class="eyebrow">Étape 1</p>
-              <h2 id="strength-title">Test sous-maximal</h2>
-              <p class="muted">
-                Exemple : tu peux faire 60 kg × 6 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button>
-                propres avec encore 1 répétition en réserve.
-              </p>
-              <form id="strength-form">
-                <div class="form-grid">
-                  <label class="field">
-                    Exercice
-                    <select id="exercise-id" name="exerciseId"></select>
-                  </label>
-                  <label class="field">
-                    Charge utilisée (kg)
-                    <input name="testWeight" type="number" min="1" step="0.5" value="60" required />
-                  </label>
-                  <label class="field">
-                    Répétitions propres
-                    <input name="testReps" type="number" min="1" max="30" value="6" required />
-                  </label>
-                  <label class="field">
-                    <span><button class="glossary-term" type="button" data-glossary="rir">RIR</button> estimé</span>
-                    <input name="testRir" type="number" min="0" max="5" value="1" />
-                  </label>
-                </div>
-                <div class="form-actions">
-                  <button class="btn primary" type="submit">Ajouter le test</button>
-                  <button class="btn ghost" id="clear-tests" type="button">Effacer les tests</button>
-                </div>
-              </form>
-              <div id="tests-list" class="tests-list" aria-live="polite"></div>
-            </section>
+            <div id="notice" class="notice" aria-live="polite">Remplis le profil, génère les tests conseillés, puis ajoute les calibrations que tu connais.</div>
 
             <section class="panel" aria-labelledby="profile-title">
-              <p class="eyebrow">Étape 2</p>
-              <h2 id="profile-title">Profil et objectif</h2>
+              <p class="eyebrow">Étape 1</p>
+              <h2 id="profile-title">Profil, niveau et objectif</h2>
               <form id="profile-form">
                 <div class="form-grid">
                   <label class="field">
@@ -164,9 +128,62 @@
                   </label>
                 </div>
                 <div class="form-actions">
+                  <button class="btn ghost" id="build-calibration" type="button">Générer les tests conseillés</button>
                   <button class="btn primary" type="submit">Générer mon plan</button>
                 </div>
               </form>
+            </section>
+
+            <section class="panel" aria-labelledby="calibration-title">
+              <p class="eyebrow">Étape 2</p>
+              <h2 id="calibration-title">Calibration guidée des charges</h2>
+              <p class="muted">
+                Fais un test sous-maximal par famille importante : 5-10 répétitions propres, avec
+                <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 1-2. Si tu ne connais pas une charge,
+                laisse la famille vide : le programme utilisera une prescription en RIR.
+              </p>
+              <form id="calibration-form">
+                <div class="form-grid">
+                  <label class="field full">
+                    Famille à calibrer
+                    <select id="calibration-family" name="familyId"></select>
+                  </label>
+                  <label class="field full">
+                    Exercice réellement utilisé
+                    <input name="calibrationExercise" type="text" placeholder="Ex : développé couché, leg press 45°, curl machine..." />
+                  </label>
+                  <label class="field">
+                    Charge utilisée (kg)
+                    <input name="calibrationWeight" type="number" min="1" step="0.5" value="60" />
+                  </label>
+                  <label class="field">
+                    Répétitions propres
+                    <input name="calibrationReps" type="number" min="1" max="30" value="8" />
+                  </label>
+                  <label class="field">
+                    RIR réel
+                    <input name="calibrationRir" type="number" min="0" max="5" value="2" />
+                  </label>
+                  <label class="field">
+                    Douleur 0-10
+                    <input name="calibrationPain" type="number" min="0" max="10" value="0" />
+                  </label>
+                  <label class="field full">
+                    Technique
+                    <select name="calibrationTechnique">
+                      <option value="clean">Propre</option>
+                      <option value="unstable">Instable / amplitude douteuse</option>
+                      <option value="failed">Trop lourd / échec technique</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-actions">
+                  <button class="btn primary" type="submit">Ajouter cette calibration</button>
+                  <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
+                </div>
+              </form>
+              <div id="calibration-guidance" class="tests-list" aria-live="polite"></div>
+              <div id="calibration-list" class="tests-list" aria-live="polite"></div>
             </section>
           </div>
 
