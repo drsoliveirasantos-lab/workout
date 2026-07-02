@@ -6,205 +6,65 @@
     <title>Workout Nykuto — entraînement evidence-based</title>
     <meta
       name="description"
-      content="Générateur d'entraînement et de repères nutritionnels personnalisés, basé sur des formules transparentes et des sources scientifiques."
+      content="Workout Nykuto crée des repères d'entraînement et de nutrition personnalisés avec des formules transparentes, des sources scientifiques et des garde-fous de sécurité."
     />
     <link rel="stylesheet" href="src/styles.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <div class="page-shell home-shell">
       <header class="site-header">
-        <a class="logo" href="#top" aria-label="Workout Nykuto accueil">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
           <span class="logo-mark">WN</span>
           <span>Workout Nykuto</span>
         </a>
         <nav class="nav" aria-label="Navigation principale">
-          <a href="#builder">Créer un plan</a>
-          <a href="#sources">Sources</a>
-          <a href="docs/evidence.md">Evidence base</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html">Evidence base</a>
         </nav>
       </header>
 
-      <main id="top">
-        <section class="hero" aria-labelledby="hero-title">
+      <main>
+        <section class="hero home-hero" aria-labelledby="hero-title">
           <div>
             <p class="eyebrow">workout.nykuto.com</p>
-            <h1 id="hero-title">Plan sportif <span>calculé, pas inventé.</span></h1>
+            <h1 id="hero-title">Ton entraînement <span>calculé, pas inventé.</span></h1>
             <p>
-              Un générateur d'entraînement et de nutrition qui part de données simples : ton niveau,
-              ton objectif, ton budget et une série sous-maximale. Le moteur estime les charges,
-              propose une progression prudente et affiche les sources utilisées.
+              Workout Nykuto aide à construire un programme de musculation et des repères nutritionnels
+              à partir de données simples : niveau, objectif, budget, matériel et série sous-maximale.
+              L'idée est claire : des formules lisibles, des limites affichées, et une progression prudente.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="#builder">Commencer</a>
-              <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
+              <a class="btn primary" href="plan.html">Créer mon plan</a>
+              <a class="btn ghost" href="evidence.html">Voir la base scientifique</a>
             </div>
           </div>
-          <aside class="hero-card" aria-label="Repères du moteur">
-            <p class="eyebrow">MVP evidence-based</p>
-            <h2>Débutants protégés</h2>
+          <aside class="hero-card" aria-label="Résumé du site">
+            <p class="eyebrow">MVP</p>
+            <h2>Simple, séparé, lisible</h2>
             <p>
-              Pas de vrai test 1RM imposé. Le site demande une charge réalisable sur quelques répétitions,
-              puis calcule un Training Max plus prudent.
+              L'accueil reste court. Les outils et les références ont chacun leur propre page pour éviter
+              un long scroll et garder une navigation propre.
             </p>
             <div class="metric-grid">
               <div class="metric">
                 <strong>e1RM</strong>
-                <span>Epley + Brzycki</span>
+                <span>Estimation sous-maximale</span>
               </div>
               <div class="metric">
                 <strong>90%</strong>
-                <span>Training Max initial</span>
+                <span>Training Max prudent</span>
               </div>
               <div class="metric">
                 <strong>2-5 j</strong>
-                <span>Split ajusté</span>
+                <span>Programmes/semaine</span>
               </div>
               <div class="metric">
                 <strong>€</strong>
-                <span>Budget nutrition</span>
+                <span>Nutrition par budget</span>
               </div>
             </div>
           </aside>
-        </section>
-
-        <section id="builder" class="builder-grid" aria-label="Générateur de programme">
-          <div>
-            <div id="notice" class="notice" aria-live="polite">Remplis le profil, ajoute un test si tu en as un, puis génère le plan.</div>
-
-            <section class="panel" aria-labelledby="strength-title">
-              <p class="eyebrow">Étape 1</p>
-              <h2 id="strength-title">Test sous-maximal</h2>
-              <p class="muted">
-                Exemple : tu peux faire 60 kg × 6 répétitions propres avec encore 1 répétition en réserve.
-              </p>
-              <form id="strength-form">
-                <div class="form-grid">
-                  <label class="field">
-                    Exercice
-                    <select id="exercise-id" name="exerciseId"></select>
-                  </label>
-                  <label class="field">
-                    Charge utilisée (kg)
-                    <input name="testWeight" type="number" min="1" step="0.5" value="60" required />
-                  </label>
-                  <label class="field">
-                    Répétitions propres
-                    <input name="testReps" type="number" min="1" max="30" value="6" required />
-                  </label>
-                  <label class="field">
-                    RIR estimé
-                    <input name="testRir" type="number" min="0" max="5" value="1" />
-                  </label>
-                </div>
-                <div class="form-actions">
-                  <button class="btn primary" type="submit">Ajouter le test</button>
-                  <button class="btn ghost" id="clear-tests" type="button">Effacer les tests</button>
-                </div>
-              </form>
-              <div id="tests-list" class="tests-list" aria-live="polite"></div>
-            </section>
-
-            <section class="panel" aria-labelledby="profile-title">
-              <p class="eyebrow">Étape 2</p>
-              <h2 id="profile-title">Profil et objectif</h2>
-              <form id="profile-form">
-                <div class="form-grid">
-                  <label class="field">
-                    Sexe biologique pour BMR
-                    <select name="sex">
-                      <option value="male">Homme</option>
-                      <option value="female">Femme</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Âge
-                    <input name="age" type="number" min="14" max="90" value="29" required />
-                  </label>
-                  <label class="field">
-                    Taille (cm)
-                    <input name="heightCm" type="number" min="120" max="230" value="175" required />
-                  </label>
-                  <label class="field">
-                    Poids (kg)
-                    <input name="weightKg" type="number" min="35" max="250" step="0.1" value="80" required />
-                  </label>
-                  <label class="field">
-                    Niveau
-                    <select name="level">
-                      <option value="beginner">Débutant</option>
-                      <option value="intermediate">Intermédiaire</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Objectif
-                    <select name="goal">
-                      <option value="recomposition">Recomposition</option>
-                      <option value="fat_loss">Perte de gras</option>
-                      <option value="hypertrophy">Prise de muscle</option>
-                      <option value="strength">Force</option>
-                      <option value="general_health">Santé générale</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Séances/semaine
-                    <select name="daysPerWeek">
-                      <option value="2">2</option>
-                      <option value="3" selected>3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Activité hors muscu
-                    <select name="activity">
-                      <option value="sedentary">Sédentaire</option>
-                      <option value="light" selected>Légère</option>
-                      <option value="moderate">Modérée</option>
-                      <option value="high">Élevée</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Budget nutrition
-                    <select name="budget">
-                      <option value="very_low">Très serré</option>
-                      <option value="moderate">Moyen</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </label>
-                  <label class="field">
-                    Matériel
-                    <select name="equipment">
-                      <option value="basic">Salle basique</option>
-                      <option value="bodyweight">Poids du corps</option>
-                      <option value="full_gym">Salle complète</option>
-                    </select>
-                  </label>
-                  <label class="field full">
-                    Blessures ou douleurs à prendre en compte
-                    <textarea name="injuries" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
-                  </label>
-                  <label class="field full">
-                    Signaux médicaux importants
-                    <textarea name="medicalFlags" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
-                  </label>
-                </div>
-                <div class="form-actions">
-                  <button class="btn primary" type="submit">Générer mon plan</button>
-                </div>
-              </form>
-            </section>
-          </div>
-
-          <section id="result" class="result-panel empty" aria-live="polite"></section>
-        </section>
-
-        <section id="sources" class="panel sources-panel" aria-labelledby="sources-title">
-          <p class="eyebrow">Transparence</p>
-          <h2 id="sources-title">Sources utilisées</h2>
-          <p class="muted">
-            Le MVP affiche les sources de référence. Les formules détaillées sont dans <code>docs/evidence.md</code>.
-          </p>
-          <ul id="sources-list" class="sources-list"></ul>
         </section>
       </main>
 
@@ -212,7 +72,5 @@
         <p>Workout Nykuto est un outil éducatif. Il ne remplace pas un avis médical, diététique ou sportif individualisé.</p>
       </footer>
     </div>
-
-    <script type="module" src="src/app.js"></script>
   </body>
 </html>
