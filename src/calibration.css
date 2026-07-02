@@ -12,6 +12,42 @@
   background: rgba(167, 243, 208, 0.08);
 }
 
+.calibration-dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+.calibration-dashboard > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.calibration-progress-row {
+  display: grid;
+  gap: 8px;
+}
+
+.calibration-progress,
+.calibration-zone-mini-progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.calibration-zone-mini-progress {
+  height: 7px;
+}
+
+.calibration-progress span,
+.calibration-zone-mini-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(125, 211, 252, 0.9), rgba(167, 243, 208, 0.95));
+}
+
 .calibration-zone-funnel {
   display: grid;
   gap: 10px;
@@ -79,7 +115,7 @@
 
 .calibration-movement-item {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -95,8 +131,37 @@
   color: var(--muted);
 }
 
+.inline-calibration-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.inline-calibration-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.inline-calibration-grid label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.inline-calibration-grid select {
+  min-height: 42px;
+  width: 100%;
+  min-width: 0;
+}
+
 @media (max-width: 640px) {
   .calibration-zone-accordion > summary {
+    align-items: center;
     padding: 12px;
   }
 
@@ -107,5 +172,19 @@
   .calibration-movement-item {
     padding: 10px;
     border-radius: 16px;
+  }
+
+  .inline-calibration-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .inline-calibration-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mini-action {
+    width: 100%;
   }
 }
