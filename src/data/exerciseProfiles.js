@@ -1,5 +1,16 @@
 const DEFAULT_CONFIDENCE_FLOOR = 15;
 
+const LOAD_INPUT_RULES = {
+  dumbbell_press: { label: 'kg par haltère', normalizedMultiplier: 2, note: 'Haltères : indique le poids d’une seule main. Le moteur convertit en charge totale pour les transferts.' },
+  incline_dumbbell_press: { label: 'kg par haltère', normalizedMultiplier: 2, note: 'Développé incliné haltères : indique le poids d’un haltère, pas le total des deux.' },
+  dumbbell_seated_press: { label: 'kg par haltère', normalizedMultiplier: 2, note: 'Développé épaules haltères : indique le poids d’un haltère, puis le moteur convertit en total.' },
+  dumbbell_curl: { label: 'kg par haltère', normalizedMultiplier: 2, note: 'Curl haltères bilatéral : indique le poids d’un haltère ; le transfert vers barre/câble est converti en total.' },
+  lateral_raise: { label: 'kg par main', normalizedMultiplier: 1, note: 'Élévation latérale haltères : indique le poids d’une main. La charge cible reste par main/côté.' },
+  cable_lateral_raise: { label: 'kg par côté', normalizedMultiplier: 1, note: 'Poulie unilatérale : indique la charge utilisée pour un côté.' },
+  machine_lateral_raise: { label: 'kg machine', normalizedMultiplier: 1, note: 'Machine bilatérale : indique la charge affichée par la machine.' },
+  dumbbell_row_supported: { label: 'kg par main', normalizedMultiplier: 1, note: 'Rowing haltère : indique le poids de l’haltère utilisé pour un côté.' }
+};
+
 export const EXERCISE_PROFILES = {
   bench_press: profile('bench_press', ['Développé couché'], 'horizontal_push', 'pecs', 'horizontal_push', 'compound_press', 'barbell', 0.65, 1, { pectoraux: 0.55, triceps: 0.25, deltoide_anterieur: 0.2 }),
   chest_press_machine: profile('chest_press_machine', ['Chest press machine'], 'horizontal_push', 'pecs', 'horizontal_push', 'compound_press', 'machine', 0.9, 1.05, { pectoraux: 0.58, triceps: 0.24, deltoide_anterieur: 0.18 }),
@@ -90,6 +101,29 @@ export function getExerciseProfileByName(exerciseName, fallbackFamilyId = '') {
   if (exact) return EXERCISE_PROFILES[exact];
 
   return Object.values(EXERCISE_PROFILES).find((exerciseProfile) => exerciseProfile.familyId === fallbackFamilyId) || null;
+}
+
+export function getExerciseLoadInput(profileId) {
+  const profile = getExerciseProfile(profileId);
+  const rule = LOAD_INPUT_RULES[profileId];
+
+  if (rule) return rule;
+
+  if (profile?.modality?.includes('machine')) {
+    return { label: 'kg machine', normalizedMultiplier: 1, note: 'Machine : indique la charge affichée par la machine.' };
+  }
+
+  if (profile?.modality?.includes('cable')) {
+    return { label: 'kg poulie', normalizedMultiplier: 1, note: 'Poulie : indique la charge affichée sur la colonne.' };
+  }
+
+  return { label: 'kg total', normalizedMultiplier: 1, note: 'Barre, Smith ou machine guidée : indique la charge totale utilisée.' };
+}
+
+export function normalizeCalibrationLoad(profileId, rawWeight) {
+  const value = Number(rawWeight);
+  const rule = getExerciseLoadInput(profileId);
+  return Number.isFinite(value) ? value * rule.normalizedMultiplier : value;
 }
 
 export function calculateExerciseTransfer({ sourceProfileId, targetProfileId, testConfidenceScore = 100 }) {
