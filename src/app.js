@@ -1,5 +1,4 @@
 import { EXERCISES } from './data/exercises.js';
-import { SOURCES } from './data/sources.js';
 import { estimateOneRepMax, generateTrainingPlan } from './engine/training.js';
 import { calculateNutritionTargets, buildBudgetMenu } from './engine/nutrition.js';
 
@@ -12,40 +11,35 @@ const selectors = {
   profileForm: '#profile-form',
   exerciseSelect: '#exercise-id',
   testsList: '#tests-list',
-  result: '#result',
-  sources: '#sources-list'
+  result: '#result'
 };
 
 function init() {
   hydrateExerciseSelect();
-  hydrateSources();
   bindForms();
   renderEmptyState();
 }
 
 function hydrateExerciseSelect() {
   const select = document.querySelector(selectors.exerciseSelect);
+  if (!select) return;
+
   select.innerHTML = EXERCISES
     .filter((exercise) => exercise.loadSource === 'estimated-1rm')
     .map((exercise) => `<option value="${exercise.id}">${exercise.name}</option>`)
     .join('');
 }
 
-function hydrateSources() {
-  const container = document.querySelector(selectors.sources);
-  container.innerHTML = SOURCES.map((source) => `
-    <li>
-      <a href="${source.url}" target="_blank" rel="noopener noreferrer">${source.organization} — ${source.title}</a>
-      <span>${source.usedFor.join(', ')}</span>
-    </li>
-  `).join('');
-}
-
 function bindForms() {
-  document.querySelector(selectors.strengthForm).addEventListener('submit', handleStrengthSubmit);
-  document.querySelector(selectors.profileForm).addEventListener('submit', handleProfileSubmit);
-  document.querySelector('#load-demo').addEventListener('click', loadDemo);
-  document.querySelector('#clear-tests').addEventListener('click', () => {
+  const strengthForm = document.querySelector(selectors.strengthForm);
+  const profileForm = document.querySelector(selectors.profileForm);
+  const loadDemoButton = document.querySelector('#load-demo');
+  const clearTestsButton = document.querySelector('#clear-tests');
+
+  strengthForm?.addEventListener('submit', handleStrengthSubmit);
+  profileForm?.addEventListener('submit', handleProfileSubmit);
+  loadDemoButton?.addEventListener('click', loadDemo);
+  clearTestsButton?.addEventListener('click', () => {
     state.strengthTests = [];
     renderTests();
     renderEmptyState();
@@ -110,6 +104,7 @@ function handleProfileSubmit(event) {
 
 function renderTests() {
   const container = document.querySelector(selectors.testsList);
+  if (!container) return;
 
   if (!state.strengthTests.length) {
     container.innerHTML = '<p class="muted">Aucun test ajouté. Tu peux quand même générer un plan : les charges seront données en RIR.</p>';
@@ -128,6 +123,8 @@ function renderTests() {
 
 function renderPlan(plan, nutrition, menu) {
   const result = document.querySelector(selectors.result);
+  if (!result) return;
+
   result.classList.remove('empty');
 
   result.innerHTML = `
@@ -231,6 +228,8 @@ function renderSession(session) {
 
 function renderEmptyState() {
   const result = document.querySelector(selectors.result);
+  if (!result) return;
+
   result.classList.add('empty');
   result.innerHTML = `
     <p class="eyebrow">Résultat</p>
@@ -241,6 +240,8 @@ function renderEmptyState() {
 
 function renderNotice(message, type = 'neutral') {
   const notice = document.querySelector('#notice');
+  if (!notice) return;
+
   notice.textContent = message;
   notice.className = `notice ${type}`;
 }
