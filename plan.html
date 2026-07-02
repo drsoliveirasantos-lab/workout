@@ -8,11 +8,11 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux12" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux12" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux12" />
-    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux12" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux12" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux14" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux14" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux14" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux14" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux14" />
   </head>
   <body>
     <div class="page-shell">
@@ -52,6 +52,8 @@
               </summary>
               <div class="builder-step-content">
                 <form id="profile-form">
+                  <input type="hidden" name="injuries" value="pain:none" />
+                  <input type="hidden" name="medicalFlags" value="priority:balanced; recovery:normal; preference:mixed" />
                   <div class="form-grid">
                     <label class="field">
                       <span>Sexe biologique pour <button class="glossary-term" type="button" data-glossary="bmr">BMR</button></span>
@@ -136,6 +138,51 @@
                       </select>
                     </label>
                     <label class="field">
+                      Priorité musculaire
+                      <select name="priorityMuscleUi">
+                        <option value="balanced" selected>Équilibré</option>
+                        <option value="pecs">Pectoraux</option>
+                        <option value="back_width">Dos largeur</option>
+                        <option value="back_thickness">Dos épaisseur</option>
+                        <option value="delts">Épaules largeur</option>
+                        <option value="arms">Bras</option>
+                        <option value="quads">Quadriceps</option>
+                        <option value="glutes">Fessiers</option>
+                        <option value="hamstrings">Ischios</option>
+                        <option value="calves">Mollets</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Récupération
+                      <select name="recoveryLevelUi">
+                        <option value="low">Faible — sommeil/stress compliqués</option>
+                        <option value="normal" selected>Normale</option>
+                        <option value="high">Bonne</option>
+                        <option value="very_high">Très bonne</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Préférence exercices
+                      <select name="exercisePreferenceUi">
+                        <option value="mixed" selected>Mixte</option>
+                        <option value="machines">Machines guidées</option>
+                        <option value="free_weights">Barre / haltères</option>
+                        <option value="cables">Poulies / câbles</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Douleur principale
+                      <select name="painZoneUi">
+                        <option value="none" selected>Aucune</option>
+                        <option value="shoulder">Épaule</option>
+                        <option value="elbow">Coude</option>
+                        <option value="wrist">Poignet</option>
+                        <option value="knee">Genou</option>
+                        <option value="lower_back">Lombaires</option>
+                        <option value="hip">Hanche</option>
+                      </select>
+                    </label>
+                    <label class="field">
                       <span class="field-label-with-help">
                         Activité hors muscu
                         <details class="help-popover">
@@ -183,11 +230,11 @@
                     </label>
                     <label class="field full">
                       Blessures ou douleurs à prendre en compte
-                      <textarea name="injuries" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
+                      <textarea name="injuriesText" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
                     </label>
                     <label class="field full">
                       Signaux médicaux importants
-                      <textarea name="medicalFlags" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
+                      <textarea name="medicalFlagsText" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
                     </label>
                   </div>
                 </form>
@@ -288,8 +335,24 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux12"></script>
-    <script type="module" src="src/muscle-display.js?v=20260702-ux12"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux12"></script>
+    <script>
+      (() => {
+        const form = document.querySelector('#profile-form');
+        if (!form) return;
+        const val = (name) => form.querySelector(`[name="${name}"]`)?.value || '';
+        const sync = () => {
+          const injuries = form.querySelector('[name="injuries"]');
+          const flags = form.querySelector('[name="medicalFlags"]');
+          if (injuries) injuries.value = [`pain:${val('painZoneUi') || 'none'}`, val('injuriesText')].filter(Boolean).join('; ');
+          if (flags) flags.value = [`priority:${val('priorityMuscleUi') || 'balanced'}`, `recovery:${val('recoveryLevelUi') || 'normal'}`, `preference:${val('exercisePreferenceUi') || 'mixed'}`, val('medicalFlagsText')].filter(Boolean).join('; ');
+        };
+        form.addEventListener('input', sync);
+        form.addEventListener('change', sync);
+        sync();
+      })();
+    </script>
+    <script type="module" src="src/app.js?v=20260702-ux14"></script>
+    <script type="module" src="src/muscle-display.js?v=20260702-ux14"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux14"></script>
   </body>
 </html>
