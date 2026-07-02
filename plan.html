@@ -8,11 +8,11 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux8" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux8" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux8" />
-    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux8" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux8" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux9" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux9" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260702-ux9" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260702-ux9" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260702-ux9" />
   </head>
   <body>
     <div class="page-shell">
@@ -73,6 +73,40 @@
                       <select name="weightKg" data-range-select data-min="35" data-max="250" data-step="1" data-default="80" required></select>
                     </label>
                     <label class="field">
+                      Profil physique
+                      <select name="physicalProfile">
+                        <option value="unknown">Je ne sais pas / standard</option>
+                        <option value="lean_low_muscle">Mince peu musclé</option>
+                        <option value="lean_athletic">Mince sportif</option>
+                        <option value="standard" selected>Standard</option>
+                        <option value="muscular_lean">Musclé plutôt sec</option>
+                        <option value="muscular_soft">Musclé avec un peu de gras</option>
+                        <option value="overweight_low_muscle">Surpoids peu musclé</option>
+                        <option value="overweight_muscular">Surpoids musclé</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span class="field-label-with-help">
+                        Masse grasse estimée
+                        <details class="help-popover">
+                          <summary aria-label="Aide masse grasse">i</summary>
+                          <div class="help-content">
+                            <strong>Optionnel.</strong>
+                            <span>Si tu ne sais pas, laisse “Je ne sais pas”. Si tu as une estimation visuelle ou impédancemètre, le calcul ajuste légèrement la dépense.</span>
+                          </div>
+                        </details>
+                      </span>
+                      <select name="bodyFatEstimate">
+                        <option value="unknown" selected>Je ne sais pas</option>
+                        <option value="8-12">8-12 %</option>
+                        <option value="13-17">13-17 %</option>
+                        <option value="18-22">18-22 %</option>
+                        <option value="23-27">23-27 %</option>
+                        <option value="28-35">28-35 %</option>
+                        <option value="35+">35 %+</option>
+                      </select>
+                    </label>
+                    <label class="field">
                       Niveau
                       <select name="level">
                         <option value="beginner">Débutant</option>
@@ -102,7 +136,18 @@
                       </select>
                     </label>
                     <label class="field">
-                      Activité hors muscu
+                      <span class="field-label-with-help">
+                        Activité hors muscu
+                        <details class="help-popover">
+                          <summary aria-label="Aide activité hors muscu">i</summary>
+                          <div class="help-content">
+                            <strong>Sédentaire</strong><span>Bureau, télétravail, chauffeur, peu de marche.</span>
+                            <strong>Légère</strong><span>Bureau + marche, étudiant, vendeur calme, environ 5 000-8 000 pas/jour.</span>
+                            <strong>Modérée</strong><span>Serveur, coiffeur, infirmier, magasin actif, souvent debout.</span>
+                            <strong>Élevée</strong><span>Chantier, manutention, livreur vélo, entretien intensif, journée très physique.</span>
+                          </div>
+                        </details>
+                      </span>
                       <select name="activity">
                         <option value="sedentary">Sédentaire</option>
                         <option value="light" selected>Légère</option>
@@ -111,11 +156,21 @@
                       </select>
                     </label>
                     <label class="field">
-                      Budget nutrition
+                      <span class="field-label-with-help">
+                        Budget nutrition
+                        <details class="help-popover">
+                          <summary aria-label="Aide budget nutrition">i</summary>
+                          <div class="help-content">
+                            <strong>Très serré</strong><span>Riz, pâtes, avoine, œufs, lentilles, haricots, sardines, produits simples.</span>
+                            <strong>Moyen</strong><span>Ajoute poulet, viande hachée, yaourt grec, fruits/légumes plus réguliers.</span>
+                            <strong>Flexible</strong><span>Plus de variété : poisson, viande maigre, whey, produits pratiques.</span>
+                          </div>
+                        </details>
+                      </span>
                       <select name="budget">
-                        <option value="very_low">Très serré</option>
-                        <option value="moderate">Moyen</option>
-                        <option value="flexible">Flexible</option>
+                        <option value="very_low">Très serré — env. 100-150 €/mois</option>
+                        <option value="moderate">Moyen — env. 150-250 €/mois</option>
+                        <option value="flexible">Flexible — env. 250-400+ €/mois</option>
                       </select>
                     </label>
                     <label class="field">
@@ -231,7 +286,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/app.js?v=20260702-ux8"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux8"></script>
+    <script type="module" src="src/app.js?v=20260702-ux9"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux9"></script>
   </body>
 </html>
