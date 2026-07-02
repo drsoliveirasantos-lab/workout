@@ -20,7 +20,7 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains collapsible steps, zone funnel, dropdown inputs and result accordion', async () => {
+test('plan page contains collapsible steps, inline calibration dashboard, dropdown inputs and result accordion', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
@@ -37,8 +37,11 @@ test('plan page contains collapsible steps, zone funnel, dropdown inputs and res
   assert.match(html, /builder-step/);
   assert.match(html, /Étape 1 — Profil/);
   assert.match(html, /Étape 2 — Calibration/);
+  assert.match(html, /Tableau de bord, progression par zone et saisie directe/);
   assert.match(html, /id="generate-plan"/);
   assert.match(html, /id="calibration-form"/);
+  assert.match(html, /id="calibration-guidance"/);
+  assert.match(html, /manual-calibration-panel/);
   assert.match(html, /id="calibration-zone"/);
   assert.match(html, /id="calibration-family"/);
   assert.match(html, /id="calibration-exercise"/);
@@ -47,8 +50,10 @@ test('plan page contains collapsible steps, zone funnel, dropdown inputs and res
   assert.match(html, /id="calibration-rir"/);
   assert.match(html, /id="calibration-pain"/);
   assert.match(html, /data-range-select/);
-  assert.match(html, /Zone à calibrer/);
-  assert.match(html, /Mouvement \/ test à calibrer/);
+  assert.match(html, /Profil physique/);
+  assert.match(html, /Masse grasse estimée/);
+  assert.match(html, /Activité hors muscu/);
+  assert.match(html, /Budget nutrition/);
   assert.match(html, /Prise de masse sèche/);
   assert.doesNotMatch(html, /weight-quick-picks/);
   assert.doesNotMatch(html, /reps-quick-picks/);
@@ -63,17 +68,18 @@ test('plan page contains collapsible steps, zone funnel, dropdown inputs and res
   assert.match(html, /value="very_advanced"/);
   assert.match(html, /src\/app\.js/);
   assert.match(html, /src\/glossary\.js/);
-  assert.match(html, /data-glossary="rir"/);
   assert.match(html, /data-glossary="bmr"/);
   assert.match(app, /populateProfileRangeSelects/);
   assert.match(app, /renderCalibrationSelectOptions/);
   assert.match(app, /calibration-zone-accordion/);
+  assert.match(app, /calibration-dashboard/);
+  assert.match(app, /data-save-inline-calibration/);
+  assert.match(app, /inline-calibration-grid/);
+  assert.match(app, /saveInlineCalibration/);
   assert.match(app, /buildCalibrationZones/);
   assert.match(app, /renderZoneSelect/);
   assert.match(app, /renderMovementSelect/);
   assert.match(app, /hydrateCalibrationExerciseFromSelection/);
-  assert.match(app, /data-select-zone/);
-  assert.match(app, /data-select-family/);
   assert.doesNotMatch(app, /data-quick-pick/);
   assert.match(app, /renderAccordion/);
   assert.match(app, /accordion-section/);
@@ -97,9 +103,13 @@ test('plan page contains collapsible steps, zone funnel, dropdown inputs and res
   assert.match(training, /calculateExerciseTransfer/);
   assert.match(training, /fiabilité/);
   assert.match(nutrition, /lean_bulk/);
+  assert.match(nutrition, /bodyComposition/);
   assert.match(calibrationCss, /calibration-movement-item/);
   assert.match(calibrationCss, /calibration-zone-accordion/);
+  assert.match(calibrationCss, /inline-calibration-grid/);
+  assert.match(calibrationCss, /calibration-progress/);
   assert.match(formStepsCss, /builder-step/);
+  assert.match(formStepsCss, /position: fixed/);
   assert.match(accordionCss, /accordion-section/);
   assert.match(accordionCss, /accordion-summary/);
 });
