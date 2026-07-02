@@ -43,6 +43,8 @@ function getProfileFromForm() {
     age: form.get('age'),
     heightCm: form.get('heightCm'),
     weightKg: form.get('weightKg'),
+    physicalProfile: form.get('physicalProfile'),
+    bodyFatEstimate: form.get('bodyFatEstimate'),
     level: form.get('level'),
     goal: form.get('goal'),
     daysPerWeek: form.get('daysPerWeek'),
@@ -420,9 +422,17 @@ function renderPlan(plan, nutrition, menu, profile) {
     </ul>
   `;
 
+  const bodyCompositionRows = nutrition.bodyComposition ? `
+      <li><strong>Profil corporel :</strong> ${nutrition.bodyComposition.label}</li>
+      <li><strong>Note composition :</strong> ${nutrition.bodyComposition.note}</li>
+      ${nutrition.bodyComposition.leanMassKg ? `<li><strong>Masse maigre estimée :</strong> ${nutrition.bodyComposition.leanMassKg} kg</li>` : ''}
+      ${nutrition.mifflinBmr && nutrition.mifflinBmr !== nutrition.bmr ? `<li><strong>BMR Mifflin de base :</strong> ${nutrition.mifflinBmr} kcal/jour</li>` : ''}
+  ` : '';
+
   const nutritionContent = `
     <ul class="clean-list">
-      <li><strong>BMR estimé :</strong> ${nutrition.bmr} kcal/jour</li>
+      <li><strong>BMR utilisé :</strong> ${nutrition.bmr} kcal/jour</li>
+      ${bodyCompositionRows}
       <li><strong>Maintenance :</strong> ${nutrition.maintenance} kcal/jour</li>
       <li><strong>Cible :</strong> ${nutrition.calories.min}-${nutrition.calories.max} kcal/jour</li>
       <li><strong>Protéines :</strong> ${nutrition.protein.min}-${nutrition.protein.max} g/jour</li>
@@ -561,6 +571,8 @@ function loadDemo() {
   document.querySelector('[name="age"]').value = '29';
   document.querySelector('[name="heightCm"]').value = '169';
   document.querySelector('[name="weightKg"]').value = '85';
+  document.querySelector('[name="physicalProfile"]').value = 'muscular_soft';
+  document.querySelector('[name="bodyFatEstimate"]').value = '18-22';
   document.querySelector('[name="level"]').value = 'very_advanced';
   document.querySelector('[name="goal"]').value = 'lean_bulk';
   document.querySelector('[name="daysPerWeek"]').value = '4';
