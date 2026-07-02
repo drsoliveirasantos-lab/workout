@@ -147,6 +147,8 @@ function renderPlan(plan, nutrition, menu) {
       </div>
     `}
 
+    ${renderCalculations(plan.calculations)}
+
     <section class="result-section">
       <h3>Entraînement</h3>
       <div class="sessions-grid">
@@ -200,18 +202,48 @@ function renderPlan(plan, nutrition, menu) {
   `;
 }
 
+function renderCalculations(calculations) {
+  if (!calculations) return '';
+
+  return `
+    <section class="result-section calculations-card">
+      <h3>${calculations.title}</h3>
+      <div class="metric-grid">
+        <div class="metric"><strong>${calculations.totalValidSets}</strong><span>séries valides/semaine</span></div>
+        <div class="metric"><strong>${calculations.totalPrepSets}</strong><span>séries échauffement/ajustement</span></div>
+        <div class="metric"><strong>${calculations.cardioMinutes} min</strong><span>cardio/semaine</span></div>
+        <div class="metric"><strong>${Object.keys(calculations.byMuscle || {}).length}</strong><span>groupes suivis</span></div>
+      </div>
+      <p class="muted">${calculations.densityNote}</p>
+      ${calculations.missingSessionNote ? `<p class="muted">${calculations.missingSessionNote}</p>` : ''}
+      ${renderMuscleVolume(calculations.byMuscle)}
+    </section>
+  `;
+}
+
+function renderMuscleVolume(byMuscle = {}) {
+  const rows = Object.entries(byMuscle)
+    .sort((a, b) => b[1] - a[1])
+    .map(([muscle, sets]) => `<li><strong>${muscle}</strong><span>${sets} séries valides</span></li>`)
+    .join('');
+
+  return rows ? `<ul class="volume-list">${rows}</ul>` : '';
+}
+
 function renderSession(session) {
   return `
     <article class="session-card">
       <h4>${session.title}</h4>
       <p class="muted">${session.warmup}</p>
+      ${session.calculations ? `<p class="muted">Calcul séance : ${session.calculations.validSets} séries valides · ${session.calculations.prepSets} préparatoires · ${session.calculations.cardioMinutes} min cardio.</p>` : ''}
       <div class="exercise-list">
         ${session.exercises.map((exercise) => `
           <div class="exercise-row">
             <div>
               <strong>${exercise.name}</strong>
               <span>${exercise.muscles.join(', ')}</span>
-              <small>Alternative débutant : ${exercise.alternative}</small>
+              <small>${exercise.supportLabel || 'Alternative débutant'} : ${exercise.alternative}</small>
+              ${exercise.note ? `<small>${exercise.note}</small>` : ''}
             </div>
             <div class="exercise-dose">
               <strong>${exercise.sets}×${exercise.repRange[0]}-${exercise.repRange[1]}</strong>
@@ -250,19 +282,19 @@ function loadDemo() {
   document.querySelector('[name="age"]').value = 29;
   document.querySelector('[name="heightCm"]').value = 169;
   document.querySelector('[name="weightKg"]').value = 85;
-  document.querySelector('[name="level"]').value = 'beginner';
-  document.querySelector('[name="goal"]').value = 'recomposition';
-  document.querySelector('[name="daysPerWeek"]').value = 3;
-  document.querySelector('[name="activity"]').value = 'light';
+  document.querySelector('[name="level"]').value = 'very_advanced';
+  document.querySelector('[name="goal"]').value = 'hypertrophy';
+  document.querySelector('[name="daysPerWeek"]').value = 4;
+  document.querySelector('[name="activity"]').value = 'moderate';
   document.querySelector('[name="budget"]').value = 'very_low';
-  document.querySelector('[name="equipment"]').value = 'basic';
+  document.querySelector('[name="equipment"]').value = 'full_gym';
 
   state.strengthTests = [
     { exerciseId: 'bench_press', exerciseName: 'Développé couché', ...estimateOneRepMax({ weight: 60, reps: 6, rir: 1 }) },
     { exerciseId: 'squat', exerciseName: 'Squat', ...estimateOneRepMax({ weight: 80, reps: 5, rir: 1 }) }
   ];
   renderTests();
-  renderNotice('Profil de démonstration chargé.', 'success');
+  renderNotice('Profil de démonstration très avancé chargé.', 'success');
 }
 
 init();
