@@ -11,7 +11,7 @@ test('boot-health: core static files exist and reference the app module', async 
   const app = await text('src/app.js');
   const css = await text('src/styles.css');
 
-  assert.match(html, /Workout Nekouto/);
+  assert.match(html, /Workout Nykuto/);
   assert.match(html, /src\/app\.js/);
   assert.match(app, /generateTrainingPlan/);
   assert.match(css, /@media/);
