@@ -6,6 +6,7 @@ import {
   calculateCalibrationEntry,
   summarizeCalibrationCoverage
 } from './engine/calibration.js';
+import { getExerciseLoadInput, getExerciseProfileByName } from './data/exerciseProfiles.js';
 
 const state = {
   calibrations: [],
@@ -289,11 +290,17 @@ function getCalibrationEntry(familyId) {
   return state.calibrations.find((entry) => entry.familyId === familyId);
 }
 
+function getLoadInputInfo(exerciseName, familyId) {
+  const profile = getExerciseProfileByName(exerciseName, familyId);
+  return getExerciseLoadInput(profile?.id);
+}
+
 function renderCalibrationGuidance(profile = getProfileFromForm()) {
   const container = document.querySelector(selectors.calibrationGuidance);
   if (!container) return;
 
   const requiredCoverage = summarizeCalibrationCoverage(profile, state.calibrations);
+  const requiredFamilyIds = new Set(requiredCoverage.required.map((item) => item.familyId));
   const dashboardProfile = { ...profile, level: 'very_advanced' };
   const dashboardPlan = buildCalibrationPlan(dashboardProfile);
   const dashboardZones = buildCalibrationZones(dashboardProfile);
@@ -302,7 +309,7 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
   const dashboardScore = dashboardPlan.length ? Math.round((completedDashboard / dashboardPlan.length) * 100) : 0;
   const minimumLine = requiredCoverage.total === dashboardPlan.length
     ? `${completedDashboard}/${dashboardPlan.length} mouvements calibrés.`
-    : `Minimum conseillé : ${requiredCoverage.completed}/${requiredCoverage.total}. Tous les groupes avancés affichés : ${completedDashboard}/${dashboardPlan.length}.`;
+    : `Minimum pour ton niveau : ${requiredCoverage.completed}/${requiredCoverage.total}. Tous les groupes avancés : ${completedDashboard}/${dashboardPlan.length}.`;
 
   container.innerHTML = `
     <article class="mini-card calibration-dashboard">
@@ -331,7 +338,11 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
               <p class="muted">${zone.description}</p>
               <div class="calibration-zone-mini-progress"><span style="width: ${zoneScore}%"></span></div>
               <div class="calibration-movement-list">
-                ${zone.availableFamilyIds.map((familyId) => renderInlineCalibrationCard({ zone, item: planByFamily[familyId] })).join('')}
+                ${zone.availableFamilyIds.map((familyId) => renderInlineCalibrationCard({
+                  zone,
+                  item: planByFamily[familyId],
+                  isMinimum: requiredFamilyIds.has(familyId)
+                })).join('')}
               </div>
             </div>
           </details>
@@ -341,50 +352,57 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
   `;
 }
 
-function renderInlineCalibrationCard({ zone, item }) {
+function renderInlineCalibrationCard({ zone, item, isMinimum }) {
   const done = getCalibrationEntry(item.familyId);
   const selectedExercise = done?.exerciseName || item.defaultTest;
-  const selectedWeight = done?.inputWeight || getDefaultWeight(item.familyId);
+  const selectedWeight = done?.enteredWeight || done?.inputWeight || getDefaultWeight(item.familyId);
   const selectedReps = done?.inputReps || 8;
   const selectedRir = done?.rir || 2;
   const selectedPain = done?.pain || 0;
   const selectedTechnique = done?.technique || 'clean';
+  const loadInput = getLoadInputInfo(selectedExercise, item.familyId);
 
   return `
-    <div class="calibration-movement-item ${done ? 'is-complete' : ''}" data-calibration-inline="true" data-family-id="${item.familyId}" data-zone-id="${zone.id}">
-      <div class="inline-calibration-head">
-        <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
+    <details class="calibration-movement-roll ${done ? 'is-complete' : ''}" data-calibration-inline="true" data-family-id="${item.familyId}" data-zone-id="${zone.id}">
+      <summary>
+        <span>
+          <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
+          <small>${isMinimum ? 'minimum pour ton niveau' : 'complément avancé'}</small>
+        </span>
         <small>${done ? 'test enregistré' : 'à remplir'}</small>
+      </summary>
+      <div class="calibration-movement-item ${done ? 'is-complete' : ''}">
+        <span>${item.instruction}</span>
+        <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
+        <div class="inline-calibration-grid">
+          <label>Exercice
+            <select name="inlineExercise">${buildExerciseOptions(item, selectedExercise)}</select>
+          </label>
+          <label>Charge — ${loadInput.label}
+            <select name="inlineWeight">${buildOptions(getWeightOptions(item.familyId), selectedWeight, (value) => `${formatNumber(value)} kg`)}</select>
+            <small>${loadInput.note}</small>
+          </label>
+          <label>Reps
+            <select name="inlineReps">${buildOptions(buildRange(1, 30, 1), selectedReps, (value) => `${formatNumber(value)} reps`)}</select>
+          </label>
+          <label>RIR
+            <select name="inlineRir">${buildOptions(buildRange(0, 5, 1), selectedRir, (value) => `${formatNumber(value)}`)}</select>
+          </label>
+          <label>Douleur
+            <select name="inlinePain">${buildOptions(buildRange(0, 10, 1), selectedPain, (value) => `${formatNumber(value)}/10`)}</select>
+          </label>
+          <label>Technique
+            <select name="inlineTechnique">
+              <option value="clean" ${selectedTechnique === 'clean' ? 'selected' : ''}>Propre</option>
+              <option value="unstable" ${selectedTechnique === 'unstable' ? 'selected' : ''}>Instable</option>
+              <option value="failed" ${selectedTechnique === 'failed' ? 'selected' : ''}>Trop lourd</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn primary mini-action" type="button" data-save-inline-calibration="true">${done ? 'Mettre à jour ce test' : 'Enregistrer ce test'}</button>
+        ${done ? `<small>Saisi : ${done.enteredWeight ?? done.inputWeight} ${done.loadInputLabel || 'kg'} · charge interne ${done.sourceLoadKg || done.inputWeight} kg · e1RM ≈ ${done.estimatedOneRm} kg · confiance ${done.confidence.label} (${done.confidence.score}%).</small>` : ''}
       </div>
-      <span>${item.instruction}</span>
-      <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
-      <div class="inline-calibration-grid">
-        <label>Exercice
-          <select name="inlineExercise">${buildExerciseOptions(item, selectedExercise)}</select>
-        </label>
-        <label>Charge
-          <select name="inlineWeight">${buildOptions(getWeightOptions(item.familyId), selectedWeight, (value) => `${formatNumber(value)} kg`)}</select>
-        </label>
-        <label>Reps
-          <select name="inlineReps">${buildOptions(buildRange(1, 30, 1), selectedReps, (value) => `${formatNumber(value)} reps`)}</select>
-        </label>
-        <label>RIR
-          <select name="inlineRir">${buildOptions(buildRange(0, 5, 1), selectedRir, (value) => `${formatNumber(value)}`)}</select>
-        </label>
-        <label>Douleur
-          <select name="inlinePain">${buildOptions(buildRange(0, 10, 1), selectedPain, (value) => `${formatNumber(value)}/10`)}</select>
-        </label>
-        <label>Technique
-          <select name="inlineTechnique">
-            <option value="clean" ${selectedTechnique === 'clean' ? 'selected' : ''}>Propre</option>
-            <option value="unstable" ${selectedTechnique === 'unstable' ? 'selected' : ''}>Instable</option>
-            <option value="failed" ${selectedTechnique === 'failed' ? 'selected' : ''}>Trop lourd</option>
-          </select>
-        </label>
-      </div>
-      <button class="btn primary mini-action" type="button" data-save-inline-calibration="true">${done ? 'Mettre à jour ce test' : 'Enregistrer ce test'}</button>
-      ${done ? `<small>e1RM ≈ ${done.estimatedOneRm} kg · confiance ${done.confidence.label} (${done.confidence.score}%).</small>` : ''}
-    </div>
+    </details>
   `;
 }
 
@@ -450,9 +468,10 @@ function renderCalibrationList() {
   container.innerHTML = state.calibrations.map((entry) => `
     <article class="mini-card">
       <strong>${entry.zoneLabel} — ${entry.movementLabel} — ${entry.exerciseName}</strong>
-      <span>${entry.inputWeight} kg × ${entry.inputReps} reps + RIR ${entry.rir}</span>
-      <span>e1RM ≈ ${entry.estimatedOneRm} kg · Training Max ${entry.trainingMax} kg · confiance ${entry.confidence.label} (${entry.confidence.score}%)</span>
+      <span>${entry.enteredWeight ?? entry.inputWeight} ${entry.loadInputLabel || 'kg'} × ${entry.inputReps} reps + RIR ${entry.rir}</span>
+      <span>Charge interne ${entry.sourceLoadKg || entry.inputWeight} kg · e1RM ≈ ${entry.estimatedOneRm} kg · Training Max ${entry.trainingMax} kg · confiance ${entry.confidence.label} (${entry.confidence.score}%)</span>
       <span>Plage 8-12 reps : ${entry.workingRange.low}-${entry.workingRange.high} kg</span>
+      <small>${entry.loadInputNote || ''}</small>
       <small>${entry.recommendation}</small>
     </article>
   `).join('');
