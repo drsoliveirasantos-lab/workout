@@ -9,6 +9,7 @@
       content="Base scientifique de Workout Nykuto : formules e1RM, Training Max, progression, nutrition et garde-fous."
     />
     <link rel="stylesheet" href="src/styles.css" />
+    <link rel="stylesheet" href="src/glossary.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -30,8 +31,7 @@
           <p class="eyebrow">Evidence base</p>
           <h1 id="evidence-title">Formules, règles et limites du moteur</h1>
           <p class="muted">
-            Cette page explique les règles utilisées par le MVP. Elle sert à rendre les calculs compréhensibles,
-            pas à promettre une précision parfaite.
+            Cette page explique les règles utilisées par le MVP. Clique sur les petits termes soulignés pour afficher leur définition.
           </p>
         </section>
 
@@ -40,36 +40,36 @@
           <div class="two-columns">
             <article class="mini-card">
               <p class="eyebrow">Epley</p>
-              <h3>e1RM = charge × (1 + reps / 30)</h3>
-              <p class="muted">Formule simple pour estimer une répétition maximale à partir d'une série sous-maximale.</p>
+              <h3><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button> = charge × (1 + <button class="glossary-term" type="button" data-glossary="reps">reps</button> / 30)</h3>
+              <p class="muted">Formule simple pour estimer une répétition maximale à partir d'une <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>.</p>
             </article>
             <article class="mini-card">
               <p class="eyebrow">Brzycki</p>
-              <h3>e1RM = charge × 36 / (37 - reps)</h3>
+              <h3><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button> = charge × 36 / (37 - <button class="glossary-term" type="button" data-glossary="reps">reps</button>)</h3>
               <p class="muted">Formule alternative. Le MVP moyenne Epley et Brzycki pour éviter de dépendre d'une seule estimation.</p>
             </article>
           </div>
           <p>
-            Le moteur transforme ensuite l'e1RM en <strong>Training Max à 90 %</strong>. C'est volontairement prudent,
+            Le moteur transforme ensuite l'e1RM en <strong><button class="glossary-term" type="button" data-glossary="trainingMax">Training Max</button> à 90 %</strong>. C'est volontairement prudent,
             surtout pour débutants et intermédiaires.
           </p>
           <ul class="clean-list">
-            <li><strong>3-10 répétitions :</strong> fiabilité haute.</li>
-            <li><strong>11-15 répétitions :</strong> fiabilité moyenne.</li>
-            <li><strong>&gt;15 répétitions :</strong> fiabilité basse.</li>
+            <li><strong>3-10 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité haute.</li>
+            <li><strong>11-15 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité moyenne.</li>
+            <li><strong>&gt;15 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité basse.</li>
           </ul>
         </section>
 
         <section class="panel result-section" aria-labelledby="progression-evidence">
           <h2 id="progression-evidence">2. Progression</h2>
           <p>
-            Le MVP utilise une double progression : on augmente la charge seulement quand toutes les séries atteignent
+            Le MVP utilise une <button class="glossary-term" type="button" data-glossary="doubleProgression">double progression</button> : on augmente la charge seulement quand toutes les séries atteignent
             le haut de la fourchette avec une technique propre.
           </p>
           <ul class="clean-list">
             <li><strong>Haut du corps :</strong> +2 à +2,5 kg ou +2,5 à 5 %.</li>
             <li><strong>Bas du corps :</strong> +2,5 à +5 kg ou +5 à 10 %.</li>
-            <li><strong>Fatigue, douleur ou baisse nette :</strong> maintien ou deload.</li>
+            <li><strong>Fatigue, douleur ou baisse nette :</strong> maintien ou <button class="glossary-term" type="button" data-glossary="deload">deload</button>.</li>
           </ul>
         </section>
 
@@ -81,16 +81,16 @@
           <div class="two-columns">
             <article class="mini-card">
               <p class="eyebrow">Homme</p>
-              <h3>BMR = 10×kg + 6,25×cm - 5×âge + 5</h3>
+              <h3><button class="glossary-term" type="button" data-glossary="bmr">BMR</button> = 10×kg + 6,25×cm - 5×âge + 5</h3>
             </article>
             <article class="mini-card">
               <p class="eyebrow">Femme</p>
-              <h3>BMR = 10×kg + 6,25×cm - 5×âge - 161</h3>
+              <h3><button class="glossary-term" type="button" data-glossary="bmr">BMR</button> = 10×kg + 6,25×cm - 5×âge - 161</h3>
             </article>
           </div>
           <ul class="clean-list">
-            <li><strong>Perte de gras :</strong> déficit modéré de 300-500 kcal/jour.</li>
-            <li><strong>Prise de muscle :</strong> surplus modéré de 150-300 kcal/jour.</li>
+            <li><strong>Perte de gras :</strong> <button class="glossary-term" type="button" data-glossary="deficit">déficit</button> modéré de 300-500 kcal/jour.</li>
+            <li><strong>Prise de muscle :</strong> <button class="glossary-term" type="button" data-glossary="surplus">surplus</button> modéré de 150-300 kcal/jour.</li>
             <li><strong>Protéines utilisateur actif :</strong> repère de 1,4 à 2,0 g/kg/jour selon objectif.</li>
           </ul>
         </section>
@@ -113,5 +113,6 @@
         <p>Les formules donnent des repères. L'évolution réelle dépend de la technique, récupération, sommeil, nutrition et contexte médical.</p>
       </footer>
     </div>
+    <script type="module" src="src/glossary.js"></script>
   </body>
 </html>
