@@ -26,6 +26,7 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   const advanced = await text('src/data/advancedPrograms.js');
   const families = await text('src/data/movementFamilies.js');
   const exerciseProfiles = await text('src/data/exerciseProfiles.js');
+  const muscleDisplay = await text('src/muscle-display.js');
   const calibration = await text('src/engine/calibration.js');
   const training = await text('src/engine/training.js');
   const nutrition = await text('src/engine/nutrition.js');
@@ -61,6 +62,7 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(html, /src\/calibration\.css/);
   assert.match(html, /src\/form-steps\.css/);
   assert.match(html, /src\/result-accordion\.css/);
+  assert.match(html, /src\/muscle-display\.js/);
   assert.match(html, /value="pecs"/);
   assert.match(html, /value="horizontal_push"/);
   assert.match(html, /Développé \/ chest press/);
@@ -93,10 +95,17 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(families, /technicalLabel: 'Poussée horizontale/);
   assert.match(exerciseProfiles, /EXERCISE_PROFILES/);
   assert.match(exerciseProfiles, /hack_squat/);
+  assert.match(exerciseProfiles, /quadriceps: 0\.56/);
+  assert.match(exerciseProfiles, /bench_press/);
+  assert.match(exerciseProfiles, /pectoraux: 0\.55/);
   assert.match(exerciseProfiles, /incline_dumbbell_press/);
   assert.match(exerciseProfiles, /cable_lateral_raise/);
   assert.match(exerciseProfiles, /calculateExerciseTransfer/);
   assert.match(exerciseProfiles, /muscles/);
+  assert.match(muscleDisplay, /Répartition musculaire indicative/);
+  assert.match(muscleDisplay, /MUSCLE_LABELS/);
+  assert.match(muscleDisplay, /getExerciseProfileByName/);
+  assert.match(muscleDisplay, /MutationObserver/);
   assert.match(calibration, /sourceProfileId/);
   assert.match(calibration, /getExerciseProfileByName/);
   assert.match(training, /lean_bulk/);
@@ -108,6 +117,7 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(calibrationCss, /calibration-zone-accordion/);
   assert.match(calibrationCss, /inline-calibration-grid/);
   assert.match(calibrationCss, /calibration-progress/);
+  assert.match(calibrationCss, /muscle-distribution/);
   assert.match(formStepsCss, /builder-step/);
   assert.match(formStepsCss, /position: fixed/);
   assert.match(accordionCss, /accordion-section/);
