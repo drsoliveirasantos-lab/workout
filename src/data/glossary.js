@@ -1,4 +1,9 @@
 export const GLOSSARY = {
+  oneRm: {
+    title: '1RM',
+    definition: 'One Repetition Maximum : charge maximale qu’une personne peut soulever une seule fois avec une technique correcte.',
+    detail: 'Le MVP évite de demander un vrai 1RM aux débutants, car un test maximal peut être inutilement risqué sans encadrement.'
+  },
   e1rm: {
     title: 'e1RM',
     definition: 'Estimated One Repetition Maximum : estimation de la charge maximale théorique pour une répétition.',
