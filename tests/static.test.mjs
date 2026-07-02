@@ -20,7 +20,7 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains guided calibration workflow and advanced levels', async () => {
+test('plan page contains guided calibration workflow and robust family select', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
@@ -30,6 +30,8 @@ test('plan page contains guided calibration workflow and advanced levels', async
   assert.match(html, /id="profile-form"/);
   assert.match(html, /id="calibration-form"/);
   assert.match(html, /id="calibration-family"/);
+  assert.match(html, /value="horizontal_push"/);
+  assert.match(html, /Poussée horizontale/);
   assert.match(html, /Générer les tests conseillés/);
   assert.match(html, /value="advanced"/);
   assert.match(html, /value="very_advanced"/);
@@ -37,6 +39,8 @@ test('plan page contains guided calibration workflow and advanced levels', async
   assert.match(html, /src\/glossary\.js/);
   assert.match(html, /data-glossary="rir"/);
   assert.match(html, /data-glossary="bmr"/);
+  assert.match(app, /hydrateCalibrationExerciseFromSelection/);
+  assert.match(app, /data-select-family/);
   assert.match(app, /refreshCalibrationPlan/);
   assert.match(app, /renderCalculations/);
   assert.match(app, /generateTrainingPlan/);
