@@ -9,6 +9,7 @@
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
     <link rel="stylesheet" href="src/styles.css" />
+    <link rel="stylesheet" href="src/glossary.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -30,8 +31,10 @@
           <p class="eyebrow">Créer un plan</p>
           <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
           <p class="muted">
-            Ajoute une série sous-maximale si tu connais une charge réalisable proprement. Sinon, le moteur génère
-            le plan avec une logique RIR 2-3 au lieu d'imposer un vrai test 1RM.
+            Ajoute une <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>
+            si tu connais une charge réalisable proprement. Sinon, le moteur génère le plan avec une logique
+            <button class="glossary-term" type="button" data-glossary="rir">RIR</button> 2-3 au lieu d'imposer un vrai test
+            <button class="glossary-term" type="button" data-glossary="oneRm">1RM</button>.
           </p>
           <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
         </section>
@@ -44,7 +47,8 @@
               <p class="eyebrow">Étape 1</p>
               <h2 id="strength-title">Test sous-maximal</h2>
               <p class="muted">
-                Exemple : tu peux faire 60 kg × 6 répétitions propres avec encore 1 répétition en réserve.
+                Exemple : tu peux faire 60 kg × 6 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button>
+                propres avec encore 1 répétition en réserve.
               </p>
               <form id="strength-form">
                 <div class="form-grid">
@@ -61,7 +65,7 @@
                     <input name="testReps" type="number" min="1" max="30" value="6" required />
                   </label>
                   <label class="field">
-                    RIR estimé
+                    <span><button class="glossary-term" type="button" data-glossary="rir">RIR</button> estimé</span>
                     <input name="testRir" type="number" min="0" max="5" value="1" />
                   </label>
                 </div>
@@ -79,7 +83,7 @@
               <form id="profile-form">
                 <div class="form-grid">
                   <label class="field">
-                    Sexe biologique pour BMR
+                    <span>Sexe biologique pour <button class="glossary-term" type="button" data-glossary="bmr">BMR</button></span>
                     <select name="sex">
                       <option value="male">Homme</option>
                       <option value="female">Femme</option>
@@ -174,5 +178,6 @@
     </div>
 
     <script type="module" src="src/app.js"></script>
+    <script type="module" src="src/glossary.js"></script>
   </body>
 </html>
