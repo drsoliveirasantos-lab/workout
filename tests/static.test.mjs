@@ -6,23 +6,39 @@ async function text(path) {
   return readFile(path, 'utf8');
 }
 
-test('boot-health: core static files exist and reference the app module', async () => {
+test('home is presentation-only and links to dedicated pages', async () => {
   const html = await text('index.html');
-  const app = await text('src/app.js');
   const css = await text('src/styles.css');
 
   assert.match(html, /Workout Nykuto/);
-  assert.match(html, /src\/app\.js/);
-  assert.match(app, /generateTrainingPlan/);
+  assert.match(html, /href="plan\.html"/);
+  assert.match(html, /href="sources\.html"/);
+  assert.match(html, /href="evidence\.html"/);
+  assert.doesNotMatch(html, /id="profile-form"/);
+  assert.doesNotMatch(html, /src\/app\.js/);
   assert.match(css, /@media/);
 });
 
-test('source visibility: evidence and official sources are present', async () => {
-  const html = await text('index.html');
-  const evidence = await text('docs/evidence.md');
-  const sources = await text('src/data/sources.js');
+test('plan page contains the generator and app module', async () => {
+  const html = await text('plan.html');
+  const app = await text('src/app.js');
 
-  assert.match(html, /sources-list/);
+  assert.match(html, /id="profile-form"/);
+  assert.match(html, /id="strength-form"/);
+  assert.match(html, /src\/app\.js/);
+  assert.match(app, /generateTrainingPlan/);
+});
+
+test('sources and evidence pages are separate pages', async () => {
+  const sourcesPage = await text('sources.html');
+  const evidencePage = await text('evidence.html');
+  const sources = await text('src/data/sources.js');
+  const evidence = await text('docs/evidence.md');
+
+  assert.match(sourcesPage, /sources-list/);
+  assert.match(sourcesPage, /src\/sources-page\.js/);
+  assert.match(evidencePage, /Evidence base/);
+  assert.match(evidencePage, /Epley/);
   assert.match(evidence, /WHO/);
   assert.match(evidence, /CDC/);
   assert.match(sources, /who\.int/);
