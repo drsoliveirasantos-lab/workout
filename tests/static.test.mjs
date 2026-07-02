@@ -87,7 +87,12 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(app, /accordion-section/);
   assert.match(app, /Diète \/ calories/);
   assert.match(app, /generateTrainingPlan/);
-  assert.match(advanced, /Split ABCD/);
+  assert.match(advanced, /Split avancé dynamique/);
+  assert.match(advanced, /FOUR_DAY_SPLIT/);
+  assert.match(advanced, /FIVE_DAY_SPLIT/);
+  assert.match(advanced, /GOAL_PRESETS/);
+  assert.match(advanced, /pec_deck/);
+  assert.match(advanced, /buildAdvancedSessions/);
   assert.match(advanced, /familyId: 'shoulder_abduction'/);
   assert.match(families, /CALIBRATION_ZONES/);
   assert.match(families, /familyIds: \['horizontal_push', 'pec_isolation'\]/);
@@ -111,6 +116,8 @@ test('plan page contains collapsible steps, inline calibration dashboard, dropdo
   assert.match(muscleDisplay, /MutationObserver/);
   assert.match(calibration, /sourceProfileId/);
   assert.match(calibration, /getExerciseProfileByName/);
+  assert.match(training, /Split avancé dynamique/);
+  assert.match(training, /split dynamique/);
   assert.match(training, /lean_bulk/);
   assert.match(training, /calculateExerciseTransfer/);
   assert.match(training, /fiabilité/);
