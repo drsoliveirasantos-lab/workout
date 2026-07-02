@@ -20,7 +20,7 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains selectable calibration exercise, quick picks and result accordion', async () => {
+test('plan page contains zone funnel, selectable exercise, quick picks and result accordion', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
@@ -31,15 +31,18 @@ test('plan page contains selectable calibration exercise, quick picks and result
 
   assert.match(html, /id="profile-form"/);
   assert.match(html, /id="calibration-form"/);
+  assert.match(html, /id="calibration-zone"/);
   assert.match(html, /id="calibration-family"/);
   assert.match(html, /id="calibration-exercise"/);
+  assert.match(html, /Zone à calibrer/);
+  assert.match(html, /Mouvement \/ test à calibrer/);
   assert.match(html, /id="weight-quick-picks"/);
   assert.match(html, /id="reps-quick-picks"/);
   assert.match(html, /src\/calibration\.css/);
   assert.match(html, /src\/result-accordion\.css/);
+  assert.match(html, /value="pecs"/);
   assert.match(html, /value="horizontal_push"/);
-  assert.match(html, /Pecs — développé/);
-  assert.match(html, /Jambes — squat/);
+  assert.match(html, /Développé \/ chest press/);
   assert.match(html, /Générer les tests conseillés/);
   assert.match(html, /value="advanced"/);
   assert.match(html, /value="very_advanced"/);
@@ -47,21 +50,27 @@ test('plan page contains selectable calibration exercise, quick picks and result
   assert.match(html, /src\/glossary\.js/);
   assert.match(html, /data-glossary="rir"/);
   assert.match(html, /data-glossary="bmr"/);
+  assert.match(app, /buildCalibrationZones/);
+  assert.match(app, /renderZoneSelect/);
+  assert.match(app, /renderMovementSelect/);
   assert.match(app, /hydrateCalibrationExerciseFromSelection/);
   assert.match(app, /renderQuickPicks/);
+  assert.match(app, /data-select-zone/);
   assert.match(app, /data-select-family/);
   assert.match(app, /data-quick-pick/);
-  assert.match(app, /refreshCalibrationPlan/);
   assert.match(app, /renderAccordion/);
   assert.match(app, /accordion-section/);
   assert.match(app, /Diète \/ calories/);
   assert.match(app, /generateTrainingPlan/);
   assert.match(advanced, /Split ABCD/);
   assert.match(advanced, /familyId: 'horizontal_push'/);
-  assert.match(families, /Pecs — développé/);
+  assert.match(families, /CALIBRATION_ZONES/);
+  assert.match(families, /movementLabel: 'Squat \/ leg press'/);
   assert.match(families, /technicalLabel: 'Poussée horizontale'/);
-  assert.match(calibration, /confidence/);
+  assert.match(calibration, /buildCalibrationZones/);
+  assert.match(calibration, /mouvement/);
   assert.match(calibrationCss, /quick-pick/);
+  assert.match(calibrationCss, /calibration-movement-item/);
   assert.match(accordionCss, /accordion-section/);
   assert.match(accordionCss, /accordion-summary/);
 });
