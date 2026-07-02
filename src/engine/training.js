@@ -1,6 +1,6 @@
 import { EXERCISES, SPLITS } from '../data/exercises.js';
 import { buildAdvancedSessions, calculateAdvancedMetrics, DIEGO_ADVANCED_ABCD } from '../data/advancedPrograms.js';
-import { MOVEMENT_FAMILIES } from '../data/movementFamilies.js';
+import { calculateExerciseTransfer } from '../data/exerciseProfiles.js';
 
 const ROUNDING_STEP_KG = 2.5;
 
@@ -217,28 +217,42 @@ function buildAdvancedPrescription(exercise, calibration) {
     return {
       loadKg: null,
       loadText: `${baseParts.join(' · ')} · charge cible : RIR 1-2`,
-      note: 'Famille non calibrée : choisir la charge par RIR réel.'
+      note: 'Mouvement non calibré : choisir la charge par RIR réel.'
     };
   }
 
-  const family = MOVEMENT_FAMILIES[exercise.familyId];
-  const transfer = family?.transfer?.[exercise.transferKey];
+  const transferPrescription = buildTransferPrescription({
+    calibration,
+    targetProfileId: exercise.transferKey,
+    rirFallback: 'RIR 1-2',
+    basePrefix: `${baseParts.join(' · ')} · `
+  });
 
-  if (transfer === null || transfer === undefined) {
+  return transferPrescription;
+}
+
+function buildTransferPrescription({ calibration, targetProfileId, rirFallback, basePrefix = '' }) {
+  const transfer = calculateExerciseTransfer({
+    sourceProfileId: calibration.sourceProfileId,
+    targetProfileId,
+    testConfidenceScore: calibration.confidence.score
+  });
+
+  if (transfer.coefficient === null) {
     return {
       loadKg: null,
-      loadText: `${baseParts.join(' · ')} · charge cible : RIR 1-2`,
-      note: `Calibration ${calibration.familyLabel} disponible, mais transfert non fiable vers cet exercice : utiliser RIR.`
+      loadText: `${basePrefix}charge cible : ${rirFallback}`,
+      note: `Source ${calibration.exerciseName}. ${transfer.reason} Fiabilité ${transfer.reliabilityScore}% : utiliser ${rirFallback}.`
     };
   }
 
-  const low = roundToStep(calibration.workingRange.low * transfer);
-  const high = roundToStep(calibration.workingRange.high * transfer);
+  const low = roundToStep(calibration.workingRange.low * transfer.coefficient);
+  const high = roundToStep(calibration.workingRange.high * transfer.coefficient);
 
   return {
     loadKg: low,
-    loadText: `${baseParts.join(' · ')} · charge estimée ${low}-${high} kg`,
-    note: `Basé sur ${calibration.exerciseName} · confiance ${calibration.confidence.label} · coefficient transfert ${transfer}.`
+    loadText: `${basePrefix}charge estimée ${low}-${high} kg`,
+    note: `Source ${calibration.exerciseName} (${calibration.sourceProfileName}) · transfert ${transfer.relation} · coefficient ${transfer.coefficient} · fiabilité ${transfer.reliabilityScore}% (${transfer.reliabilityLabel}). ${transfer.reason}`
   };
 }
 
@@ -305,24 +319,12 @@ function buildGeneralPrescription({ exercise, test, calibration, intensity }) {
   }
 
   if (calibration && exercise.familyId && exercise.familyId !== 'core') {
-    const family = MOVEMENT_FAMILIES[exercise.familyId];
-    const transfer = family?.transfer?.[exercise.transferKey];
-
-    if (transfer !== null && transfer !== undefined) {
-      const low = roundToStep(calibration.workingRange.low * transfer);
-      const high = roundToStep(calibration.workingRange.high * transfer);
-      return {
-        loadKg: low,
-        loadText: `Charge estimée ${low}-${high} kg`,
-        note: `Basé sur ${calibration.exerciseName} · confiance ${calibration.confidence.label} · famille ${calibration.familyLabel}.`
-      };
-    }
-
-    return {
-      loadKg: null,
-      loadText: 'Choisir une charge à RIR 2-3',
-      note: `Calibration ${calibration.familyLabel} disponible, mais transfert non fiable vers ${exercise.name}. Utilise RIR.`
-    };
+    return buildTransferPrescription({
+      calibration,
+      targetProfileId: exercise.transferKey,
+      rirFallback: 'RIR 2-3',
+      basePrefix: ''
+    });
   }
 
   if (exercise.familyId === 'core' || exercise.loadSource === 'time') {
@@ -336,7 +338,7 @@ function buildGeneralPrescription({ exercise, test, calibration, intensity }) {
   return {
     loadKg: null,
     loadText: 'Choisir une charge à RIR 2-3',
-    note: 'Famille non calibrée : utiliser RIR puis enregistrer la charge après la séance.'
+    note: 'Mouvement non calibré : utiliser RIR puis enregistrer la charge après la séance.'
   };
 }
 
