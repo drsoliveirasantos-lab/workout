@@ -23,6 +23,7 @@ const selectors = {
 function init() {
   bindForms();
   refreshCalibrationPlan();
+  renderCalibrationList();
   renderEmptyState();
 }
 
@@ -49,12 +50,15 @@ function getProfileFromForm() {
 function bindForms() {
   const profileForm = document.querySelector(selectors.profileForm);
   const calibrationForm = document.querySelector(selectors.calibrationForm);
+  const calibrationFamily = document.querySelector(selectors.calibrationFamily);
   const loadDemoButton = document.querySelector('#load-demo');
   const buildCalibrationButton = document.querySelector('#build-calibration');
   const clearCalibrationsButton = document.querySelector('#clear-calibrations');
+  const calibrationGuidance = document.querySelector(selectors.calibrationGuidance);
 
   profileForm?.addEventListener('submit', handleProfileSubmit);
   calibrationForm?.addEventListener('submit', handleCalibrationSubmit);
+  calibrationFamily?.addEventListener('change', () => hydrateCalibrationExerciseFromSelection({ force: true }));
   loadDemoButton?.addEventListener('click', loadDemo);
   buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
   clearCalibrationsButton?.addEventListener('click', () => {
@@ -62,6 +66,18 @@ function bindForms() {
     renderCalibrationList();
     refreshCalibrationPlan();
     renderNotice('Calibrations effacées.', 'success');
+  });
+
+  calibrationGuidance?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-select-family]');
+    if (!button) return;
+
+    const select = document.querySelector(selectors.calibrationFamily);
+    if (!select) return;
+
+    select.value = button.dataset.selectFamily;
+    hydrateCalibrationExerciseFromSelection({ force: true });
+    renderNotice(`Famille sélectionnée : ${select.options[select.selectedIndex]?.textContent || ''}`, 'success');
   });
 
   profileForm?.addEventListener('change', (event) => {
@@ -82,9 +98,37 @@ function renderCalibrationSelect() {
   const select = document.querySelector(selectors.calibrationFamily);
   if (!select) return;
 
-  select.innerHTML = state.calibrationPlan.map((item) => `
+  const previousValue = select.value;
+  const nextOptions = state.calibrationPlan.length
+    ? state.calibrationPlan
+    : buildCalibrationPlan({ level: 'beginner' });
+
+  select.innerHTML = nextOptions.map((item) => `
     <option value="${item.familyId}">${item.label} — ${item.defaultTest}</option>
   `).join('');
+
+  if (previousValue && nextOptions.some((item) => item.familyId === previousValue)) {
+    select.value = previousValue;
+  }
+
+  hydrateCalibrationExerciseFromSelection({ force: false });
+}
+
+function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
+  const select = document.querySelector(selectors.calibrationFamily);
+  const input = document.querySelector('[name="calibrationExercise"]');
+  if (!select || !input) return;
+
+  const selected = state.calibrationPlan.find((item) => item.familyId === select.value);
+  if (!selected) return;
+
+  const knownDefaultValues = state.calibrationPlan.map((item) => item.defaultTest);
+  const currentIsGeneratedDefault = knownDefaultValues.includes(input.value);
+
+  if (force || !input.value || currentIsGeneratedDefault) {
+    input.value = selected.defaultTest;
+    input.placeholder = `Ex : ${selected.alternatives.join(', ')}`;
+  }
 }
 
 function renderCalibrationGuidance(profile = getProfileFromForm()) {
@@ -107,6 +151,7 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
           <span>${item.target}</span>
           <span>${item.instruction}</span>
           <small>Alternatives : ${item.alternatives.join(', ')}</small>
+          <button class="btn ghost mini-action" type="button" data-select-family="${item.familyId}">Utiliser cette famille</button>
         </article>
       `;
     }).join('')}
@@ -333,7 +378,7 @@ function renderEmptyState() {
   result.innerHTML = `
     <p class="eyebrow">Résultat</p>
     <h2>Génère les tests conseillés ou lance directement le programme.</h2>
-    <p>Les familles calibrées auront une plage de charge. Les familles non calibrées resteront prescrites en RIR 1-3.</p>
+    <p>Les familles calibrées auront une plage de charge. Les familles non calibrées resteront prescrites avec une logique RIR 1-3.</p>
   `;
 }
 
