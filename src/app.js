@@ -60,7 +60,6 @@ function bindForms() {
   const calibrationZone = document.querySelector(selectors.calibrationZone);
   const calibrationFamily = document.querySelector(selectors.calibrationFamily);
   const loadDemoButton = document.querySelector('#load-demo');
-  const buildCalibrationButton = document.querySelector('#build-calibration');
   const clearCalibrationsButton = document.querySelector('#clear-calibrations');
   const generatePlanButton = document.querySelector(selectors.generatePlan);
   const calibrationGuidance = document.querySelector(selectors.calibrationGuidance);
@@ -73,7 +72,6 @@ function bindForms() {
   });
   calibrationFamily?.addEventListener('change', () => hydrateCalibrationFieldsFromSelection({ force: true }));
   loadDemoButton?.addEventListener('click', loadDemo);
-  buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
   generatePlanButton?.addEventListener('click', handleGeneratePlan);
   clearCalibrationsButton?.addEventListener('click', () => {
     state.calibrations = [];
@@ -220,28 +218,18 @@ function renderCalibrationSelectOptions({ force = false } = {}) {
 }
 
 function getWeightOptions(familyId) {
-  if (['leg_press_pattern'].includes(familyId)) {
-    return buildRange(20, 300, 5);
-  }
-
-  if (['calf_raise'].includes(familyId)) {
-    return buildRange(10, 220, 5);
-  }
-
-  if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) {
-    return buildRange(2.5, 100, 2.5);
-  }
-
-  if (['vertical_push'].includes(familyId)) {
-    return buildRange(5, 140, 2.5);
-  }
-
+  if (['leg_press_pattern'].includes(familyId)) return buildRange(20, 300, 5);
+  if (['calf_raise'].includes(familyId)) return buildRange(10, 220, 5);
+  if (['shoulder_abduction'].includes(familyId)) return buildRange(2.5, 60, 2.5);
+  if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) return buildRange(2.5, 100, 2.5);
+  if (['vertical_push'].includes(familyId)) return buildRange(5, 140, 2.5);
   return buildRange(5, 220, 2.5);
 }
 
 function getDefaultWeight(familyId) {
   if (familyId === 'leg_press_pattern') return 120;
   if (familyId === 'calf_raise') return 60;
+  if (familyId === 'shoulder_abduction') return 10;
   if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) return 20;
   if (familyId === 'vertical_push') return 30;
   return 60;
@@ -291,26 +279,33 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
       <span>${coverage.message}</span>
       <span>Couverture : ${coverage.score}%</span>
     </article>
-    ${coverage.zones.map((zone) => `
-      <article class="mini-card calibration-zone-card">
-        <strong>${zone.label}</strong>
-        <span>${zone.description}</span>
-        <div class="calibration-movement-list">
-          ${zone.availableFamilyIds.map((familyId) => {
-            const item = planByFamily[familyId];
-            const done = state.calibrations.find((entry) => entry.familyId === familyId);
-            return `
-              <div class="calibration-movement-item ${done ? 'is-complete' : ''}">
-                <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
-                <span>${item.instruction}</span>
-                <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
-                <button class="btn ghost mini-action" type="button" data-select-zone="${zone.id}" data-select-family="${item.familyId}" data-select-label="${zone.label} — ${item.movementLabel}">${done ? 'Modifier ce test' : 'Utiliser ce test'}</button>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </article>
-    `).join('')}
+    <div class="calibration-zone-funnel">
+      ${coverage.zones.map((zone, index) => `
+        <details class="calibration-zone-accordion" ${index === 0 ? 'open' : ''}>
+          <summary>
+            <strong>${zone.label}</strong>
+            <small>${zone.availableFamilyIds.length} test(s)</small>
+          </summary>
+          <div class="calibration-zone-content">
+            <p class="muted">${zone.description}</p>
+            <div class="calibration-movement-list">
+              ${zone.availableFamilyIds.map((familyId) => {
+                const item = planByFamily[familyId];
+                const done = state.calibrations.find((entry) => entry.familyId === familyId);
+                return `
+                  <div class="calibration-movement-item ${done ? 'is-complete' : ''}">
+                    <strong>${done ? '✓ ' : ''}${item.movementLabel}</strong>
+                    <span>${item.instruction}</span>
+                    <small>Exemples : ${item.defaultTest}, ${item.alternatives.join(', ')}</small>
+                    <button class="btn ghost mini-action" type="button" data-select-zone="${zone.id}" data-select-family="${item.familyId}" data-select-label="${zone.label} — ${item.movementLabel}">${done ? 'Modifier ce test' : 'Utiliser ce test'}</button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </details>
+      `).join('')}
+    </div>
   `;
 }
 
@@ -567,7 +562,7 @@ function loadDemo() {
   document.querySelector('[name="heightCm"]').value = '169';
   document.querySelector('[name="weightKg"]').value = '85';
   document.querySelector('[name="level"]').value = 'very_advanced';
-  document.querySelector('[name="goal"]').value = 'hypertrophy';
+  document.querySelector('[name="goal"]').value = 'lean_bulk';
   document.querySelector('[name="daysPerWeek"]').value = '4';
   document.querySelector('[name="activity"]').value = 'moderate';
   document.querySelector('[name="budget"]').value = 'very_low';
