@@ -143,6 +143,49 @@
   color: var(--muted);
 }
 
+.muscle-distribution {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 14px;
+  background: rgba(125, 211, 252, 0.06);
+}
+
+.muscle-distribution > strong {
+  font-size: 0.88rem;
+}
+
+.muscle-distribution ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.muscle-distribution li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.muscle-distribution li strong {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 0.78rem;
+}
+
+.muscle-distribution small {
+  margin-left: 0;
+  line-height: 1.35;
+}
+
 .inline-calibration-head {
   display: flex;
   align-items: center;
