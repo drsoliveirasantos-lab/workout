@@ -1,83 +1,36 @@
-import { EXERCISES } from './data/exercises.js';
-import { estimateOneRepMax, generateTrainingPlan } from './engine/training.js';
+import { generateTrainingPlan } from './engine/training.js';
 import { calculateNutritionTargets, buildBudgetMenu } from './engine/nutrition.js';
+import {
+  buildCalibrationPlan,
+  calculateCalibrationEntry,
+  summarizeCalibrationCoverage
+} from './engine/calibration.js';
 
 const state = {
-  strengthTests: []
+  calibrations: [],
+  calibrationPlan: []
 };
 
 const selectors = {
-  strengthForm: '#strength-form',
   profileForm: '#profile-form',
-  exerciseSelect: '#exercise-id',
-  testsList: '#tests-list',
+  calibrationForm: '#calibration-form',
+  calibrationFamily: '#calibration-family',
+  calibrationGuidance: '#calibration-guidance',
+  calibrationList: '#calibration-list',
   result: '#result'
 };
 
 function init() {
-  hydrateExerciseSelect();
   bindForms();
+  refreshCalibrationPlan();
   renderEmptyState();
 }
 
-function hydrateExerciseSelect() {
-  const select = document.querySelector(selectors.exerciseSelect);
-  if (!select) return;
+function getProfileFromForm() {
+  const formElement = document.querySelector(selectors.profileForm);
+  const form = new FormData(formElement);
 
-  select.innerHTML = EXERCISES
-    .filter((exercise) => exercise.loadSource === 'estimated-1rm')
-    .map((exercise) => `<option value="${exercise.id}">${exercise.name}</option>`)
-    .join('');
-}
-
-function bindForms() {
-  const strengthForm = document.querySelector(selectors.strengthForm);
-  const profileForm = document.querySelector(selectors.profileForm);
-  const loadDemoButton = document.querySelector('#load-demo');
-  const clearTestsButton = document.querySelector('#clear-tests');
-
-  strengthForm?.addEventListener('submit', handleStrengthSubmit);
-  profileForm?.addEventListener('submit', handleProfileSubmit);
-  loadDemoButton?.addEventListener('click', loadDemo);
-  clearTestsButton?.addEventListener('click', () => {
-    state.strengthTests = [];
-    renderTests();
-    renderEmptyState();
-  });
-}
-
-function handleStrengthSubmit(event) {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const exerciseId = form.get('exerciseId');
-  const exercise = EXERCISES.find((item) => item.id === exerciseId);
-
-  try {
-    const estimate = estimateOneRepMax({
-      weight: form.get('testWeight'),
-      reps: form.get('testReps'),
-      rir: form.get('testRir')
-    });
-
-    const test = {
-      exerciseId,
-      exerciseName: exercise.name,
-      ...estimate
-    };
-
-    state.strengthTests = state.strengthTests.filter((item) => item.exerciseId !== exerciseId);
-    state.strengthTests.push(test);
-    renderTests();
-    renderNotice(`Test ajouté : ${exercise.name}, e1RM ≈ ${test.estimatedOneRm} kg, Training Max ${test.trainingMax} kg.`, 'success');
-  } catch (error) {
-    renderNotice(error.message, 'error');
-  }
-}
-
-function handleProfileSubmit(event) {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const profile = {
+  return {
     sex: form.get('sex'),
     age: form.get('age'),
     heightCm: form.get('heightCm'),
@@ -91,40 +44,143 @@ function handleProfileSubmit(event) {
     injuries: form.get('injuries'),
     medicalFlags: form.get('medicalFlags')
   };
+}
+
+function bindForms() {
+  const profileForm = document.querySelector(selectors.profileForm);
+  const calibrationForm = document.querySelector(selectors.calibrationForm);
+  const loadDemoButton = document.querySelector('#load-demo');
+  const buildCalibrationButton = document.querySelector('#build-calibration');
+  const clearCalibrationsButton = document.querySelector('#clear-calibrations');
+
+  profileForm?.addEventListener('submit', handleProfileSubmit);
+  calibrationForm?.addEventListener('submit', handleCalibrationSubmit);
+  loadDemoButton?.addEventListener('click', loadDemo);
+  buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
+  clearCalibrationsButton?.addEventListener('click', () => {
+    state.calibrations = [];
+    renderCalibrationList();
+    refreshCalibrationPlan();
+    renderNotice('Calibrations effacées.', 'success');
+  });
+
+  profileForm?.addEventListener('change', (event) => {
+    if (['level', 'daysPerWeek', 'equipment', 'goal'].includes(event.target.name)) {
+      refreshCalibrationPlan();
+    }
+  });
+}
+
+function refreshCalibrationPlan() {
+  const profile = getProfileFromForm();
+  state.calibrationPlan = buildCalibrationPlan(profile);
+  renderCalibrationSelect();
+  renderCalibrationGuidance(profile);
+}
+
+function renderCalibrationSelect() {
+  const select = document.querySelector(selectors.calibrationFamily);
+  if (!select) return;
+
+  select.innerHTML = state.calibrationPlan.map((item) => `
+    <option value="${item.familyId}">${item.label} — ${item.defaultTest}</option>
+  `).join('');
+}
+
+function renderCalibrationGuidance(profile = getProfileFromForm()) {
+  const container = document.querySelector(selectors.calibrationGuidance);
+  if (!container) return;
+
+  const coverage = summarizeCalibrationCoverage(profile, state.calibrations);
+
+  container.innerHTML = `
+    <article class="mini-card">
+      <strong>Plan de calibration conseillé</strong>
+      <span>${coverage.message}</span>
+      <span>Couverture : ${coverage.score}%</span>
+    </article>
+    ${coverage.required.map((item) => {
+      const done = state.calibrations.find((entry) => entry.familyId === item.familyId);
+      return `
+        <article class="mini-card ${done ? 'is-complete' : ''}">
+          <strong>${done ? '✓ ' : ''}${item.label}</strong>
+          <span>${item.target}</span>
+          <span>${item.instruction}</span>
+          <small>Alternatives : ${item.alternatives.join(', ')}</small>
+        </article>
+      `;
+    }).join('')}
+  `;
+}
+
+function handleCalibrationSubmit(event) {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
 
   try {
-    const plan = generateTrainingPlan({ profile, strengthTests: state.strengthTests });
-    const nutrition = calculateNutritionTargets(profile);
-    const menu = buildBudgetMenu(nutrition);
-    renderPlan(plan, nutrition, menu);
+    const entry = calculateCalibrationEntry({
+      familyId: form.get('familyId'),
+      exerciseName: form.get('calibrationExercise'),
+      weight: form.get('calibrationWeight'),
+      reps: form.get('calibrationReps'),
+      rir: form.get('calibrationRir'),
+      pain: form.get('calibrationPain'),
+      technique: form.get('calibrationTechnique')
+    });
+
+    state.calibrations = state.calibrations.filter((item) => item.familyId !== entry.familyId);
+    state.calibrations.push(entry);
+    renderCalibrationList();
+    refreshCalibrationPlan();
+    renderNotice(`Calibration ajoutée : ${entry.familyLabel}, confiance ${entry.confidence.label}.`, 'success');
   } catch (error) {
     renderNotice(error.message, 'error');
   }
 }
 
-function renderTests() {
-  const container = document.querySelector(selectors.testsList);
+function renderCalibrationList() {
+  const container = document.querySelector(selectors.calibrationList);
   if (!container) return;
 
-  if (!state.strengthTests.length) {
-    container.innerHTML = '<p class="muted">Aucun test ajouté. Tu peux quand même générer un plan : les charges seront données en RIR.</p>';
+  if (!state.calibrations.length) {
+    container.innerHTML = '<p class="muted">Aucune calibration ajoutée. Les charges seront prescrites en RIR quand la famille n’est pas calibrée.</p>';
     return;
   }
 
-  container.innerHTML = state.strengthTests.map((test) => `
+  container.innerHTML = state.calibrations.map((entry) => `
     <article class="mini-card">
-      <strong>${test.exerciseName}</strong>
-      <span>${test.inputWeight} kg × ${test.inputReps} reps ${test.rir ? `+ RIR ${test.rir}` : ''}</span>
-      <span>e1RM ≈ ${test.estimatedOneRm} kg · Training Max ${test.trainingMax} kg · fiabilité ${test.reliability}</span>
-      ${test.warning ? `<em>${test.warning}</em>` : ''}
+      <strong>${entry.familyLabel} — ${entry.exerciseName}</strong>
+      <span>${entry.inputWeight} kg × ${entry.inputReps} reps + RIR ${entry.rir}</span>
+      <span>e1RM ≈ ${entry.estimatedOneRm} kg · Training Max ${entry.trainingMax} kg · confiance ${entry.confidence.label} (${entry.confidence.score}%)</span>
+      <span>Plage 8-12 reps : ${entry.workingRange.low}-${entry.workingRange.high} kg</span>
+      <small>${entry.recommendation}</small>
     </article>
   `).join('');
 }
 
-function renderPlan(plan, nutrition, menu) {
+function handleProfileSubmit(event) {
+  event.preventDefault();
+  const profile = getProfileFromForm();
+
+  try {
+    const plan = generateTrainingPlan({
+      profile,
+      strengthTests: [],
+      calibrations: state.calibrations
+    });
+    const nutrition = calculateNutritionTargets(profile);
+    const menu = buildBudgetMenu(nutrition);
+    renderPlan(plan, nutrition, menu, profile);
+  } catch (error) {
+    renderNotice(error.message, 'error');
+  }
+}
+
+function renderPlan(plan, nutrition, menu, profile) {
   const result = document.querySelector(selectors.result);
   if (!result) return;
 
+  const coverage = summarizeCalibrationCoverage(profile, state.calibrations);
   result.classList.remove('empty');
 
   result.innerHTML = `
@@ -146,6 +202,17 @@ function renderPlan(plan, nutrition, menu) {
         <p>${plan.safety.message}</p>
       </div>
     `}
+
+    <section class="result-section calculations-card">
+      <h3>Fiabilité des charges</h3>
+      <div class="metric-grid">
+        <div class="metric"><strong>${coverage.score}%</strong><span>couverture calibration</span></div>
+        <div class="metric"><strong>${coverage.completed}/${coverage.total}</strong><span>familles calibrées</span></div>
+        <div class="metric"><strong>${state.calibrations.length}</strong><span>tests enregistrés</span></div>
+        <div class="metric"><strong>RIR</strong><span>fallback si non calibré</span></div>
+      </div>
+      <p class="muted">${coverage.message}</p>
+    </section>
 
     ${renderCalculations(plan.calculations)}
 
@@ -265,8 +332,8 @@ function renderEmptyState() {
   result.classList.add('empty');
   result.innerHTML = `
     <p class="eyebrow">Résultat</p>
-    <h2>Ajoute un test de charge ou génère directement un programme.</h2>
-    <p>Le moteur utilise un Training Max prudent. Sans test, les charges seront prescrites avec une logique RIR 2-3.</p>
+    <h2>Génère les tests conseillés ou lance directement le programme.</h2>
+    <p>Les familles calibrées auront une plage de charge. Les familles non calibrées resteront prescrites en RIR 1-3.</p>
   `;
 }
 
@@ -289,12 +356,15 @@ function loadDemo() {
   document.querySelector('[name="budget"]').value = 'very_low';
   document.querySelector('[name="equipment"]').value = 'full_gym';
 
-  state.strengthTests = [
-    { exerciseId: 'bench_press', exerciseName: 'Développé couché', ...estimateOneRepMax({ weight: 60, reps: 6, rir: 1 }) },
-    { exerciseId: 'squat', exerciseName: 'Squat', ...estimateOneRepMax({ weight: 80, reps: 5, rir: 1 }) }
+  refreshCalibrationPlan();
+  state.calibrations = [
+    calculateCalibrationEntry({ familyId: 'horizontal_push', exerciseName: 'Développé couché', weight: 80, reps: 8, rir: 2, pain: 0, technique: 'clean' }),
+    calculateCalibrationEntry({ familyId: 'leg_press_pattern', exerciseName: 'Leg press 45°', weight: 180, reps: 8, rir: 2, pain: 0, technique: 'clean' }),
+    calculateCalibrationEntry({ familyId: 'vertical_push', exerciseName: 'Développé assis', weight: 45, reps: 8, rir: 2, pain: 0, technique: 'clean' })
   ];
-  renderTests();
-  renderNotice('Profil de démonstration très avancé chargé.', 'success');
+  renderCalibrationList();
+  renderCalibrationGuidance(getProfileFromForm());
+  renderNotice('Démo très avancée chargée avec calibrations partielles.', 'success');
 }
 
 init();
