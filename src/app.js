@@ -21,12 +21,15 @@ const selectors = {
   calibrationExercise: '#calibration-exercise',
   calibrationGuidance: '#calibration-guidance',
   calibrationList: '#calibration-list',
-  result: '#result'
+  result: '#result',
+  generatePlan: '#generate-plan'
 };
 
 function init() {
+  populateProfileRangeSelects();
   bindForms();
   refreshCalibrationPlan();
+  hydrateCalibrationFieldsFromSelection({ force: true });
   renderCalibrationList();
   renderEmptyState();
 }
@@ -59,9 +62,10 @@ function bindForms() {
   const loadDemoButton = document.querySelector('#load-demo');
   const buildCalibrationButton = document.querySelector('#build-calibration');
   const clearCalibrationsButton = document.querySelector('#clear-calibrations');
+  const generatePlanButton = document.querySelector(selectors.generatePlan);
   const calibrationGuidance = document.querySelector(selectors.calibrationGuidance);
 
-  profileForm?.addEventListener('submit', handleProfileSubmit);
+  profileForm?.addEventListener('submit', handleGeneratePlan);
   calibrationForm?.addEventListener('submit', handleCalibrationSubmit);
   calibrationZone?.addEventListener('change', () => {
     renderMovementSelect({ force: true });
@@ -70,22 +74,12 @@ function bindForms() {
   calibrationFamily?.addEventListener('change', () => hydrateCalibrationFieldsFromSelection({ force: true }));
   loadDemoButton?.addEventListener('click', loadDemo);
   buildCalibrationButton?.addEventListener('click', refreshCalibrationPlan);
+  generatePlanButton?.addEventListener('click', handleGeneratePlan);
   clearCalibrationsButton?.addEventListener('click', () => {
     state.calibrations = [];
     renderCalibrationList();
     refreshCalibrationPlan();
     renderNotice('Calibrations effacées.', 'success');
-  });
-
-  document.addEventListener('click', (event) => {
-    const quickPick = event.target.closest('[data-quick-pick]');
-    if (!quickPick) return;
-
-    const input = document.querySelector(`[name="${quickPick.dataset.target}"]`);
-    if (!input) return;
-
-    input.value = quickPick.dataset.value;
-    setActiveQuickPick(quickPick.parentElement, quickPick.dataset.value);
   });
 
   calibrationGuidance?.addEventListener('click', (event) => {
@@ -107,6 +101,18 @@ function bindForms() {
     if (['level', 'daysPerWeek', 'equipment', 'goal'].includes(event.target.name)) {
       refreshCalibrationPlan();
     }
+  });
+}
+
+function populateProfileRangeSelects() {
+  document.querySelectorAll('[data-range-select]').forEach((select) => {
+    const min = Number(select.dataset.min);
+    const max = Number(select.dataset.max);
+    const step = Number(select.dataset.step) || 1;
+    const defaultValue = select.dataset.default;
+    const values = buildRange(min, max, step);
+    const unit = select.name === 'age' ? 'ans' : select.name === 'heightCm' ? 'cm' : 'kg';
+    setSelectOptions(select, values, defaultValue, (value) => `${formatNumber(value)} ${unit}`);
   });
 }
 
@@ -166,7 +172,7 @@ function renderMovementSelect({ force = false } = {}) {
 
 function hydrateCalibrationFieldsFromSelection({ force = false } = {}) {
   hydrateCalibrationExerciseFromSelection({ force });
-  renderCalibrationQuickPicks();
+  renderCalibrationSelectOptions({ force });
 }
 
 function getSelectedMovement() {
@@ -196,51 +202,80 @@ function hydrateCalibrationExerciseFromSelection({ force = false } = {}) {
   }
 }
 
-function renderCalibrationQuickPicks() {
+function renderCalibrationSelectOptions({ force = false } = {}) {
   const selectedMovement = getSelectedMovement();
   const selectedFamily = selectedMovement?.familyId || 'horizontal_push';
-  renderQuickPicks('weight-quick-picks', 'calibrationWeight', getWeightPresets(selectedFamily));
-  renderQuickPicks('reps-quick-picks', 'calibrationReps', [5, 6, 7, 8, 9, 10, 11, 12]);
+  const weightSelect = document.querySelector('#calibration-weight');
+  const repsSelect = document.querySelector('#calibration-reps');
+  const rirSelect = document.querySelector('#calibration-rir');
+  const painSelect = document.querySelector('#calibration-pain');
+
+  const weightOptions = getWeightOptions(selectedFamily);
+  const defaultWeight = getDefaultWeight(selectedFamily);
+
+  setSelectOptions(weightSelect, weightOptions, defaultWeight, (value) => `${formatNumber(value)} kg`, { preserve: !force });
+  setSelectOptions(repsSelect, buildRange(1, 30, 1), 8, (value) => `${formatNumber(value)} reps`, { preserve: !force });
+  setSelectOptions(rirSelect, buildRange(0, 5, 1), 2, (value) => `${formatNumber(value)} RIR`, { preserve: !force });
+  setSelectOptions(painSelect, buildRange(0, 10, 1), 0, (value) => `${formatNumber(value)}/10`, { preserve: !force });
 }
 
-function getWeightPresets(familyId) {
+function getWeightOptions(familyId) {
   if (['leg_press_pattern'].includes(familyId)) {
-    return [40, 60, 80, 100, 120, 140, 160, 180, 200, 240];
+    return buildRange(20, 300, 5);
   }
 
   if (['calf_raise'].includes(familyId)) {
-    return [20, 40, 60, 80, 100, 120, 140, 160];
+    return buildRange(10, 220, 5);
   }
 
   if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) {
-    return [5, 10, 15, 20, 25, 30, 35, 40, 50, 60];
+    return buildRange(2.5, 100, 2.5);
   }
 
   if (['vertical_push'].includes(familyId)) {
-    return [10, 20, 30, 40, 50, 60, 70, 80];
+    return buildRange(5, 140, 2.5);
   }
 
-  return [20, 30, 40, 50, 60, 70, 80, 90, 100, 120];
+  return buildRange(5, 220, 2.5);
 }
 
-function renderQuickPicks(containerId, targetName, values) {
-  const container = document.querySelector(`#${containerId}`);
-  const input = document.querySelector(`[name="${targetName}"]`);
-  if (!container || !input) return;
+function getDefaultWeight(familyId) {
+  if (familyId === 'leg_press_pattern') return 120;
+  if (familyId === 'calf_raise') return 60;
+  if (['elbow_flexion', 'elbow_extension', 'knee_extension', 'knee_flexion'].includes(familyId)) return 20;
+  if (familyId === 'vertical_push') return 30;
+  return 60;
+}
 
-  container.innerHTML = values.map((value) => `
-    <button class="quick-pick" type="button" data-quick-pick="true" data-target="${targetName}" data-value="${value}">${value}</button>
+function buildRange(min, max, step) {
+  const values = [];
+  for (let value = min; value <= max + 0.0001; value += step) {
+    values.push(Number(value.toFixed(2)));
+  }
+  return values;
+}
+
+function setSelectOptions(select, values, defaultValue, formatter = formatNumber, options = {}) {
+  if (!select) return;
+
+  const previousValue = select.value;
+  const stringValues = values.map((value) => String(value));
+
+  select.innerHTML = values.map((value) => `
+    <option value="${value}">${formatter(value)}</option>
   `).join('');
 
-  setActiveQuickPick(container, input.value);
+  if (options.preserve && previousValue && stringValues.includes(previousValue)) {
+    select.value = previousValue;
+  } else if (stringValues.includes(String(defaultValue))) {
+    select.value = String(defaultValue);
+  } else if (values.length) {
+    select.value = String(values[0]);
+  }
 }
 
-function setActiveQuickPick(container, value) {
-  if (!container) return;
-
-  container.querySelectorAll('[data-quick-pick]').forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.value === String(value));
-  });
+function formatNumber(value) {
+  return Number(value).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
 }
 
 function renderCalibrationGuidance(profile = getProfileFromForm()) {
@@ -324,8 +359,8 @@ function renderCalibrationList() {
   `).join('');
 }
 
-function handleProfileSubmit(event) {
-  event.preventDefault();
+function handleGeneratePlan(event) {
+  event?.preventDefault?.();
   const profile = getProfileFromForm();
 
   try {
@@ -337,6 +372,7 @@ function handleProfileSubmit(event) {
     const nutrition = calculateNutritionTargets(profile);
     const menu = buildBudgetMenu(nutrition);
     renderPlan(plan, nutrition, menu, profile);
+    renderNotice('Programme généré. Tu peux ouvrir les sections du résultat une par une.', 'success');
   } catch (error) {
     renderNotice(error.message, 'error');
   }
@@ -513,7 +549,7 @@ function renderEmptyState() {
   result.classList.add('empty');
   result.innerHTML = `
     <p class="eyebrow">Résultat</p>
-    <h2>Génère les tests conseillés ou lance directement le programme.</h2>
+    <h2>Remplis les étapes puis génère le programme final.</h2>
     <p>Les mouvements calibrés auront une plage de charge. Les mouvements non calibrés resteront prescrits avec une logique RIR 1-3.</p>
   `;
 }
@@ -527,17 +563,18 @@ function renderNotice(message, type = 'neutral') {
 }
 
 function loadDemo() {
-  document.querySelector('[name="age"]').value = 29;
-  document.querySelector('[name="heightCm"]').value = 169;
-  document.querySelector('[name="weightKg"]').value = 85;
+  document.querySelector('[name="age"]').value = '29';
+  document.querySelector('[name="heightCm"]').value = '169';
+  document.querySelector('[name="weightKg"]').value = '85';
   document.querySelector('[name="level"]').value = 'very_advanced';
   document.querySelector('[name="goal"]').value = 'hypertrophy';
-  document.querySelector('[name="daysPerWeek"]').value = 4;
+  document.querySelector('[name="daysPerWeek"]').value = '4';
   document.querySelector('[name="activity"]').value = 'moderate';
   document.querySelector('[name="budget"]').value = 'very_low';
   document.querySelector('[name="equipment"]').value = 'full_gym';
 
   refreshCalibrationPlan();
+  hydrateCalibrationFieldsFromSelection({ force: true });
   state.calibrations = [
     calculateCalibrationEntry({ familyId: 'horizontal_push', exerciseName: 'Développé couché', weight: 80, reps: 8, rir: 2, pain: 0, technique: 'clean' }),
     calculateCalibrationEntry({ familyId: 'leg_press_pattern', exerciseName: 'Leg press 45°', weight: 180, reps: 8, rir: 2, pain: 0, technique: 'clean' }),
