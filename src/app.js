@@ -116,7 +116,7 @@ function renderCalibrationSelect() {
     : buildCalibrationPlan({ level: 'beginner' });
 
   select.innerHTML = nextOptions.map((item) => `
-    <option value="${item.familyId}">${item.label} — ${item.defaultTest}</option>
+    <option value="${item.familyId}">${item.label}</option>
   `).join('');
 
   if (previousValue && nextOptions.some((item) => item.familyId === previousValue)) {
@@ -221,7 +221,7 @@ function renderCalibrationGuidance(profile = getProfileFromForm()) {
           <span>${item.target}</span>
           <span>${item.instruction}</span>
           <small>Alternatives : ${item.alternatives.join(', ')}</small>
-          <button class="btn ghost mini-action" type="button" data-select-family="${item.familyId}">Utiliser cette famille</button>
+          <button class="btn ghost mini-action" type="button" data-select-family="${item.familyId}">${done ? 'Modifier cette famille' : 'Utiliser cette famille'}</button>
         </article>
       `;
     }).join('')}
