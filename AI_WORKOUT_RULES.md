@@ -1,6 +1,6 @@
 # AI_WORKOUT_RULES.md
 
-Document permanent de référence pour toute conversation IA qui travaille sur Workout Nekouto.
+Document permanent de référence pour toute conversation IA qui travaille sur Workout Nykuto.
 
 Avant de générer, corriger ou intégrer du code, lire ce fichier et appliquer ses règles. Lire aussi `SOURCE_OF_TRUTH.md` et `STABILITY_CHECKLIST.md`.
 
@@ -8,7 +8,7 @@ Avant de générer, corriger ou intégrer du code, lire ce fichier et appliquer 
 
 ## 1. Objectif général
 
-Workout Nekouto doit produire un générateur d'entraînement et de nutrition clair, accessible et evidence-based pour `workout.nekouto.com`.
+Workout Nykuto doit produire un générateur d'entraînement et de nutrition clair, accessible et evidence-based pour `workout.nykuto.com`.
 
 Le produit doit privilégier :
 
