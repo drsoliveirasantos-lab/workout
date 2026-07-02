@@ -1,4 +1,4 @@
-import { MOVEMENT_FAMILIES, getRequiredFamiliesForProfile } from '../data/movementFamilies.js';
+import { CALIBRATION_ZONES, MOVEMENT_FAMILIES, getRequiredFamiliesForProfile } from '../data/movementFamilies.js';
 import { estimateOneRepMax, roundToStep } from './training.js';
 
 export function buildCalibrationPlan(profile) {
@@ -8,7 +8,11 @@ export function buildCalibrationPlan(profile) {
     const family = MOVEMENT_FAMILIES[familyId];
     return {
       familyId,
+      zoneId: family.zoneId,
+      zoneLabel: family.zoneLabel,
       label: family.label,
+      movementLabel: family.movementLabel,
+      technicalLabel: family.technicalLabel,
       target: family.target,
       defaultTest: family.defaultTest,
       alternatives: family.alternatives,
@@ -16,6 +20,18 @@ export function buildCalibrationPlan(profile) {
       instruction: `Choisis une charge pour ${family.defaultTest} que tu peux faire entre ${family.recommendedRepRange[0]} et ${family.recommendedRepRange[1]} répétitions propres avec RIR 1-2.`
     };
   });
+}
+
+export function buildCalibrationZones(profile) {
+  const plan = buildCalibrationPlan(profile);
+  const availableFamilyIds = new Set(plan.map((item) => item.familyId));
+
+  return CALIBRATION_ZONES
+    .map((zone) => ({
+      ...zone,
+      availableFamilyIds: zone.familyIds.filter((familyId) => availableFamilyIds.has(familyId))
+    }))
+    .filter((zone) => zone.availableFamilyIds.length > 0);
 }
 
 export function calculateCalibrationEntry({ familyId, exerciseName, weight, reps, rir, pain = 0, technique = 'clean' }) {
@@ -27,6 +43,10 @@ export function calculateCalibrationEntry({ familyId, exerciseName, weight, reps
 
   return {
     familyId,
+    zoneId: family.zoneId,
+    zoneLabel: family.zoneLabel,
+    movementLabel: family.movementLabel,
+    technicalLabel: family.technicalLabel,
     familyLabel: family.label,
     exerciseName: exerciseName || family.defaultTest,
     target: family.target,
@@ -115,12 +135,13 @@ export function summarizeCalibrationCoverage(profile, calibrationEntries) {
 
   return {
     required,
+    zones: buildCalibrationZones(profile),
     missing,
     completed,
     total: required.length,
     score: required.length ? Math.round((completed / required.length) * 100) : 0,
     message: missing.length
-      ? `${completed}/${required.length} familles calibrées. Les familles manquantes seront prescrites en RIR au lieu de charge calculée.`
-      : 'Toutes les familles importantes sont calibrées pour ce programme.'
+      ? `${completed}/${required.length} mouvements calibrés. Les mouvements manquants seront prescrits en RIR au lieu de charge calculée.`
+      : 'Tous les mouvements importants sont calibrés pour ce programme.'
   };
 }
