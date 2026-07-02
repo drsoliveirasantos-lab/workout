@@ -1,0 +1,20 @@
+{
+  "name": "workout-nekouto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Evidence-based workout and budget nutrition generator for workout.nekouto.com",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "validate": "npm test",
+    "build": "node scripts/build-static.mjs"
+  },
+  "keywords": [
+    "fitness",
+    "training",
+    "nutrition",
+    "cloudflare-pages",
+    "evidence-based"
+  ],
+  "license": "UNLICENSED"
+}
