@@ -12,14 +12,14 @@ export const DIEGO_ADVANCED_ABCD = {
       sourcePage: 2,
       cardioMinutes: 25,
       exercises: [
-        { name: 'Développé incliné', muscles: ['pectoraux'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
-        { name: 'Développé couché', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Développé décliné', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Extension triceps à la corde', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Extension triceps à la corde debout', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Triceps français avec haltère', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Abdominaux supérieurs sur planche', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Ajuster à la technique' },
-        { name: 'Abdominaux inférieurs', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Ajuster à la technique' }
+        { name: 'Développé incliné', familyId: 'horizontal_push', transferKey: 'incline_press', muscles: ['pectoraux'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Développé couché', familyId: 'horizontal_push', transferKey: 'bench_press', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Développé décliné', familyId: 'horizontal_push', transferKey: 'decline_press', muscles: ['pectoraux'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Extension triceps à la corde', familyId: 'elbow_extension', transferKey: 'rope_pushdown', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Extension triceps à la corde debout', familyId: 'elbow_extension', transferKey: 'rope_pushdown', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Triceps français avec haltère', familyId: 'elbow_extension', transferKey: 'french_press', muscles: ['triceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Abdominaux supérieurs sur planche', familyId: 'core', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Ajuster à la technique' },
+        { name: 'Abdominaux inférieurs', familyId: 'core', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Ajuster à la technique' }
       ]
     },
     {
@@ -29,13 +29,13 @@ export const DIEGO_ADVANCED_ABCD = {
       sourcePage: 3,
       cardioMinutes: 25,
       exercises: [
-        { name: 'Rameur courbé proné', muscles: ['dos'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
-        { name: 'Rameur bas prise triangle', muscles: ['dos'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Rameur bas prise ouverte machine', muscles: ['dos'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Pulley avant supination', muscles: ['dos'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Soulevé de terre', muscles: ['dos', 'chaîne postérieure'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Lombaires sur banc romain', muscles: ['lombaires'], prepSets: 0, validSets: 3, reps: [15, 20], warmup: 'Contrôle strict du mouvement' },
-        { name: 'Mollets debout à la machine', muscles: ['mollets'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' }
+        { name: 'Rameur courbé proné', familyId: 'horizontal_pull', transferKey: 'bent_over_row', muscles: ['dos'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Rameur bas prise triangle', familyId: 'horizontal_pull', transferKey: 'low_row_triangle', muscles: ['dos'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Rameur bas prise ouverte machine', familyId: 'horizontal_pull', transferKey: 'low_row_wide', muscles: ['dos'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Pulley avant supination', familyId: 'vertical_pull', transferKey: 'pulldown_supinated', muscles: ['dos'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Soulevé de terre', familyId: 'hip_extension', transferKey: 'rdl', muscles: ['dos', 'chaîne postérieure'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Lombaires sur banc romain', familyId: 'hip_extension', transferKey: null, muscles: ['lombaires'], prepSets: 0, validSets: 3, reps: [15, 20], warmup: 'Contrôle strict du mouvement' },
+        { name: 'Mollets debout à la machine', familyId: 'calf_raise', transferKey: 'standing_calf_machine', muscles: ['mollets'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' }
       ]
     },
     {
@@ -45,13 +45,13 @@ export const DIEGO_ADVANCED_ABCD = {
       sourcePage: 4,
       cardioMinutes: 25,
       exercises: [
-        { name: 'Développé assis', muscles: ['épaules'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
-        { name: 'Élévation frontale à la corde', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Élévation latérale assise avec haltère', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Élévation latérale unilatérale avec câble', muscles: ['épaules'], prepSets: 0, validSets: 4, reps: [8, 12], rest: '45 s par bras', warmup: 'Charge contrôlée' },
-        { name: 'Curl barre debout', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Curl Scott à la machine ou cross', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Curl direct au cross avec corde', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' }
+        { name: 'Développé assis', familyId: 'vertical_push', transferKey: 'seated_press', muscles: ['épaules'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Élévation frontale à la corde', familyId: 'vertical_push', transferKey: 'front_raise_cable', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Élévation latérale assise avec haltère', familyId: 'vertical_push', transferKey: 'lateral_raise', muscles: ['épaules'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Élévation latérale unilatérale avec câble', familyId: 'vertical_push', transferKey: 'lateral_raise', muscles: ['épaules'], prepSets: 0, validSets: 4, reps: [8, 12], rest: '45 s par bras', warmup: 'Charge contrôlée' },
+        { name: 'Curl barre debout', familyId: 'elbow_flexion', transferKey: 'barbell_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Curl Scott à la machine ou cross', familyId: 'elbow_flexion', transferKey: 'machine_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Curl direct au cross avec corde', familyId: 'elbow_flexion', transferKey: 'cable_curl', muscles: ['biceps'], prepSets: 1, validSets: 3, reps: [8, 12], warmup: '1×10-15 ajustement' }
       ]
     },
     {
@@ -61,12 +61,12 @@ export const DIEGO_ADVANCED_ABCD = {
       sourcePage: 5,
       cardioMinutes: 25,
       exercises: [
-        { name: 'Mollets debout à la machine', muscles: ['mollets'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
-        { name: 'Squat Smith', muscles: ['quadriceps', 'fessiers'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
-        { name: 'Leg press 45°', muscles: ['quadriceps', 'fessiers'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Extension des jambes à la machine', muscles: ['quadriceps'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Flexion des jambes couché', muscles: ['ischio-jambiers'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
-        { name: 'Élévation des hanches', muscles: ['fessiers'], prepSets: 1, validSets: 4, reps: [8, 12], rest: '60 s', tempo: 'pic de contraction 2 s', warmup: '1×10-15 ajustement' }
+        { name: 'Mollets debout à la machine', familyId: 'calf_raise', transferKey: 'standing_calf_machine', muscles: ['mollets'], prepSets: 2, validSets: 6, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Squat Smith', familyId: 'leg_press_pattern', transferKey: 'smith_squat', muscles: ['quadriceps', 'fessiers'], prepSets: 2, validSets: 4, reps: [8, 12], warmup: '1×15-20 échauffement + 1×10-15 ajustement' },
+        { name: 'Leg press 45°', familyId: 'leg_press_pattern', transferKey: 'leg_press_45', muscles: ['quadriceps', 'fessiers'], prepSets: 1, validSets: 5, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Extension des jambes à la machine', familyId: 'knee_extension', transferKey: 'leg_extension', muscles: ['quadriceps'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Flexion des jambes couché', familyId: 'knee_flexion', transferKey: 'lying_leg_curl', muscles: ['ischio-jambiers'], prepSets: 1, validSets: 4, reps: [8, 12], warmup: '1×10-15 ajustement' },
+        { name: 'Élévation des hanches', familyId: 'hip_extension', transferKey: 'hip_thrust', muscles: ['fessiers'], prepSets: 1, validSets: 4, reps: [8, 12], rest: '60 s', tempo: 'pic de contraction 2 s', warmup: '1×10-15 ajustement' }
       ]
     }
   ]
@@ -74,7 +74,10 @@ export const DIEGO_ADVANCED_ABCD = {
 
 export function buildAdvancedSessions({ daysPerWeek }) {
   const days = Number(daysPerWeek) || 4;
-  const sessions = DIEGO_ADVANCED_ABCD.sessions.map((session) => ({ ...session }));
+  const sessions = DIEGO_ADVANCED_ABCD.sessions.map((session) => ({
+    ...session,
+    exercises: session.exercises.map((exercise) => ({ ...exercise }))
+  }));
 
   if (days >= 5) {
     sessions.push({
@@ -85,9 +88,9 @@ export function buildAdvancedSessions({ daysPerWeek }) {
       cardioMinutes: 25,
       optional: true,
       exercises: [
-        { name: 'Rappel point faible', muscles: ['point faible'], prepSets: 1, validSets: 3, reps: [10, 15], warmup: 'Choisir 1 exercice non douloureux' },
-        { name: 'Abdominaux ou gainage', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Contrôle technique' },
-        { name: 'Mobilité active', muscles: ['récupération'], prepSets: 0, validSets: 2, reps: ['10-15 min'], warmup: 'Zone facile' }
+        { name: 'Rappel point faible', familyId: 'weak_point', muscles: ['point faible'], prepSets: 1, validSets: 3, reps: [10, 15], warmup: 'Choisir 1 exercice non douloureux' },
+        { name: 'Abdominaux ou gainage', familyId: 'core', muscles: ['abdominaux'], prepSets: 0, validSets: 3, reps: ['max'], rest: '45 s', warmup: 'Contrôle technique' },
+        { name: 'Mobilité active', familyId: 'recovery', muscles: ['récupération'], prepSets: 0, validSets: 2, reps: ['10-15 min'], warmup: 'Zone facile' }
       ]
     });
   }
