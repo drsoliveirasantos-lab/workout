@@ -39,6 +39,30 @@ test('generates a training plan with sessions and progression rules', () => {
   assert.ok(plan.sessions[0].exercises.length >= 4);
 });
 
+test('generates Diego-style very advanced ABCD plan with calculations', () => {
+  const profile = {
+    sex: 'male',
+    age: 29,
+    heightCm: 175,
+    weightKg: 80,
+    level: 'very_advanced',
+    goal: 'hypertrophy',
+    daysPerWeek: 4,
+    equipment: 'full_gym',
+    injuries: '',
+    medicalFlags: ''
+  };
+
+  const plan = generateTrainingPlan({ profile, strengthTests: [] });
+
+  assert.equal(plan.sessions.length, 4);
+  assert.equal(plan.calculations.totalValidSets, 117);
+  assert.equal(plan.calculations.cardioMinutes, 100);
+  assert.equal(plan.calculations.byMuscle.pectoraux, 12);
+  assert.equal(plan.calculations.byMuscle.triceps, 9);
+  assert.match(plan.title, /Très avancé/);
+});
+
 test('calculates nutrition targets and budget menu', () => {
   const profile = {
     sex: 'male',
