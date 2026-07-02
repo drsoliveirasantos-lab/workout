@@ -1,5 +1,5 @@
 import { CALIBRATION_ZONES, MOVEMENT_FAMILIES, getRequiredFamiliesForProfile } from '../data/movementFamilies.js';
-import { getExerciseProfileByName } from '../data/exerciseProfiles.js';
+import { getExerciseLoadInput, getExerciseProfileByName, normalizeCalibrationLoad } from '../data/exerciseProfiles.js';
 import { estimateOneRepMax, roundToStep } from './training.js';
 
 export function buildCalibrationPlan(profile) {
@@ -40,7 +40,9 @@ export function calculateCalibrationEntry({ familyId, exerciseName, weight, reps
   if (!family) throw new Error('Famille de mouvement inconnue.');
 
   const sourceProfile = getExerciseProfileByName(exerciseName || family.defaultTest, familyId);
-  const estimate = estimateOneRepMax({ weight, reps, rir });
+  const loadInput = getExerciseLoadInput(sourceProfile?.id);
+  const sourceLoadKg = normalizeCalibrationLoad(sourceProfile?.id, weight);
+  const estimate = estimateOneRepMax({ weight: sourceLoadKg, reps, rir });
   const confidence = getCalibrationConfidence({ reps: estimate.effectiveReps, pain, technique });
 
   return {
@@ -53,6 +55,10 @@ export function calculateCalibrationEntry({ familyId, exerciseName, weight, reps
     sourceProfileName: sourceProfile?.names?.[0] || exerciseName || family.defaultTest,
     sourceMuscles: sourceProfile?.muscles || {},
     sourceModality: sourceProfile?.modality || 'unknown',
+    sourceLoadKg,
+    enteredWeight: Number(weight),
+    loadInputLabel: loadInput.label,
+    loadInputNote: loadInput.note,
     familyLabel: family.label,
     exerciseName: exerciseName || family.defaultTest,
     target: family.target,
