@@ -7,7 +7,7 @@ Audit réalisé sur le moteur de calibration, les familles musculaires, les prof
 Statut actuel :
 
 - Les grands groupes affichés dans le tableau de calibration sont complets pour un profil avancé : Pecs, Dos, Épaules, Jambes, Bras, Mollets.
-- Les mouvements internes couvrent les principaux patrons utiles au calcul : développé/chest press, rowing, tirage vertical, développé épaules, élévation latérale, squat/leg press, leg extension, leg curl, hip thrust, curl, pushdown, calf raise.
+- Les mouvements internes couvrent les principaux patrons utiles au calcul : développé/chest press, écarté/pec deck, rowing, tirage vertical, développé épaules, élévation latérale, squat/leg press, leg extension, leg curl, hip thrust, curl, pushdown, calf raise.
 - Les exercices principaux ont des profils de muscles, stabilité, modalité et coefficient de charge.
 - Les transferts entre exercices utilisent une similarité composite : muscles sollicités, famille de mouvement, mécanique et stabilité.
 - Les exercices non transférables restent en RIR au lieu de recevoir une fausse charge calculée.
@@ -44,6 +44,7 @@ Chaque mouvement devient un sous-menu indépendant :
 
 - Pecs
   - Développé / chest press
+  - Écarté / pec deck
 - Jambes
   - Squat / leg press
   - Quadriceps / leg extension
@@ -62,13 +63,13 @@ Le tableau distingue :
 Exemple :
 
 - Minimum pour ton niveau : 0/3
-- Tous les groupes avancés : 0/12
+- Tous les groupes avancés : 0/13
 
 ## Audit des familles
 
 ### Pecs
 
-Famille : horizontal_push
+Familles : horizontal_push, pec_isolation
 
 Exercices couverts :
 
@@ -80,10 +81,12 @@ Exercices couverts :
 - Développé haltères
 - Pec deck
 - Écarté poulie
+- Cable fly
+- Butterfly machine
 
-Muscles représentés : pectoraux, haut des pectoraux, triceps, deltoïde antérieur.
+Muscles représentés : pectoraux, haut des pectoraux, triceps, deltoïde antérieur, biceps stabilisateur léger.
 
-Correction importante : les haltères sont maintenant saisis en kg par haltère et convertis en charge interne.
+Correction importante : les haltères sont maintenant saisis en kg par haltère et convertis en charge interne. Les pecs ont maintenant deux tests avancés : un test de poussée lourde et un test d’isolation/adduction horizontale.
 
 ### Dos
 
