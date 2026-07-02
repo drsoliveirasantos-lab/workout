@@ -1,4 +1,5 @@
 import { EXERCISES, SPLITS } from '../data/exercises.js';
+import { buildAdvancedSessions, calculateAdvancedMetrics, DIEGO_ADVANCED_ABCD } from '../data/advancedPrograms.js';
 
 const ROUNDING_STEP_KG = 2.5;
 
@@ -54,39 +55,40 @@ function getEstimationWarning(reps) {
 
 export function getIntensityByGoal(goal, level) {
   const beginner = level === 'beginner';
+  const advanced = level === 'advanced' || level === 'very_advanced';
 
   const map = {
     fat_loss: {
       label: 'Perte de gras avec maintien musculaire',
-      percent: beginner ? 0.62 : 0.68,
+      percent: beginner ? 0.62 : advanced ? 0.7 : 0.68,
       repRange: [8, 12],
-      rest: '60-120 s',
+      rest: advanced ? '60-120 s selon exercice' : '60-120 s',
       cardio: '2-3 × 20-30 min/semaine, zone facile à modérée'
     },
     hypertrophy: {
       label: 'Hypertrophie',
-      percent: beginner ? 0.65 : 0.72,
+      percent: beginner ? 0.65 : advanced ? 0.75 : 0.72,
       repRange: [6, 12],
-      rest: '90-150 s',
+      rest: advanced ? '60-150 s selon exercice' : '90-150 s',
       cardio: 'Optionnel : 1-2 séances faciles pour santé cardiovasculaire'
     },
     strength: {
       label: 'Force',
-      percent: beginner ? 0.7 : 0.78,
+      percent: beginner ? 0.7 : advanced ? 0.82 : 0.78,
       repRange: [3, 6],
-      rest: '2-4 min',
+      rest: advanced ? '2-5 min sur les mouvements lourds' : '2-4 min',
       cardio: 'Faible volume cardio pour ne pas gêner la récupération'
     },
     recomposition: {
       label: 'Recomposition corporelle',
-      percent: beginner ? 0.64 : 0.7,
+      percent: beginner ? 0.64 : advanced ? 0.72 : 0.7,
       repRange: [6, 12],
-      rest: '90-150 s',
+      rest: advanced ? '60-150 s selon exercice' : '90-150 s',
       cardio: '2 × 20-30 min/semaine selon récupération'
     },
     general_health: {
       label: 'Santé générale',
-      percent: beginner ? 0.55 : 0.62,
+      percent: beginner ? 0.55 : advanced ? 0.65 : 0.62,
       repRange: [8, 15],
       rest: '60-120 s',
       cardio: 'Atteindre progressivement les repères OMS/CDC'
@@ -98,6 +100,11 @@ export function getIntensityByGoal(goal, level) {
 
 export function generateTrainingPlan({ profile, strengthTests }) {
   const level = profile.level || 'beginner';
+
+  if (level === 'advanced' || level === 'very_advanced') {
+    return generateAdvancedPlan({ profile });
+  }
+
   const days = Math.min(Math.max(Number(profile.daysPerWeek) || 3, 2), 5);
   const goal = profile.goal || 'recomposition';
   const intensity = getIntensityByGoal(goal, level);
@@ -123,6 +130,86 @@ export function generateTrainingPlan({ profile, strengthTests }) {
     progression: buildProgressionRules(goal),
     safety: buildSafetyNotes(profile)
   };
+}
+
+function generateAdvancedPlan({ profile }) {
+  const level = profile.level || 'advanced';
+  const days = Math.min(Math.max(Number(profile.daysPerWeek) || 4, 4), 5);
+  const goal = profile.goal || 'hypertrophy';
+  const sourceSessions = buildAdvancedSessions({ daysPerWeek: days });
+  const metrics = calculateAdvancedMetrics(sourceSessions);
+  const sessions = sourceSessions.map(mapAdvancedSessionToUi);
+  const label = level === 'very_advanced' ? 'Très avancé' : 'Avancé';
+
+  return {
+    title: `${label} — ${DIEGO_ADVANCED_ABCD.label} — ${days} séances/semaine`,
+    level,
+    daysPerWeek: days,
+    goal,
+    intensity: {
+      label: `${label} hypertrophie/volume`,
+      percent: 0.7,
+      repRange: [8, 12],
+      rest: '45-150 s selon exercice et objectif',
+      cardio: `${metrics.cardioMinutes} min cardio/semaine si ${days} séances sont réalisées (${DIEGO_ADVANCED_ABCD.defaultCardioMinutes} min après séance).`
+    },
+    sessions,
+    calculations: {
+      title: 'Calculs du split avancé',
+      totalValidSets: metrics.totalValidSets,
+      totalPrepSets: metrics.totalPrepSets,
+      cardioMinutes: metrics.cardioMinutes,
+      byMuscle: metrics.byMuscle,
+      densityNote: metrics.densityNote,
+      sourceNote: DIEGO_ADVANCED_ABCD.sourceNote,
+      missingSessionNote: days >= 5 ? DIEGO_ADVANCED_ABCD.missingSessionNote : ''
+    },
+    progression: buildAdvancedProgressionRules(goal, metrics),
+    safety: buildSafetyNotes(profile)
+  };
+}
+
+function mapAdvancedSessionToUi(session) {
+  return {
+    id: session.id,
+    title: session.title,
+    type: session.id,
+    warmup: `${session.subtitle} · modèle PDF page ${session.sourcePage}. Échauffements et ajustements inclus exercice par exercice.`,
+    cooldown: session.cardioMinutes ? `+ ${session.cardioMinutes} min cardio après la séance.` : 'Retour au calme léger.',
+    calculations: {
+      validSets: sumSessionSets(session, 'validSets'),
+      prepSets: sumSessionSets(session, 'prepSets'),
+      cardioMinutes: session.cardioMinutes || 0
+    },
+    exercises: session.exercises.map((exercise, index) => ({
+      id: `${session.id}_${index}`,
+      name: exercise.name,
+      muscles: exercise.muscles || [],
+      sets: exercise.validSets || 0,
+      repRange: Array.isArray(exercise.reps) && exercise.reps.length === 2 ? exercise.reps : [12, 20],
+      rest: exercise.rest || '60-90 s',
+      loadKg: null,
+      loadText: buildAdvancedLoadText(exercise),
+      supportLabel: 'Préparation',
+      alternative: exercise.warmup || 'Ajustement progressif',
+      note: exercise.tempo || ''
+    }))
+  };
+}
+
+function buildAdvancedLoadText(exercise) {
+  const parts = [];
+
+  if (exercise.prepSets) parts.push(`${exercise.prepSets} série(s) échauffement/ajustement`);
+  parts.push(`${exercise.validSets} série(s) valides`);
+  parts.push('charge cible : RIR 1-2');
+  if (exercise.tempo) parts.push(exercise.tempo);
+
+  return parts.join(' · ');
+}
+
+function sumSessionSets(session, key) {
+  return session.exercises.reduce((total, exercise) => total + (exercise[key] || 0), 0);
 }
 
 function buildSession({ sessionType, index, intensity, level, testsByExercise, equipment }) {
@@ -158,6 +245,7 @@ function buildSession({ sessionType, index, intensity, level, testsByExercise, e
       rest: intensity.rest,
       loadKg: load,
       loadText: load ? `${load} kg` : 'Choisir une charge à RIR 2-3',
+      supportLabel: 'Alternative débutant',
       alternative: exercise.beginnerAlternative,
       note: load ? `Charge calculée depuis Training Max ${test.trainingMax} kg` : 'Pas encore de test sous-maximal pour cet exercice.'
     };
@@ -190,6 +278,17 @@ function buildProgressionRules(goal) {
     goalNote: goal === 'fat_loss'
       ? 'En déficit calorique, la priorité est de maintenir la force et la technique plutôt que de forcer la progression.'
       : 'La progression doit rester lente, mesurable et compatible avec la récupération.'
+  };
+}
+
+function buildAdvancedProgressionRules(goal, metrics) {
+  return {
+    method: 'Double progression avancée',
+    rule: 'Sur les séries valides 8-12 : quand toutes les séries atteignent 12 reps avec RIR 1-2 et technique propre, augmenter légèrement la charge.',
+    upperBody: '+1 à +2,5 kg ou +2,5 à 5 % selon machine/haltère/barre',
+    lowerBody: '+2,5 à +5 kg ou +5 à 10 % selon exercice et tolérance articulaire',
+    deload: 'Deload recommandé si performance en baisse sur 2 séances, sommeil bas, douleurs articulaires ou fatigue persistante : -30 à -50 % de séries valides pendant 5-7 jours.',
+    goalNote: `${metrics.totalValidSets} séries valides/semaine dans ce modèle. ${goal === 'fat_loss' ? 'En déficit, réduire le volume avant de forcer les charges.' : 'Réserver ce volume aux profils très entraînés.'}`
   };
 }
 
