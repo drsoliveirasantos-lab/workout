@@ -23,7 +23,7 @@ for (const file of htmlFiles) {
 await cp('src', 'dist/src', { recursive: true });
 await cp('docs', 'dist/docs', { recursive: true });
 
-for (const file of ['_headers', '_redirects', 'body_back_and_front_zones.svgz.zip']) {
+for (const file of ['_headers', '_redirects', 'body_back_and_front_zones.svg', 'body_back_and_front_zones.svgz.zip']) {
   if (await exists(file)) {
     await copyFile(file, `dist/${file}`);
   }
