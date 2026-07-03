@@ -25,6 +25,23 @@ test('biomech profile uses only the two active SVG body maps', async () => {
   assert.doesNotMatch(build, /body_back_and_front_zones/);
 });
 
+test('plan page exposes quick mode, resume action and local workout tracking', async () => {
+  const plan = await text('plan.html');
+  const app = await text('src/app.js');
+  const home = await text('index.html');
+  const homeResume = await text('src/home-resume.js');
+
+  assert.match(plan, /data-set-mode="quick"/);
+  assert.match(plan, /id="resume-plan"/);
+  assert.match(plan, /id="clear-saved-plan"/);
+  assert.match(app, /workout-nykuto-plan-v1/);
+  assert.match(app, /renderTodaySession/);
+  assert.match(app, /data-exercise-feedback/);
+  assert.match(app, /Sauvegardé sur cet appareil/);
+  assert.match(home, /resume-home-plan/);
+  assert.match(homeResume, /hasSavedPlan/);
+});
+
 test('sources page explains the public method without exposing exact internal coefficients', async () => {
   const sources = await text('sources.html');
 
