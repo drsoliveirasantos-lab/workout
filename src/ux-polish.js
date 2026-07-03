@@ -124,12 +124,29 @@ function getDefaultWeight(familyId, exerciseName = '') {
 }
 
 function polishRenderedResults() {
+  compactGeneratedResult();
   replaceReliabilityVocabulary();
   addReliabilityHelp();
   renameSessionAccordions();
   compactSessionNotes();
   compactExerciseDetails();
   syncInlineWeightRanges();
+}
+
+function compactGeneratedResult() {
+  const result = document.querySelector('#result');
+  if (!result || result.classList.contains('empty')) return;
+  result.classList.add('result-generated-compact');
+
+  const sections = [...result.querySelectorAll('.accordion-stack > .accordion-section')];
+  sections.forEach((section) => {
+    const title = section.querySelector('.accordion-summary span')?.textContent.trim() || '';
+    const shouldCollapseByDefault = ['Sécurité', 'Fiabilité des charges'].includes(title);
+    if (shouldCollapseByDefault && !section.dataset.autoCollapsed) {
+      section.open = false;
+      section.dataset.autoCollapsed = 'true';
+    }
+  });
 }
 
 function replaceReliabilityVocabulary() {
