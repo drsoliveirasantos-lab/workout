@@ -1,4 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent7';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent8';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -65,9 +65,7 @@ function collectView(doc, candidates, options) {
   if (!image || !pathNodes.length) throw new Error(`Vue ${options.view} incomplète: image ou zones introuvable`);
   const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height'), transform: collectTransformChain(image) };
   const seen = new Map();
-  const allPaths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter(Boolean);
-  const viewPaths = allPaths.filter((path) => shouldShowPathInView(path, options.view));
-  const paths = viewPaths.length ? viewPaths : allPaths;
+  const paths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter((path) => path && shouldShowPathInView(path, options.view));
   return { label: options.view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
 }
 function collectLayerCandidates(doc) {
