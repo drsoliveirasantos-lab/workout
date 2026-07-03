@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profil biomécanique — Workout Nykuto</title>
     <meta name="description" content="Carte biomécanique interactive et analyse musculaire par zone." />
-    <link rel="stylesheet" href="src/styles.css?v=20260703-ux26" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux26" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux26" />
-    <link rel="stylesheet" href="src/biomech-map-overrides.css?v=20260703-ux26" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux27" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux27" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux27" />
+    <link rel="stylesheet" href="src/biomech-map-overrides.css?v=20260703-ux27" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
@@ -35,16 +35,27 @@
             <article><strong id="global-tests">12</strong><span>tests analysés</span></article>
           </div>
         </section>
-        <section class="biomech-grid" aria-label="Carte corporelle interactive">
-          <aside class="panel biomech-nav-panel">
+        <section class="biomech-grid biomech-hud-grid" aria-label="Carte corporelle interactive">
+          <aside class="panel biomech-nav-panel" aria-label="Navigation musculaire compacte">
             <p class="eyebrow">Zones</p>
             <h2>Carte musculaire</h2>
             <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
             <div class="data-quality-card"><strong>Qualité des données</strong><p>La carte utilise les zones tracées manuellement dans Inkscape. Les formes sont regroupées ensuite par région musculaire.</p></div>
           </aside>
-          <section class="panel body-map-panel" aria-label="Silhouette musculaire">
+          <section class="panel body-map-panel hud-map-panel" aria-label="Silhouette musculaire avec indicateurs">
             <div class="scan-header"><span>Vue anatomique</span><button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button></div>
-            <div class="body-stage" id="body-stage"><div id="body-map-mount" class="user-body-map"></div><div class="scan-ring" aria-hidden="true"></div></div>
+            <div class="body-stage hud-stage" id="body-stage">
+              <div id="body-map-mount" class="user-body-map"></div>
+              <div id="hud-zone-cards" class="body-hud-cards" aria-label="Statistiques musculaires autour du corps"></div>
+              <div class="hud-orbit hud-orbit-one" aria-hidden="true"></div>
+              <div class="hud-orbit hud-orbit-two" aria-hidden="true"></div>
+              <div class="scan-ring" aria-hidden="true"></div>
+            </div>
+            <div class="hud-legend" aria-label="Légende des scores">
+              <span><i class="legend-dot legend-strong"></i>Fort 75%+</span>
+              <span><i class="legend-dot legend-balanced"></i>Équilibré 60–74%</span>
+              <span><i class="legend-dot legend-weak"></i>À renforcer &lt; 60%</span>
+            </div>
           </section>
           <aside class="panel biomech-analysis-panel" aria-live="polite">
             <p class="eyebrow" id="zone-eyebrow">Zone sélectionnée</p>
@@ -64,9 +75,9 @@
       </main>
       <footer class="site-footer"><p>Le profil biomécanique est une estimation éducative.</p></footer>
     </div>
-    <script type="module" src="src/biomech-profile.js?v=20260703-ux26"></script>
-    <script type="module" src="src/biomech-background-key.js?v=20260703-ux26"></script>
-    <script type="module" src="src/biomech-map-cleanup.js?v=20260703-ux26"></script>
-    <script type="module" src="src/glossary.js?v=20260703-ux26"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260703-ux27"></script>
+    <script type="module" src="src/biomech-background-key.js?v=20260703-ux27"></script>
+    <script type="module" src="src/biomech-map-cleanup.js?v=20260703-ux27"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux27"></script>
   </body>
 </html>
