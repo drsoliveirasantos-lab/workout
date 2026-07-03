@@ -6,14 +6,14 @@ const pickerConfig = {
 
 const visualChoiceMeta = {
   sex: {
-    className: 'sex-segment-group',
+    className: 'sex-dropdown',
     items: {
       male: { code: 'H', label: 'Homme', hint: 'BMR masculin' },
       female: { code: 'F', label: 'Femme', hint: 'BMR féminin' }
     }
   },
   physicalProfile: {
-    className: 'physique-chip-group',
+    className: 'physique-dropdown',
     items: {
       unknown: { code: 'STD', label: 'Standard', hint: 'Neutre' },
       lean_low_muscle: { code: 'SLM', label: 'Mince peu musclé', hint: 'Progressif' },
@@ -30,15 +30,16 @@ const visualChoiceMeta = {
 function initVisualPickers() {
   injectVisualPickerStyles();
   enhanceNumberSteppers();
-  enhanceVisualChoices();
+  enhanceVisualDropdowns();
   bindDemoRefresh();
+  bindGlobalDropdownClose();
 }
 
 function injectVisualPickerStyles() {
   if (document.querySelector('link[data-visual-pickers]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'src/visual-pickers.css?v=20260703-picker2';
+  link.href = 'src/visual-pickers.css?v=20260703-picker3';
   link.dataset.visualPickers = 'true';
   document.head.appendChild(link);
 }
@@ -110,51 +111,105 @@ function setSelectValue(select, value) {
   select.dispatchEvent(new Event('input', { bubbles: true }));
   select.dispatchEvent(new Event('change', { bubbles: true }));
   renderStepper(select);
-  syncVisualChoiceGroup(select);
+  syncVisualDropdown(select);
 }
 
-function enhanceVisualChoices(root = document) {
+function enhanceVisualDropdowns(root = document) {
   Object.entries(visualChoiceMeta).forEach(([name, config]) => {
     const select = root.querySelector(`select[name="${name}"]`);
-    if (!select || select.dataset.choiceEnhanced === 'true') return;
+    if (!select) return;
+    removeNativeCustomSelect(select);
+    if (select.dataset.choiceEnhanced === 'true') {
+      syncVisualDropdown(select);
+      return;
+    }
     select.dataset.choiceEnhanced = 'true';
     select.classList.add('visual-picker-native');
-    const group = document.createElement('div');
-    group.className = `visual-choice-group ${config.className}`;
-    group.dataset.choiceFor = name;
-    select.insertAdjacentElement('afterend', group);
-    group.addEventListener('click', (event) => {
-      const card = event.target.closest('[data-choice-value]');
-      if (!card) return;
-      setSelectValue(select, card.dataset.choiceValue);
+    const dropdown = document.createElement('div');
+    dropdown.className = `visual-choice-dropdown ${config.className}`;
+    dropdown.dataset.choiceFor = name;
+    dropdown.innerHTML = '<button class="visual-choice-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"></button><div class="visual-choice-menu" role="listbox"></div>';
+    select.insertAdjacentElement('afterend', dropdown);
+
+    dropdown.querySelector('.visual-choice-trigger').addEventListener('click', () => toggleVisualDropdown(dropdown));
+    dropdown.querySelector('.visual-choice-menu').addEventListener('click', (event) => {
+      const option = event.target.closest('[data-choice-value]');
+      if (!option) return;
+      setSelectValue(select, option.dataset.choiceValue);
+      closeVisualDropdown(dropdown);
     });
-    select.addEventListener('change', () => syncVisualChoiceGroup(select));
-    syncVisualChoiceGroup(select);
+    select.addEventListener('change', () => syncVisualDropdown(select));
+    syncVisualDropdown(select);
   });
 }
 
-function syncVisualChoiceGroup(select) {
-  const group = select.nextElementSibling?.classList?.contains('visual-choice-group') ? select.nextElementSibling : null;
-  if (!group) return;
+function removeNativeCustomSelect(select) {
+  const sibling = select.nextElementSibling;
+  if (sibling?.classList?.contains('custom-select')) sibling.remove();
+  select.classList.remove('custom-select-native');
+}
+
+function syncVisualDropdown(select) {
+  const dropdown = select.nextElementSibling?.classList?.contains('visual-choice-dropdown') ? select.nextElementSibling : null;
+  if (!dropdown) return;
   const meta = visualChoiceMeta[select.name];
-  group.innerHTML = [...select.options].map((option) => {
+  const trigger = dropdown.querySelector('.visual-choice-trigger');
+  const menu = dropdown.querySelector('.visual-choice-menu');
+  const selected = select.selectedOptions[0] || select.options[0];
+  const selectedItem = meta.items[selected?.value] || { code: 'OPT', label: selected?.textContent || 'Sélectionner', hint: '' };
+
+  trigger.innerHTML = renderChoiceContent(selectedItem, true);
+  trigger.setAttribute('aria-label', `Sélection actuelle : ${selectedItem.label}`);
+  menu.innerHTML = [...select.options].map((option) => {
     const item = meta.items[option.value] || { code: 'OPT', label: option.textContent, hint: '' };
-    const selected = option.value === select.value;
-    return `<button class="visual-choice-chip ${selected ? 'is-selected' : ''}" type="button" data-choice-value="${escapeAttr(option.value)}" aria-pressed="${selected ? 'true' : 'false'}">
-      <span class="visual-choice-code">${escapeHtml(item.code)}</span>
-      <span class="visual-choice-copy"><strong>${escapeHtml(item.label || option.textContent)}</strong><small>${escapeHtml(item.hint || option.textContent)}</small></span>
-    </button>`;
+    const isSelected = option.value === select.value;
+    return `<button class="visual-choice-option ${isSelected ? 'is-selected' : ''}" type="button" role="option" aria-selected="${isSelected ? 'true' : 'false'}" data-choice-value="${escapeAttr(option.value)}">${renderChoiceContent(item, false)}</button>`;
   }).join('');
+}
+
+function renderChoiceContent(item, withChevron) {
+  return `<span class="visual-choice-code">${escapeHtml(item.code)}</span><span class="visual-choice-copy"><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.hint || '')}</small></span>${withChevron ? '<span class="visual-choice-chevron" aria-hidden="true"></span>' : ''}`;
+}
+
+function toggleVisualDropdown(dropdown) {
+  const isOpen = dropdown.classList.contains('is-open');
+  closeAllVisualDropdowns();
+  if (!isOpen) openVisualDropdown(dropdown);
+}
+
+function openVisualDropdown(dropdown) {
+  dropdown.classList.add('is-open');
+  dropdown.querySelector('.visual-choice-trigger')?.setAttribute('aria-expanded', 'true');
+}
+
+function closeVisualDropdown(dropdown) {
+  dropdown.classList.remove('is-open');
+  dropdown.querySelector('.visual-choice-trigger')?.setAttribute('aria-expanded', 'false');
+}
+
+function closeAllVisualDropdowns() {
+  document.querySelectorAll('.visual-choice-dropdown.is-open').forEach(closeVisualDropdown);
+}
+
+function bindGlobalDropdownClose() {
+  if (document.body.dataset.visualDropdownCloseBound === 'true') return;
+  document.body.dataset.visualDropdownCloseBound = 'true';
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.visual-choice-dropdown')) closeAllVisualDropdowns();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeAllVisualDropdowns();
+  });
 }
 
 function bindDemoRefresh() {
   document.querySelector('#load-demo')?.addEventListener('click', () => {
     window.requestAnimationFrame(() => {
       enhanceNumberSteppers();
-      enhanceVisualChoices();
+      enhanceVisualDropdowns();
       document.querySelectorAll('select').forEach((select) => {
         renderStepper(select);
-        syncVisualChoiceGroup(select);
+        syncVisualDropdown(select);
       });
     });
   });
