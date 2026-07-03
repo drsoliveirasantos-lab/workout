@@ -1,26 +1,20 @@
+import { BODY_ART } from './data/bodyArt.js';
+
 const ZONES = {
   global: {
     label: 'Vue globale',
     score: 78,
     reliability: 74,
     level: 'Bon',
-    subzones: [
-      ['Poussée / pectoraux', 82],
-      ['Jambes antérieures', 80],
-      ['Dos / tirages', 63],
-      ['Épaules largeur', 58]
-    ],
+    subzones: [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]],
     strengths: ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'],
     weaknesses: ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'],
     sources: ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'],
     recommendation: 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.',
-    parts: ['pec_sternal', 'vaste_lateral', 'droit_femoral', 'triceps_lateral']
+    parts: ['pec_sternal', 'vaste_lateral', 'droit_femoral', 'triceps_long']
   },
   pecs: {
-    label: 'Pectoraux',
-    score: 81,
-    reliability: 86,
-    level: 'Fort',
+    label: 'Pectoraux', score: 81, reliability: 86, level: 'Fort',
     subzones: [['Haut des pectoraux', 68], ['Milieu des pectoraux', 86], ['Bas des pectoraux', 74], ['Stabilité haltères', 62]],
     strengths: ['Milieu des pectoraux dominant', 'Poussée horizontale fiable', 'Isolation pec deck cohérente'],
     weaknesses: ['Haut des pectoraux en retard relatif', 'Stabilité haltères un peu moins forte que la barre'],
@@ -29,10 +23,7 @@ const ZONES = {
     parts: ['pec_claviculaire', 'pec_sternal', 'pec_costal']
   },
   back: {
-    label: 'Dos',
-    score: 64,
-    reliability: 56,
-    level: 'Correct',
+    label: 'Dos', score: 64, reliability: 56, level: 'Correct',
     subzones: [['Largeur / grand dorsal', 61], ['Épaisseur / rhomboïdes', 68], ['Trapèzes', 59], ['Lombaires', 52]],
     strengths: ['Rowing utilisable comme repère', 'Épaisseur du dos mieux documentée que la largeur'],
     weaknesses: ['Tirage vertical à compléter', 'Pullover ou traction assistée manquants'],
@@ -41,10 +32,7 @@ const ZONES = {
     parts: ['grand_dorsal', 'trapezes']
   },
   shoulders: {
-    label: 'Épaules',
-    score: 60,
-    reliability: 58,
-    level: 'Correct',
+    label: 'Épaules', score: 60, reliability: 58, level: 'Correct',
     subzones: [['Deltoïde antérieur', 72], ['Deltoïde latéral', 54], ['Deltoïde postérieur', 48]],
     strengths: ['Développé épaules correctement calibré', 'Deltoïde antérieur bien documenté'],
     weaknesses: ['Deltoïde latéral à compléter', 'Deltoïde postérieur peu documenté'],
@@ -53,34 +41,25 @@ const ZONES = {
     parts: ['deltoide_anterieur', 'deltoide_posterieur']
   },
   arms: {
-    label: 'Bras',
-    score: 69,
-    reliability: 61,
-    level: 'Bon',
+    label: 'Bras', score: 69, reliability: 61, level: 'Bon',
     subzones: [['Triceps', 75], ['Biceps', 63], ['Avant-bras', 54]],
     strengths: ['Triceps soutenus par les développés', 'Pushdown utile pour isoler'],
     weaknesses: ['Curl direct à calibrer pour mieux isoler biceps', 'Avant-bras peu mesurés'],
     sources: ['Extension triceps corde', 'Développé couché', 'Curl barre'],
     recommendation: 'Ajouter un curl câble ou haltères pour séparer biceps, brachial et avant-bras.',
-    parts: ['biceps', 'triceps_lateral']
+    parts: ['biceps', 'triceps_long', 'avant_bras']
   },
   legs: {
-    label: 'Jambes',
-    score: 79,
-    reliability: 76,
-    level: 'Fort',
+    label: 'Jambes', score: 79, reliability: 76, level: 'Fort',
     subzones: [['Quadriceps', 84], ['Fessiers', 72], ['Ischios', 61], ['Adducteurs', 58]],
     strengths: ['Dominance quadriceps claire', 'Hack squat / leg press très utiles', 'Bonne poussée jambes'],
     weaknesses: ['Ischios à compléter avec leg curl', 'Chaîne postérieure moins précise'],
     sources: ['Hack squat', 'Leg press 45°', 'Leg extension', 'Hip thrust'],
     recommendation: 'Garder le hack squat/leg press et ajouter un leg curl pour équilibrer quadriceps/ischios.',
-    parts: ['vaste_lateral', 'vaste_medial', 'droit_femoral', 'vaste_intermediaire']
+    parts: ['vaste_lateral', 'vaste_medial', 'droit_femoral', 'vaste_intermediaire', 'ischios']
   },
   glutes: {
-    label: 'Fessiers',
-    score: 72,
-    reliability: 66,
-    level: 'Bon',
+    label: 'Fessiers', score: 72, reliability: 66, level: 'Bon',
     subzones: [['Grand fessier', 76], ['Moyen fessier', 62], ['Extension de hanche', 74]],
     strengths: ['Hip thrust très informatif', 'Bonne contribution sur leg press'],
     weaknesses: ['Abduction hanche non mesurée', 'Unilatéral à documenter'],
@@ -89,10 +68,7 @@ const ZONES = {
     parts: ['grand_fessier']
   },
   calves: {
-    label: 'Mollets',
-    score: 55,
-    reliability: 42,
-    level: 'Correct',
+    label: 'Mollets', score: 55, reliability: 42, level: 'Correct',
     subzones: [['Gastrocnémien', 58], ['Soléaire', 50], ['Stabilité pied', 44]],
     strengths: ['Base debout exploitable'],
     weaknesses: ['Mollets assis manquants', 'Soléaire peu documenté'],
@@ -101,26 +77,31 @@ const ZONES = {
     parts: ['gastrocnemien']
   },
   core: {
-    label: 'Core / abdos',
-    score: 62,
-    reliability: 40,
-    level: 'Correct',
+    label: 'Core / abdos', score: 62, reliability: 40, level: 'Correct',
     subzones: [['Gainage', 64], ['Flexion tronc', 60], ['Stabilité lombaire', 55]],
     strengths: ['Core présent dans les mouvements libres'],
     weaknesses: ['Peu de tests directs', 'Endurance spécifique à mesurer'],
     sources: ['Gainage', 'Squat Smith', 'RDL'],
     recommendation: 'Ajouter un test simple de gainage ou crunch lesté si tu veux suivre le core.',
-    parts: ['abdos']
+    parts: ['abdos', 'lombaires']
   }
 };
 
 const state = { zone: 'global', view: 'front' };
 
 function init() {
+  loadBodyArtwork();
   renderTabs();
   bindEvents();
   renderZone('global');
   renderGlobalCards();
+}
+
+function loadBodyArtwork() {
+  const front = document.querySelector('#body-art-front');
+  const back = document.querySelector('#body-art-back');
+  if (front) front.src = BODY_ART.front;
+  if (back) back.src = BODY_ART.back;
 }
 
 function renderTabs() {
@@ -139,16 +120,16 @@ function bindEvents() {
     if (button) renderZone(button.dataset.zone);
   });
 
-  document.querySelector('.body-map')?.addEventListener('click', (event) => {
-    const muscle = event.target.closest('[data-zone]');
-    if (muscle) renderZone(muscle.dataset.zone);
+  document.querySelector('.body-hotspots')?.addEventListener('click', (event) => {
+    const hotspot = event.target.closest('[data-zone]');
+    if (hotspot) renderZone(hotspot.dataset.zone);
   });
 
   document.querySelector('#toggle-view')?.addEventListener('click', () => {
     state.view = state.view === 'front' ? 'back' : 'front';
-    const map = document.querySelector('.body-map');
-    map?.classList.toggle('is-back', state.view === 'back');
+    document.querySelector('#body-stage')?.classList.toggle('is-back', state.view === 'back');
     document.querySelector('#toggle-view').textContent = state.view === 'front' ? 'Vue arrière' : 'Vue avant';
+    paintBody(state.zone, ZONES[state.zone] || ZONES.global);
   });
 }
 
@@ -179,16 +160,16 @@ function fillList(selector, items) {
 }
 
 function paintBody(zoneId, zone) {
-  const map = document.querySelector('.body-map');
+  const map = document.querySelector('.body-hotspots');
   if (!map) return;
   map.dataset.zone = zoneId;
-  map.querySelectorAll('.muscle').forEach((muscle) => {
-    muscle.classList.remove('is-active', 'strength-hot', 'strength-warm', 'strength-mid', 'strength-low');
+  map.querySelectorAll('.hotspot').forEach((hotspot) => {
+    hotspot.classList.remove('is-active', 'strength-hot', 'strength-warm', 'strength-mid', 'strength-low');
     const active = zoneId === 'global'
-      ? zone.parts.includes(muscle.dataset.part)
-      : muscle.dataset.zone === zoneId || zone.parts.includes(muscle.dataset.part);
+      ? zone.parts.includes(hotspot.dataset.part)
+      : hotspot.dataset.zone === zoneId || zone.parts.includes(hotspot.dataset.part);
     if (!active) return;
-    muscle.classList.add('is-active', strengthClass(zone.score));
+    hotspot.classList.add('is-active', strengthClass(zone.score));
   });
 }
 
@@ -202,8 +183,9 @@ function strengthClass(score) {
 function renderGlobalCards() {
   const cards = document.querySelector('#global-cards');
   if (!cards) return;
-  const strongest = Object.values(ZONES).filter((zone) => zone !== ZONES.global).sort((a, b) => b.score - a.score).slice(0, 3);
-  const weakest = Object.values(ZONES).filter((zone) => zone !== ZONES.global).sort((a, b) => a.score - b.score).slice(0, 3);
+  const zones = Object.values(ZONES).filter((zone) => zone !== ZONES.global);
+  const strongest = zones.toSorted((a, b) => b.score - a.score).slice(0, 3);
+  const weakest = zones.toSorted((a, b) => a.score - b.score).slice(0, 3);
   cards.innerHTML = `
     <article><strong>Points forts</strong><p>${strongest.map((zone) => zone.label).join(' · ')}</p></article>
     <article><strong>À renforcer</strong><p>${weakest.map((zone) => zone.label).join(' · ')}</p></article>
