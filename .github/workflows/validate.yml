@@ -35,6 +35,7 @@ jobs:
           test -f dist/body_back_and_front_zones.svg
           test -f dist/src/app.js
           test -f dist/src/biomech-profile.js
+          test -f dist/src/biomech-zone-filter.js
           test -f dist/src/biomech-click-zones.js
           test -f dist/src/biomech-profile.css
           test -f dist/src/biomech-zone-visibility.css
