@@ -1,6 +1,6 @@
 const lateralRaiseNames = ['elevation laterale halteres', 'elevation laterale assise avec haltere', 'lateral raise'];
 const cableLateralNames = ['elevation laterale poulie', 'elevation laterale unilaterale avec cable', 'cable lateral raise'];
-const customSelectLongNames = new Set(['age', 'heightCm', 'weightKg', 'calibrationWeight', 'calibrationReps', 'inlineWeight', 'inlineReps']);
+const customSelectLongNames = new Set(['age', 'heightCm', 'weightKg', 'calibrationWeight', 'calibrationReps', 'inlineWeight', 'inlineReps', 'sex', 'physicalProfile']);
 const premiumControlIcons = {
   sex: '⚥',
   age: '◷',
@@ -60,7 +60,7 @@ function injectPremiumControlStyles() {
 function loadVisualPickers() {
   if (document.querySelector('script[data-visual-pickers]')) return;
   const script = document.createElement('script');
-  script.src = 'src/visual-pickers.js?v=20260703-picker1';
+  script.src = 'src/visual-pickers.js?v=20260703-picker3';
   script.dataset.visualPickers = 'true';
   script.defer = true;
   document.body.appendChild(script);
