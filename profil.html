@@ -8,9 +8,9 @@
       name="description"
       content="Carte biomécanique interactive : points forts, points faibles, fiabilité des calibrations et analyse musculaire par zone."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux17" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux17" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux17" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux18" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux18" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux18" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
@@ -60,80 +60,50 @@
               <span>Vue anatomique</span>
               <button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button>
             </div>
-            <div class="body-stage">
-              <svg class="body-map front-view" viewBox="0 0 360 780" role="img" aria-labelledby="body-title">
-                <title id="body-title">Silhouette anatomique interactive du profil biomécanique</title>
-                <defs>
-                  <radialGradient id="bodyGlass" cx="50%" cy="30%" r="74%">
-                    <stop offset="0" stop-color="#8feeff" stop-opacity="0.26" />
-                    <stop offset="0.54" stop-color="#1d83b9" stop-opacity="0.16" />
-                    <stop offset="1" stop-color="#031020" stop-opacity="0.03" />
-                  </radialGradient>
-                  <linearGradient id="muscleIdle" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stop-color="#98f3ff" stop-opacity="0.44" />
-                    <stop offset="1" stop-color="#0e6ea5" stop-opacity="0.18" />
-                  </linearGradient>
-                  <filter id="glow"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                </defs>
+            <div class="body-stage" id="body-stage">
+              <div class="body-art-frame" aria-hidden="true">
+                <img id="body-art-front" class="body-art body-art-front" alt="" />
+                <img id="body-art-back" class="body-art body-art-back" alt="" />
+              </div>
 
-                <g class="body-silhouette">
-                  <path class="head" d="M151 54 C151 24 209 24 209 54 C212 94 199 120 180 122 C161 120 148 94 151 54Z" />
-                  <path class="neck" d="M162 116 C168 134 192 134 198 116 L207 162 C198 171 162 171 153 162Z" />
-                  <path class="torso" d="M101 169 C120 147 148 139 180 140 C212 139 240 147 259 169 C273 214 266 295 252 363 C232 408 202 430 180 430 C158 430 128 408 108 363 C94 295 87 214 101 169Z" />
-                  <path class="pelvis" d="M118 366 C138 405 222 405 242 366 C260 416 254 462 225 478 C205 490 155 490 135 478 C106 462 100 416 118 366Z" />
-                  <path class="arm left" d="M101 174 C74 194 58 253 50 334 C43 420 54 474 77 480 C95 484 104 454 103 410 C102 340 121 262 132 205Z" />
-                  <path class="arm right" d="M259 174 C286 194 302 253 310 334 C317 420 306 474 283 480 C265 484 256 454 257 410 C258 340 239 262 228 205Z" />
-                  <path class="leg left" d="M130 462 C151 481 169 481 178 462 C176 532 169 635 160 720 C151 744 128 742 122 719 C120 636 121 535 130 462Z" />
-                  <path class="leg right" d="M230 462 C209 481 191 481 182 462 C184 532 191 635 200 720 C209 744 232 742 238 719 C240 636 239 535 230 462Z" />
-                  <path class="foot left" d="M122 716 C101 733 93 753 116 758 C142 762 158 750 162 727Z" />
-                  <path class="foot right" d="M238 716 C259 733 267 753 244 758 C218 762 202 750 198 727Z" />
-                  <path class="detail sternum" d="M180 142 C178 214 178 308 180 386" />
-                  <path class="detail clavicle-left" d="M112 170 C136 158 159 157 178 169" />
-                  <path class="detail clavicle-right" d="M248 170 C224 158 201 157 182 169" />
-                  <path class="detail rib-left" d="M119 219 C145 238 166 241 179 238" />
-                  <path class="detail rib-right" d="M241 219 C215 238 194 241 181 238" />
-                  <path class="detail waist-left" d="M126 310 C145 332 161 345 178 352" />
-                  <path class="detail waist-right" d="M234 310 C215 332 199 345 182 352" />
+              <svg class="body-hotspots" viewBox="0 0 256 384" role="img" aria-labelledby="body-title">
+                <title id="body-title">Carte interactive du profil biomécanique</title>
+                <g class="hotspot-layer hotspot-front">
+                  <path data-zone="pecs" data-part="pec_claviculaire" class="hotspot pecs" d="M76 88 C99 72 116 76 126 94 C112 109 89 109 71 99 Z" />
+                  <path data-zone="pecs" data-part="pec_claviculaire" class="hotspot pecs" d="M180 88 C157 72 140 76 130 94 C144 109 167 109 185 99 Z" />
+                  <path data-zone="pecs" data-part="pec_sternal" class="hotspot pecs" d="M70 103 C92 111 116 108 126 95 L126 126 C102 138 79 128 68 114 Z" />
+                  <path data-zone="pecs" data-part="pec_sternal" class="hotspot pecs" d="M186 103 C164 111 140 108 130 95 L130 126 C154 138 177 128 188 114 Z" />
+                  <path data-zone="pecs" data-part="pec_costal" class="hotspot pecs" d="M76 128 C96 145 114 144 126 130 L124 149 C100 156 82 146 72 134 Z" />
+                  <path data-zone="pecs" data-part="pec_costal" class="hotspot pecs" d="M180 128 C160 145 142 144 130 130 L132 149 C156 156 174 146 184 134 Z" />
+                  <ellipse data-zone="shoulders" data-part="deltoide_anterieur" class="hotspot shoulders" cx="59" cy="100" rx="20" ry="30" />
+                  <ellipse data-zone="shoulders" data-part="deltoide_anterieur" class="hotspot shoulders" cx="197" cy="100" rx="20" ry="30" />
+                  <ellipse data-zone="arms" data-part="biceps" class="hotspot arms" cx="45" cy="154" rx="15" ry="38" />
+                  <ellipse data-zone="arms" data-part="biceps" class="hotspot arms" cx="211" cy="154" rx="15" ry="38" />
+                  <path data-zone="arms" data-part="avant_bras" class="hotspot arms" d="M36 196 C52 201 54 236 41 254 C24 246 26 210 36 196Z" />
+                  <path data-zone="arms" data-part="avant_bras" class="hotspot arms" d="M220 196 C204 201 202 236 215 254 C232 246 230 210 220 196Z" />
+                  <path data-zone="core" data-part="abdos" class="hotspot core" d="M105 136 C117 130 139 130 151 136 C158 180 148 222 128 232 C108 222 98 180 105 136Z" />
+                  <ellipse data-zone="legs" data-part="vaste_lateral" class="hotspot legs" cx="95" cy="270" rx="20" ry="60" />
+                  <ellipse data-zone="legs" data-part="droit_femoral" class="hotspot legs" cx="115" cy="270" rx="13" ry="65" />
+                  <ellipse data-zone="legs" data-part="droit_femoral" class="hotspot legs" cx="141" cy="270" rx="13" ry="65" />
+                  <ellipse data-zone="legs" data-part="vaste_lateral" class="hotspot legs" cx="161" cy="270" rx="20" ry="60" />
+                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="94" cy="344" rx="15" ry="35" />
+                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="162" cy="344" rx="15" ry="35" />
                 </g>
-
-                <g class="muscle-layer front-muscles">
-                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs" d="M112 170 C135 150 164 153 177 171 C165 190 138 192 106 181 C106 177 108 173 112 170Z" />
-                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs" d="M248 170 C225 150 196 153 183 171 C195 190 222 192 254 181 C254 177 252 173 248 170Z" />
-                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs" d="M106 188 C136 195 166 192 177 174 L176 229 C151 241 124 229 101 207 C101 200 102 193 106 188Z" />
-                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs" d="M254 188 C224 195 194 192 183 174 L184 229 C209 241 236 229 259 207 C259 200 258 193 254 188Z" />
-                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs" d="M113 224 C142 248 166 245 176 233 L172 267 C146 280 119 260 104 234 C106 231 109 227 113 224Z" />
-                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs" d="M247 224 C218 248 194 245 184 233 L188 267 C214 280 241 260 256 234 C254 231 251 227 247 224Z" />
-                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders" d="M82 165 C104 142 127 149 136 181 C125 217 99 242 74 231 C66 202 69 180 82 165Z" />
-                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders" d="M278 165 C256 142 233 149 224 181 C235 217 261 242 286 231 C294 202 291 180 278 165Z" />
-                  <path data-zone="arms" data-part="biceps" class="muscle arms" d="M64 243 C91 255 98 303 88 357 C81 390 64 410 50 392 C49 339 51 283 64 243Z" />
-                  <path data-zone="arms" data-part="biceps" class="muscle arms" d="M296 243 C269 255 262 303 272 357 C279 390 296 410 310 392 C311 339 309 283 296 243Z" />
-                  <path data-zone="arms" data-part="avant_bras" class="muscle arms" d="M53 397 C78 407 80 454 62 482 C42 476 35 445 40 416 C44 407 48 401 53 397Z" />
-                  <path data-zone="arms" data-part="avant_bras" class="muscle arms" d="M307 397 C282 407 280 454 298 482 C318 476 325 445 320 416 C316 407 312 401 307 397Z" />
-                  <path data-zone="core" data-part="abdos" class="muscle core" d="M154 270 C165 262 195 262 206 270 C210 314 202 372 188 402 C183 409 177 409 172 402 C158 372 150 314 154 270Z" />
-                  <path data-zone="core" data-part="abdos" class="muscle core abs-line" d="M160 284 L200 284 M158 318 L202 318 M160 354 L200 354" />
-                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs" d="M127 485 C153 498 161 566 154 650 C143 682 126 684 116 652 C113 590 116 525 127 485Z" />
-                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs" d="M159 481 C174 512 172 592 162 663 C151 640 148 536 159 481Z" />
-                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs" d="M233 485 C207 498 199 566 206 650 C217 682 234 684 244 652 C247 590 244 525 233 485Z" />
-                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs" d="M201 481 C186 512 188 592 198 663 C209 640 212 536 201 481Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M129 650 C148 668 149 711 134 736 C113 724 111 672 129 650Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M231 650 C212 668 211 711 226 736 C247 724 249 672 231 650Z" />
-                </g>
-
-                <g class="muscle-layer back-muscles" aria-hidden="true">
-                  <path data-zone="back" data-part="trapezes" class="muscle back" d="M132 135 C158 162 202 162 228 135 C229 189 206 226 180 235 C154 226 131 189 132 135Z" />
-                  <path data-zone="back" data-part="grand_dorsal" class="muscle back" d="M104 195 C136 213 159 253 171 326 C145 351 115 336 99 292 C91 252 93 216 104 195Z" />
-                  <path data-zone="back" data-part="grand_dorsal" class="muscle back" d="M256 195 C224 213 201 253 189 326 C215 351 245 336 261 292 C269 252 267 216 256 195Z" />
-                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders" d="M82 165 C106 144 129 151 137 181 C124 214 98 232 74 223 C67 198 70 180 82 165Z" />
-                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders" d="M278 165 C254 144 231 151 223 181 C236 214 262 232 286 223 C293 198 290 180 278 165Z" />
-                  <path data-zone="arms" data-part="triceps_long" class="muscle arms" d="M64 243 C92 259 98 319 84 370 C75 399 58 403 47 382 C49 326 53 276 64 243Z" />
-                  <path data-zone="arms" data-part="triceps_long" class="muscle arms" d="M296 243 C268 259 262 319 276 370 C285 399 302 403 313 382 C311 326 307 276 296 243Z" />
-                  <path data-zone="core" data-part="lombaires" class="muscle core" d="M154 326 C168 335 192 335 206 326 C211 370 202 405 180 429 C158 405 149 370 154 326Z" />
-                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes" d="M120 406 C147 386 175 398 178 439 C161 475 125 474 109 441 C107 426 110 413 120 406Z" />
-                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes" d="M240 406 C213 386 185 398 182 439 C199 475 235 474 251 441 C253 426 250 413 240 406Z" />
-                  <path data-zone="legs" data-part="ischios" class="muscle legs" d="M127 485 C155 502 159 578 151 660 C136 678 119 652 116 605 C114 552 116 511 127 485Z" />
-                  <path data-zone="legs" data-part="ischios" class="muscle legs" d="M233 485 C205 502 201 578 209 660 C224 678 241 652 244 605 C246 552 244 511 233 485Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M129 650 C153 667 151 712 134 736 C112 722 111 670 129 650Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M231 650 C207 667 209 712 226 736 C248 722 249 670 231 650Z" />
+                <g class="hotspot-layer hotspot-back">
+                  <path data-zone="back" data-part="trapezes" class="hotspot back" d="M88 67 C105 92 151 92 168 67 C172 115 151 140 128 146 C105 140 84 115 88 67Z" />
+                  <path data-zone="back" data-part="grand_dorsal" class="hotspot back" d="M75 119 C105 129 123 160 123 204 C96 219 73 204 65 171 C62 146 65 128 75 119Z" />
+                  <path data-zone="back" data-part="grand_dorsal" class="hotspot back" d="M181 119 C151 129 133 160 133 204 C160 219 183 204 191 171 C194 146 191 128 181 119Z" />
+                  <ellipse data-zone="shoulders" data-part="deltoide_posterieur" class="hotspot shoulders" cx="59" cy="101" rx="20" ry="30" />
+                  <ellipse data-zone="shoulders" data-part="deltoide_posterieur" class="hotspot shoulders" cx="197" cy="101" rx="20" ry="30" />
+                  <ellipse data-zone="arms" data-part="triceps_long" class="hotspot arms" cx="45" cy="154" rx="15" ry="38" />
+                  <ellipse data-zone="arms" data-part="triceps_long" class="hotspot arms" cx="211" cy="154" rx="15" ry="38" />
+                  <path data-zone="core" data-part="lombaires" class="hotspot core" d="M106 174 C120 184 136 184 150 174 C154 211 145 234 128 244 C111 234 102 211 106 174Z" />
+                  <ellipse data-zone="glutes" data-part="grand_fessier" class="hotspot glutes" cx="106" cy="234" rx="29" ry="32" />
+                  <ellipse data-zone="glutes" data-part="grand_fessier" class="hotspot glutes" cx="150" cy="234" rx="29" ry="32" />
+                  <ellipse data-zone="legs" data-part="ischios" class="hotspot legs" cx="98" cy="294" rx="19" ry="58" />
+                  <ellipse data-zone="legs" data-part="ischios" class="hotspot legs" cx="158" cy="294" rx="19" ry="58" />
+                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="96" cy="350" rx="16" ry="34" />
+                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="160" cy="350" rx="16" ry="34" />
                 </g>
               </svg>
               <div class="scan-ring" aria-hidden="true"></div>
@@ -149,22 +119,10 @@
               <small id="zone-reliability">Fiabilité 74%</small>
             </div>
             <div id="subzones" class="subzone-list"></div>
-            <div class="analysis-block">
-              <h3>Points forts</h3>
-              <ul id="strength-list" class="clean-list"></ul>
-            </div>
-            <div class="analysis-block">
-              <h3>Points faibles</h3>
-              <ul id="weakness-list" class="clean-list"></ul>
-            </div>
-            <div class="analysis-block">
-              <h3>Sources utilisées</h3>
-              <ul id="source-list" class="clean-list"></ul>
-            </div>
-            <div class="analysis-block recommendation-box">
-              <h3>Recommandation</h3>
-              <p id="recommendation-text"></p>
-            </div>
+            <div class="analysis-block"><h3>Points forts</h3><ul id="strength-list" class="clean-list"></ul></div>
+            <div class="analysis-block"><h3>Points faibles</h3><ul id="weakness-list" class="clean-list"></ul></div>
+            <div class="analysis-block"><h3>Sources utilisées</h3><ul id="source-list" class="clean-list"></ul></div>
+            <div class="analysis-block recommendation-box"><h3>Recommandation</h3><p id="recommendation-text"></p></div>
           </aside>
         </section>
 
@@ -183,7 +141,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/biomech-profile.js?v=20260702-ux17"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux17"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260702-ux18"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux18"></script>
   </body>
 </html>
