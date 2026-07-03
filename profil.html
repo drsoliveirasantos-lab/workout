@@ -4,22 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profil biomécanique — Workout Nykuto</title>
-    <meta
-      name="description"
-      content="Carte biomécanique interactive : points forts, points faibles, fiabilité des calibrations et analyse musculaire par zone."
-    />
-    <link rel="stylesheet" href="src/styles.css?v=20260703-ux24" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux24" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux24" />
-    <link rel="stylesheet" href="src/biomech-map-overrides.css?v=20260703-ux24" />
+    <meta name="description" content="Carte biomécanique interactive et analyse musculaire par zone." />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux26" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux26" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux26" />
+    <link rel="stylesheet" href="src/biomech-map-overrides.css?v=20260703-ux26" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
       <header class="site-header">
-        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
-          <span class="logo-mark">WN</span>
-          <span>Workout Nykuto</span>
-        </a>
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil"><span class="logo-mark">WN</span><span>Workout Nykuto</span></a>
         <nav class="nav" aria-label="Navigation principale">
           <a href="index.html">Accueil</a>
           <a href="plan.html">Créer un plan</a>
@@ -28,15 +22,12 @@
           <a href="evidence.html">Evidence base</a>
         </nav>
       </header>
-
       <main>
         <section class="panel biomech-hero" aria-labelledby="profile-title">
           <div>
             <p class="eyebrow">Analyse musculaire</p>
             <h1 id="profile-title">Profil biomécanique</h1>
-            <p class="muted">
-              Visualise les points forts, les points faibles, les sous-zones musculaires et la qualité des données issues des calibrations.
-            </p>
+            <p class="muted">Visualise les points forts, les points faibles, les sous-zones musculaires et la qualité des données issues des calibrations.</p>
           </div>
           <div class="biomech-summary" aria-label="Résumé global">
             <article><strong id="global-score">78</strong><span>score global</span></article>
@@ -44,37 +35,21 @@
             <article><strong id="global-tests">12</strong><span>tests analysés</span></article>
           </div>
         </section>
-
         <section class="biomech-grid" aria-label="Carte corporelle interactive">
           <aside class="panel biomech-nav-panel">
             <p class="eyebrow">Zones</p>
             <h2>Carte musculaire</h2>
             <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
-            <div class="data-quality-card">
-              <strong>Qualité des données</strong>
-              <p>La carte utilise les zones tracées manuellement dans Inkscape. Les formes sont regroupées ensuite par région musculaire.</p>
-            </div>
+            <div class="data-quality-card"><strong>Qualité des données</strong><p>La carte utilise les zones tracées manuellement dans Inkscape. Les formes sont regroupées ensuite par région musculaire.</p></div>
           </aside>
-
           <section class="panel body-map-panel" aria-label="Silhouette musculaire">
-            <div class="scan-header">
-              <span>Vue anatomique</span>
-              <button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button>
-            </div>
-            <div class="body-stage" id="body-stage">
-              <div id="body-map-mount" class="user-body-map"></div>
-              <div class="scan-ring" aria-hidden="true"></div>
-            </div>
+            <div class="scan-header"><span>Vue anatomique</span><button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button></div>
+            <div class="body-stage" id="body-stage"><div id="body-map-mount" class="user-body-map"></div><div class="scan-ring" aria-hidden="true"></div></div>
           </section>
-
           <aside class="panel biomech-analysis-panel" aria-live="polite">
             <p class="eyebrow" id="zone-eyebrow">Zone sélectionnée</p>
             <h2 id="zone-title">Vue globale</h2>
-            <div class="score-card">
-              <strong id="zone-score">78/100</strong>
-              <span id="zone-level">Bon</span>
-              <small id="zone-reliability">Fiabilité 74%</small>
-            </div>
+            <div class="score-card"><strong id="zone-score">78/100</strong><span id="zone-level">Bon</span><small id="zone-reliability">Fiabilité 74%</small></div>
             <div id="subzones" class="subzone-list"></div>
             <div class="analysis-block"><h3>Points forts</h3><ul id="strength-list" class="clean-list"></ul></div>
             <div class="analysis-block"><h3>Points faibles</h3><ul id="weakness-list" class="clean-list"></ul></div>
@@ -82,25 +57,16 @@
             <div class="analysis-block recommendation-box"><h3>Recommandation</h3><p id="recommendation-text"></p></div>
           </aside>
         </section>
-
         <section class="panel biomech-bottom" aria-label="Synthèse du profil">
-          <article>
-            <p class="eyebrow">Diagnostic</p>
-            <h2>Profil de force estimé</h2>
-            <p class="muted">Le score compare les calibrations entre elles. Il indique un profil relatif pour guider les priorités du programme, pas un classement universel.</p>
-          </article>
+          <article><p class="eyebrow">Diagnostic</p><h2>Profil de force estimé</h2><p class="muted">Le score compare les calibrations entre elles. Il indique un profil relatif pour guider les priorités du programme.</p></article>
           <div id="global-cards" class="global-cards"></div>
         </section>
       </main>
-
-      <footer class="site-footer">
-        <p>Le profil biomécanique est une estimation éducative. Les douleurs, blessures ou limitations doivent être évaluées par un professionnel.</p>
-      </footer>
+      <footer class="site-footer"><p>Le profil biomécanique est une estimation éducative.</p></footer>
     </div>
-
-    <script type="module" src="src/biomech-profile.js?v=20260703-ux24"></script>
-    <script type="module" src="src/biomech-background-key.js?v=20260703-ux24"></script>
-    <script type="module" src="src/biomech-map-cleanup.js?v=20260703-ux24"></script>
-    <script type="module" src="src/glossary.js?v=20260703-ux24"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260703-ux26"></script>
+    <script type="module" src="src/biomech-background-key.js?v=20260703-ux26"></script>
+    <script type="module" src="src/biomech-map-cleanup.js?v=20260703-ux26"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux26"></script>
   </body>
 </html>
