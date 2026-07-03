@@ -13,28 +13,14 @@ export function estimateOneRepMax({ weight, reps, rir = 0 }) {
   const cleanWeight = Number(weight);
   const cleanReps = Number(reps);
   const cleanRir = Math.max(0, Number(rir) || 0);
-
   if (!Number.isFinite(cleanWeight) || cleanWeight <= 0) throw new Error('La charge doit être supérieure à 0 kg.');
   if (!Number.isFinite(cleanReps) || cleanReps < 1 || cleanReps > 30) throw new Error('Les répétitions doivent être entre 1 et 30.');
-
   const effectiveReps = Math.min(cleanReps + cleanRir, 20);
   const epley = cleanWeight * (1 + effectiveReps / 30);
   const brzycki = effectiveReps < 37 ? cleanWeight * 36 / (37 - effectiveReps) : epley;
   const estimate = (epley + brzycki) / 2;
   const trainingMax = estimate * 0.9;
-
-  return {
-    inputWeight: cleanWeight,
-    inputReps: cleanReps,
-    rir: cleanRir,
-    effectiveReps,
-    epley: roundToStep(epley),
-    brzycki: roundToStep(brzycki),
-    estimatedOneRm: roundToStep(estimate),
-    trainingMax: roundToStep(trainingMax),
-    reliability: getReliability(effectiveReps),
-    warning: getEstimationWarning(effectiveReps)
-  };
+  return { inputWeight: cleanWeight, inputReps: cleanReps, rir: cleanRir, effectiveReps, epley: roundToStep(epley), brzycki: roundToStep(brzycki), estimatedOneRm: roundToStep(estimate), trainingMax: roundToStep(trainingMax), reliability: getReliability(effectiveReps), warning: getEstimationWarning(effectiveReps) };
 }
 
 export function getReliability(reps) {
@@ -66,14 +52,12 @@ export function getIntensityByGoal(goal, level) {
 export function generateTrainingPlan({ profile, strengthTests = [], calibrations = [] }) {
   const level = profile.level || 'beginner';
   if (level === 'advanced' || level === 'very_advanced') return generateAdvancedPlan({ profile, calibrations });
-
   const days = Math.min(Math.max(Number(profile.daysPerWeek) || 3, 2), 5);
   const goal = profile.goal || 'recomposition';
   const intensity = getIntensityByGoal(goal, level);
   const split = SPLITS[days] || SPLITS[3];
   const testsByExercise = Object.fromEntries(strengthTests.map((test) => [test.exerciseId, test]));
-  const calibrationByFamily = Object.fromEntries(calibrations.map((entry) => [entry.familyId, entry]));
-  const sessions = split.map((sessionType, index) => buildSession({ sessionType, index, intensity, level, testsByExercise, calibrationByFamily, equipment: profile.equipment || 'basic' }));
+  const sessions = split.map((sessionType, index) => buildSession({ sessionType, index, intensity, level, testsByExercise, calibrations, equipment: profile.equipment || 'basic' }));
   return { title: `${intensity.label} — ${days} séances/semaine`, level, daysPerWeek: days, goal, intensity, sessions, progression: buildProgressionRules(goal), safety: buildSafetyNotes(profile) };
 }
 
@@ -86,35 +70,16 @@ function generateAdvancedPlan({ profile, calibrations }) {
   const sessions = sourceSessions.map((session) => mapAdvancedSessionToUi(session, calibrations));
   const label = level === 'very_advanced' ? 'Très avancé' : 'Avancé';
   const intensity = getIntensityByGoal(goal, level);
-  return {
-    title: `${label} — ${DIEGO_ADVANCED_ABCD.label} — ${days} séances/semaine`,
-    level,
-    daysPerWeek: days,
-    goal,
-    intensity: { label: `${label} ${intensity.label.toLowerCase()}`, percent: intensity.percent, repRange: intensity.repRange, rest: '45-180 s selon exercice, rôle et objectif', cardio: `${metrics.cardioMinutes} min cardio/semaine intégrés au split dynamique.` },
-    sessions,
-    calculations: { title: 'Calculs du split avancé dynamique', totalValidSets: metrics.totalValidSets, totalPrepSets: metrics.totalPrepSets, cardioMinutes: metrics.cardioMinutes, byMuscle: metrics.byMuscle, byFamily: metrics.byFamily, densityNote: metrics.densityNote, sourceNote: DIEGO_ADVANCED_ABCD.sourceNote, missingSessionNote: days >= 5 ? DIEGO_ADVANCED_ABCD.missingSessionNote : '' },
-    progression: buildAdvancedProgressionRules(goal, metrics),
-    safety: buildSafetyNotes(profile)
-  };
+  return { title: `${label} — ${DIEGO_ADVANCED_ABCD.label} — ${days} séances/semaine`, level, daysPerWeek: days, goal, intensity: { label: `${label} ${intensity.label.toLowerCase()}`, percent: intensity.percent, repRange: intensity.repRange, rest: '45-180 s selon exercice, rôle et objectif', cardio: `${metrics.cardioMinutes} min cardio/semaine intégrés au split dynamique.` }, sessions, calculations: { title: 'Calculs du split avancé dynamique', totalValidSets: metrics.totalValidSets, totalPrepSets: metrics.totalPrepSets, cardioMinutes: metrics.cardioMinutes, byMuscle: metrics.byMuscle, byFamily: metrics.byFamily, densityNote: metrics.densityNote, sourceNote: DIEGO_ADVANCED_ABCD.sourceNote, missingSessionNote: days >= 5 ? DIEGO_ADVANCED_ABCD.missingSessionNote : '' }, progression: buildAdvancedProgressionRules(goal, metrics), safety: buildSafetyNotes(profile) };
 }
 
 function mapAdvancedSessionToUi(session, calibrations = []) {
-  const calibrationByFamily = Object.fromEntries(calibrations.map((entry) => [entry.familyId, entry]));
   const sourceLabel = session.sourceLabel || 'split avancé généré dynamiquement';
-  return {
-    id: session.id,
-    title: session.title,
-    type: session.id,
-    warmup: `${session.subtitle} · ${sourceLabel}. Échauffements et ajustements inclus exercice par exercice.`,
-    cooldown: session.cardioMinutes ? `+ ${session.cardioMinutes} min cardio facile ou incliné après la séance selon récupération.` : 'Retour au calme léger.',
-    calculations: { validSets: sumSessionSets(session, 'validSets'), prepSets: sumSessionSets(session, 'prepSets'), cardioMinutes: session.cardioMinutes || 0 },
-    exercises: session.exercises.map((exercise, index) => {
-      const calibration = calibrationByFamily[exercise.familyId];
-      const prescription = buildAdvancedPrescription(exercise, calibration);
-      return { id: `${session.id}_${index}`, name: exercise.name, muscles: exercise.muscles || [], sets: exercise.validSets || 0, repRange: Array.isArray(exercise.reps) && exercise.reps.length === 2 ? exercise.reps : [12, 20], rest: exercise.rest || '60-90 s', loadKg: prescription.loadKg, loadText: prescription.loadText, supportLabel: 'Préparation', alternative: exercise.warmup || 'Ajustement progressif', note: [exercise.tempo, prescription.note].filter(Boolean).join(' · ') };
-    })
-  };
+  return { id: session.id, title: session.title, type: session.id, warmup: `${session.subtitle} · ${sourceLabel}. Échauffements et ajustements inclus exercice par exercice.`, cooldown: session.cardioMinutes ? `+ ${session.cardioMinutes} min cardio facile ou incliné après la séance selon récupération.` : 'Retour au calme léger.', calculations: { validSets: sumSessionSets(session, 'validSets'), prepSets: sumSessionSets(session, 'prepSets'), cardioMinutes: session.cardioMinutes || 0 }, exercises: session.exercises.map((exercise, index) => {
+    const calibration = selectBestCalibration(exercise, calibrations);
+    const prescription = buildAdvancedPrescription(exercise, calibration);
+    return { id: `${session.id}_${index}`, name: exercise.name, muscles: exercise.muscles || [], sets: exercise.validSets || 0, repRange: Array.isArray(exercise.reps) && exercise.reps.length === 2 ? exercise.reps : [12, 20], rest: exercise.rest || '60-90 s', loadKg: prescription.loadKg, loadText: prescription.loadText, supportLabel: 'Préparation', alternative: exercise.warmup || 'Ajustement progressif', note: [exercise.tempo, prescription.note].filter(Boolean).join(' · ') };
+  }) };
 }
 
 function buildAdvancedPrescription(exercise, calibration) {
@@ -123,6 +88,21 @@ function buildAdvancedPrescription(exercise, calibration) {
   baseParts.push(`${exercise.validSets} série(s) valides`);
   if (!calibration || !exercise.familyId || exercise.familyId === 'core') return { loadKg: null, loadText: `${baseParts.join(' · ')} · charge cible : RIR 1-2`, note: 'Mouvement non calibré : choisir la charge par RIR réel.' };
   return buildTransferPrescription({ calibration, targetProfileId: exercise.transferKey, rirFallback: 'RIR 1-2', basePrefix: `${baseParts.join(' · ')} · ` });
+}
+
+function selectBestCalibration(exercise, calibrations = []) {
+  if (!exercise?.familyId || exercise.familyId === 'core') return null;
+  const candidates = calibrations.filter((entry) => entry.familyId === exercise.familyId);
+  if (!candidates.length) return null;
+  if (!exercise.transferKey) return candidates[0];
+  return candidates.map((entry) => ({
+    entry,
+    transfer: calculateExerciseTransfer({ sourceProfileId: entry.sourceProfileId, targetProfileId: exercise.transferKey, testConfidenceScore: entry.confidence?.score || 100 })
+  })).sort((a, b) => {
+    if (a.transfer.coefficient === null && b.transfer.coefficient !== null) return 1;
+    if (b.transfer.coefficient === null && a.transfer.coefficient !== null) return -1;
+    return b.transfer.reliabilityScore - a.transfer.reliabilityScore;
+  })[0]?.entry || candidates[0];
 }
 
 function buildTransferPrescription({ calibration, targetProfileId, rirFallback, basePrefix = '' }) {
@@ -136,18 +116,18 @@ function buildTransferPrescription({ calibration, targetProfileId, rirFallback, 
   const highDisplay = roundToStep(highInternal / divisor);
   const unitLabel = targetInput.label || 'kg total';
   const loadText = divisor > 1 ? `${basePrefix}charge estimée ${lowDisplay}-${highDisplay} ${unitLabel} (${lowInternal}-${highInternal} kg internes)` : `${basePrefix}charge estimée ${lowDisplay}-${highDisplay} ${unitLabel}`;
-  return { loadKg: lowDisplay, loadText, note: `Source ${calibration.exerciseName} (${calibration.sourceProfileName}) · transfert ${transfer.relation} · coefficient ${transfer.coefficient} · fiabilité ${transfer.reliabilityScore}% (${transfer.reliabilityLabel}). ${transfer.reason}` };
+  return { loadKg: lowDisplay, loadText, note: `Source choisie ${calibration.exerciseName} (${calibration.sourceProfileName}) · transfert ${transfer.relation} · coefficient ${transfer.coefficient} · fiabilité ${transfer.reliabilityScore}% (${transfer.reliabilityLabel}). ${transfer.reason}` };
 }
 
 function sumSessionSets(session, key) { return session.exercises.reduce((total, exercise) => total + (exercise[key] || 0), 0); }
 
-function buildSession({ sessionType, index, intensity, level, testsByExercise, calibrationByFamily, equipment }) {
+function buildSession({ sessionType, index, intensity, level, testsByExercise, calibrations, equipment }) {
   const templates = { full_body_a: ['squat', 'bench_press', 'row', 'lunge', 'plank'], full_body_b: ['deadlift', 'overhead_press', 'pulldown', 'squat', 'plank'], full_body_c: ['squat', 'bench_press', 'row', 'deadlift', 'lunge'], upper_a: ['bench_press', 'row', 'overhead_press', 'pulldown', 'plank'], lower_a: ['squat', 'deadlift', 'lunge', 'plank'], upper_b: ['overhead_press', 'pulldown', 'bench_press', 'row', 'plank'], lower_b: ['deadlift', 'squat', 'lunge', 'plank'], push_pull: ['bench_press', 'row', 'overhead_press', 'pulldown'] };
   const exerciseIds = templates[sessionType] || templates.full_body_a;
   const exercises = exerciseIds.map((exerciseId, position) => {
     const exercise = EXERCISES.find((item) => item.id === exerciseId);
     const test = testsByExercise[exerciseId];
-    const calibration = calibrationByFamily?.[exercise.familyId];
+    const calibration = selectBestCalibration(exercise, calibrations);
     const isMainLift = position <= 2 && exercise?.loadSource === 'estimated-1rm';
     const sets = isMainLift ? (level === 'beginner' ? 3 : 4) : 2;
     const repRange = isMainLift ? intensity.repRange : exercise.defaultRepRange;
