@@ -42,17 +42,22 @@ test('plan page exposes quick mode, resume action and local workout tracking', a
   assert.match(homeResume, /hasSavedPlan/);
 });
 
-test('premium controls are injected and styled for fitness UI', async () => {
+test('premium controls include custom dropdown menus for short selects', async () => {
   const ux = await text('src/ux-polish.js');
   const css = await text('src/premium-controls.css');
   const workflow = await text('.github/workflows/validate.yml');
 
   assert.match(ux, /injectPremiumControlStyles/);
   assert.match(ux, /decoratePremiumControls/);
-  assert.match(ux, /premium-controls\.css\?v=20260703-select1/);
+  assert.match(ux, /enhanceCustomSelect/);
+  assert.match(ux, /customSelectLongNames/);
+  assert.match(ux, /custom-select-native/);
+  assert.match(ux, /premium-controls\.css\?v=20260703-select2/);
   assert.match(ux, /premium-control-field/);
   assert.match(css, /--control-bg-top/);
   assert.match(css, /appearance: none/);
+  assert.match(css, /custom-select-menu/);
+  assert.match(css, /custom-select-option/);
   assert.match(css, /var\(--control-border-strong\)/);
   assert.match(css, /data-control-icon/);
   assert.match(workflow, /dist\/src\/premium-controls\.css/);
