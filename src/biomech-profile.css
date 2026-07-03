@@ -3,10 +3,10 @@
   --bio-card: rgba(12, 24, 45, 0.72);
   --bio-border: rgba(115, 210, 255, 0.24);
   --bio-accent: #68d8ff;
-  --bio-hot: rgba(255, 73, 102, 0.16);
-  --bio-warm: rgba(255, 152, 77, 0.14);
-  --bio-mid: rgba(246, 214, 91, 0.13);
-  --bio-low: rgba(91, 188, 255, 0.12);
+  --bio-hot: rgba(255, 73, 102, 0.34);
+  --bio-warm: rgba(255, 152, 77, 0.3);
+  --bio-mid: rgba(246, 214, 91, 0.26);
+  --bio-low: rgba(91, 188, 255, 0.24);
 }
 
 .biomech-hero {
@@ -134,77 +134,69 @@
   filter: blur(2px);
 }
 
-.body-stage::after {
-  content: '';
-  position: absolute;
-  inset: 9% 11%;
-  border-radius: 2rem;
-  background: radial-gradient(circle, rgba(5, 20, 38, 0.18), transparent 70%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.body-art-frame,
-.body-hotspots {
+.user-body-map {
+  position: relative;
   width: min(94%, 420px);
   aspect-ratio: 2 / 3;
-  position: relative;
-  z-index: 2;
+  z-index: 3;
+  filter: drop-shadow(0 0 26px rgba(104, 216, 255, 0.18));
 }
 
-.body-art-frame {
+.body-map-loading,
+.body-map-error {
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
-  isolation: isolate;
+  text-align: center;
+  padding: 1rem;
+  color: var(--muted);
+  border: 1px dashed rgba(104, 216, 255, 0.28);
+  border-radius: 1.25rem;
+  background: rgba(6, 14, 28, 0.62);
 }
 
-.body-art {
+.body-map-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   opacity: 0;
-  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
-  filter: saturate(1.12) contrast(1.04) brightness(1.08) drop-shadow(0 0 28px rgba(104, 216, 255, 0.26));
-  mix-blend-mode: screen;
+  overflow: visible;
+  transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
-.body-art-front { opacity: 0.92; }
-.body-stage.is-back .body-art-front { opacity: 0; }
-.body-stage.is-back .body-art-back { opacity: 0.92; }
+.body-map-front { opacity: 1; }
+.body-stage.is-back .body-map-front { opacity: 0; pointer-events: none; }
+.body-stage.is-back .body-map-back { opacity: 1; pointer-events: auto; }
+.body-stage:not(.is-back) .body-map-back { pointer-events: none; }
 
-.body-hotspots {
-  position: absolute;
-  z-index: 4;
-  overflow: visible;
+.body-map-image {
+  opacity: 0.94;
+  filter: saturate(1.12) contrast(1.05) brightness(1.03);
 }
 
 .hotspot {
   fill: transparent;
   stroke: transparent;
-  stroke-width: 1;
+  stroke-width: 18;
   cursor: pointer;
-  transition: opacity 0.2s ease, fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
   opacity: 0;
   vector-effect: non-scaling-stroke;
+  transition: opacity 0.16s ease, fill 0.16s ease, stroke 0.16s ease, filter 0.16s ease;
 }
 
 .hotspot:hover,
 .hotspot.is-active {
   opacity: 1;
-  stroke: rgba(222, 250, 255, 0.45);
-  filter: drop-shadow(0 0 8px rgba(104, 216, 255, 0.35));
+  stroke: rgba(222, 250, 255, 0.62);
+  filter: drop-shadow(0 0 14px rgba(104, 216, 255, 0.58));
 }
 
 .hotspot.strength-hot { fill: var(--bio-hot); }
 .hotspot.strength-warm { fill: var(--bio-warm); }
 .hotspot.strength-mid { fill: var(--bio-mid); }
 .hotspot.strength-low { fill: var(--bio-low); }
-
-.hotspot-back { display: none; }
-.body-stage.is-back .hotspot-front { display: none; }
-.body-stage.is-back .hotspot-back { display: block; }
 
 .scan-ring {
   position: absolute;
@@ -289,6 +281,5 @@
   }
 
   .body-stage { min-height: 650px; }
-  .body-art-frame,
-  .body-hotspots { width: min(94%, 360px); }
+  .user-body-map { width: min(96%, 360px); }
 }
