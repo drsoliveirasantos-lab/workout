@@ -111,29 +111,36 @@ test('plan page contains adaptive controls, multi-variant calibration and result
   assert.match(accordionCss, /accordion-summary/);
 });
 
-test('biomechanical profile page has interactive body map and analysis panels', async () => {
+test('biomechanical profile page has premium body art and interactive hotspots', async () => {
   const html = await text('profil.html');
   const script = await text('src/biomech-profile.js');
   const css = await text('src/biomech-profile.css');
+  const bodyArt = await text('src/data/bodyArt.js');
 
   assert.match(html, /Profil biomécanique/);
   assert.match(html, /Carte corporelle interactive/);
-  assert.match(html, /body-map/);
+  assert.match(html, /body-art-front/);
+  assert.match(html, /body-art-back/);
+  assert.match(html, /body-hotspots/);
   assert.match(html, /data-zone="pecs"/);
   assert.match(html, /data-part="pec_claviculaire"/);
   assert.match(html, /data-part="vaste_lateral"/);
   assert.match(html, /id="zone-tabs"/);
   assert.match(html, /src\/biomech-profile\.js/);
-  assert.match(script, /ZONES/);
+  assert.match(script, /BODY_ART/);
+  assert.match(script, /loadBodyArtwork/);
   assert.match(script, /renderZone/);
   assert.match(script, /paintBody/);
+  assert.match(script, /body-hotspots/);
   assert.match(script, /Pectoraux/);
   assert.match(script, /Quadriceps/);
   assert.match(script, /reliability/);
-  assert.match(css, /biomech-grid/);
-  assert.match(css, /strength-hot/);
+  assert.match(bodyArt, /data:image\/webp;base64/);
+  assert.match(css, /body-art-frame/);
+  assert.match(css, /body-hotspots/);
+  assert.match(css, /hotspot\.strength-hot/);
   assert.match(css, /scan-ring/);
-  assert.match(css, /body-map\.is-back/);
+  assert.match(css, /body-stage\.is-back/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
