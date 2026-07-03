@@ -8,9 +8,9 @@
       name="description"
       content="Carte biomécanique interactive : points forts, points faibles, fiabilité des calibrations et analyse musculaire par zone."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux18" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux18" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux18" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux20" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux20" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux20" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
@@ -51,7 +51,7 @@
             <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
             <div class="data-quality-card">
               <strong>Qualité des données</strong>
-              <p>La page utilise les calibrations disponibles. Sans données réelles, elle affiche une démo réaliste pour montrer le fonctionnement.</p>
+              <p>La carte utilise les zones tracées manuellement dans Inkscape. Les formes sont regroupées ensuite par région musculaire.</p>
             </div>
           </aside>
 
@@ -61,51 +61,7 @@
               <button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button>
             </div>
             <div class="body-stage" id="body-stage">
-              <div class="body-art-frame" aria-hidden="true">
-                <img id="body-art-front" class="body-art body-art-front" alt="" />
-                <img id="body-art-back" class="body-art body-art-back" alt="" />
-              </div>
-
-              <svg class="body-hotspots" viewBox="0 0 256 384" role="img" aria-labelledby="body-title">
-                <title id="body-title">Carte interactive du profil biomécanique</title>
-                <g class="hotspot-layer hotspot-front">
-                  <path data-zone="pecs" data-part="pec_claviculaire" class="hotspot pecs" d="M76 88 C99 72 116 76 126 94 C112 109 89 109 71 99 Z" />
-                  <path data-zone="pecs" data-part="pec_claviculaire" class="hotspot pecs" d="M180 88 C157 72 140 76 130 94 C144 109 167 109 185 99 Z" />
-                  <path data-zone="pecs" data-part="pec_sternal" class="hotspot pecs" d="M70 103 C92 111 116 108 126 95 L126 126 C102 138 79 128 68 114 Z" />
-                  <path data-zone="pecs" data-part="pec_sternal" class="hotspot pecs" d="M186 103 C164 111 140 108 130 95 L130 126 C154 138 177 128 188 114 Z" />
-                  <path data-zone="pecs" data-part="pec_costal" class="hotspot pecs" d="M76 128 C96 145 114 144 126 130 L124 149 C100 156 82 146 72 134 Z" />
-                  <path data-zone="pecs" data-part="pec_costal" class="hotspot pecs" d="M180 128 C160 145 142 144 130 130 L132 149 C156 156 174 146 184 134 Z" />
-                  <ellipse data-zone="shoulders" data-part="deltoide_anterieur" class="hotspot shoulders" cx="59" cy="100" rx="20" ry="30" />
-                  <ellipse data-zone="shoulders" data-part="deltoide_anterieur" class="hotspot shoulders" cx="197" cy="100" rx="20" ry="30" />
-                  <ellipse data-zone="arms" data-part="biceps" class="hotspot arms" cx="45" cy="154" rx="15" ry="38" />
-                  <ellipse data-zone="arms" data-part="biceps" class="hotspot arms" cx="211" cy="154" rx="15" ry="38" />
-                  <path data-zone="arms" data-part="avant_bras" class="hotspot arms" d="M36 196 C52 201 54 236 41 254 C24 246 26 210 36 196Z" />
-                  <path data-zone="arms" data-part="avant_bras" class="hotspot arms" d="M220 196 C204 201 202 236 215 254 C232 246 230 210 220 196Z" />
-                  <path data-zone="core" data-part="abdos" class="hotspot core" d="M105 136 C117 130 139 130 151 136 C158 180 148 222 128 232 C108 222 98 180 105 136Z" />
-                  <ellipse data-zone="legs" data-part="vaste_lateral" class="hotspot legs" cx="95" cy="270" rx="20" ry="60" />
-                  <ellipse data-zone="legs" data-part="droit_femoral" class="hotspot legs" cx="115" cy="270" rx="13" ry="65" />
-                  <ellipse data-zone="legs" data-part="droit_femoral" class="hotspot legs" cx="141" cy="270" rx="13" ry="65" />
-                  <ellipse data-zone="legs" data-part="vaste_lateral" class="hotspot legs" cx="161" cy="270" rx="20" ry="60" />
-                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="94" cy="344" rx="15" ry="35" />
-                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="162" cy="344" rx="15" ry="35" />
-                </g>
-                <g class="hotspot-layer hotspot-back">
-                  <path data-zone="back" data-part="trapezes" class="hotspot back" d="M88 67 C105 92 151 92 168 67 C172 115 151 140 128 146 C105 140 84 115 88 67Z" />
-                  <path data-zone="back" data-part="grand_dorsal" class="hotspot back" d="M75 119 C105 129 123 160 123 204 C96 219 73 204 65 171 C62 146 65 128 75 119Z" />
-                  <path data-zone="back" data-part="grand_dorsal" class="hotspot back" d="M181 119 C151 129 133 160 133 204 C160 219 183 204 191 171 C194 146 191 128 181 119Z" />
-                  <ellipse data-zone="shoulders" data-part="deltoide_posterieur" class="hotspot shoulders" cx="59" cy="101" rx="20" ry="30" />
-                  <ellipse data-zone="shoulders" data-part="deltoide_posterieur" class="hotspot shoulders" cx="197" cy="101" rx="20" ry="30" />
-                  <ellipse data-zone="arms" data-part="triceps_long" class="hotspot arms" cx="45" cy="154" rx="15" ry="38" />
-                  <ellipse data-zone="arms" data-part="triceps_long" class="hotspot arms" cx="211" cy="154" rx="15" ry="38" />
-                  <path data-zone="core" data-part="lombaires" class="hotspot core" d="M106 174 C120 184 136 184 150 174 C154 211 145 234 128 244 C111 234 102 211 106 174Z" />
-                  <ellipse data-zone="glutes" data-part="grand_fessier" class="hotspot glutes" cx="106" cy="234" rx="29" ry="32" />
-                  <ellipse data-zone="glutes" data-part="grand_fessier" class="hotspot glutes" cx="150" cy="234" rx="29" ry="32" />
-                  <ellipse data-zone="legs" data-part="ischios" class="hotspot legs" cx="98" cy="294" rx="19" ry="58" />
-                  <ellipse data-zone="legs" data-part="ischios" class="hotspot legs" cx="158" cy="294" rx="19" ry="58" />
-                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="96" cy="350" rx="16" ry="34" />
-                  <ellipse data-zone="calves" data-part="gastrocnemien" class="hotspot calves" cx="160" cy="350" rx="16" ry="34" />
-                </g>
-              </svg>
+              <div id="body-map-mount" class="user-body-map"></div>
               <div class="scan-ring" aria-hidden="true"></div>
             </div>
           </section>
@@ -141,7 +97,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/biomech-profile.js?v=20260702-ux18"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux18"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260703-ux20"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux20"></script>
   </body>
 </html>
