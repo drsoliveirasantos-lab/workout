@@ -91,10 +91,16 @@ function rebuildWeightSelect({ weightSelect, familyId, exerciseName, defaultValu
   const previous = Number(weightSelect.value);
   const options = getWeightOptions(familyId, exerciseName);
   const values = options.values;
+  const stringValues = values.map((value) => String(value));
+  const signature = `${familyId}|${normalize(exerciseName)}|${values.join(',')}`;
+
+  if (weightSelect.dataset.weightRangeSignature === signature && stringValues.includes(weightSelect.value)) return;
+
   const nextValue = Number.isFinite(previous) && previous >= values[0] && previous <= values[values.length - 1]
     ? previous
     : defaultValue;
   weightSelect.innerHTML = values.map((value) => `<option value="${value}" ${value === nextValue ? 'selected' : ''}>${formatNumber(value)} kg</option>`).join('');
+  weightSelect.dataset.weightRangeSignature = signature;
 }
 
 function getWeightOptions(familyId, exerciseName = '') {
