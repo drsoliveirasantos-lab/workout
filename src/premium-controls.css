@@ -1,0 +1,213 @@
+:root {
+  --control-bg-top: rgba(18, 32, 58, 0.96);
+  --control-bg-bottom: rgba(6, 13, 28, 0.94);
+  --control-border: rgba(125, 211, 252, 0.26);
+  --control-border-strong: rgba(45, 212, 255, 0.72);
+  --control-glow: rgba(45, 212, 255, 0.16);
+}
+
+.premium-control-field {
+  position: relative;
+  isolation: isolate;
+  gap: 0.55rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 22px;
+  color: rgba(231, 241, 255, 0.9);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(45, 212, 255, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 14px 32px rgba(0, 0, 0, 0.16);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+
+.premium-control-field:hover,
+.premium-control-field:focus-within {
+  border-color: rgba(125, 211, 252, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 42px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(45, 212, 255, 0.08);
+}
+
+.premium-control-field:focus-within {
+  transform: translateY(-1px);
+}
+
+.premium-control-field::before {
+  content: attr(data-control-icon);
+  position: absolute;
+  z-index: 2;
+  left: 1.08rem;
+  bottom: 1.18rem;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-radius: 0.75rem;
+  color: #85e8ff;
+  background: rgba(45, 212, 255, 0.08);
+  box-shadow: inset 0 0 16px rgba(45, 212, 255, 0.06), 0 0 18px rgba(45, 212, 255, 0.08);
+  font-size: 0.92rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.premium-control-field:has(select)::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  right: 1.22rem;
+  bottom: 1.72rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-right: 2px solid rgba(125, 211, 252, 0.86);
+  border-bottom: 2px solid rgba(125, 211, 252, 0.86);
+  transform: rotate(45deg);
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(45, 212, 255, 0.5));
+}
+
+.premium-control-field > span:first-child,
+.premium-control-field > .field-label-with-help,
+.premium-control-field > :not(select):not(input):not(textarea):first-child {
+  color: rgba(229, 239, 255, 0.9);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.premium-control-field select,
+.premium-control-field input:not([type='hidden']),
+.premium-control-field textarea {
+  min-height: 56px;
+  border: 1px solid var(--control-border);
+  border-radius: 18px;
+  color: #f8fbff;
+  background:
+    linear-gradient(180deg, var(--control-bg-top), var(--control-bg-bottom)),
+    rgba(8, 14, 28, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -16px 24px rgba(0, 0, 0, 0.12),
+    0 10px 26px rgba(0, 0, 0, 0.22);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    transform 0.12s ease;
+}
+
+.premium-control-field select,
+.premium-control-field input:not([type='hidden']) {
+  padding: 0 3rem 0 3.05rem;
+}
+
+.premium-control-field textarea {
+  min-height: 92px;
+  padding: 1rem 1rem 1rem 3.05rem;
+}
+
+.premium-control-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.premium-control-field select:hover,
+.premium-control-field input:not([type='hidden']):hover,
+.premium-control-field textarea:hover {
+  border-color: rgba(125, 211, 252, 0.46);
+}
+
+.premium-control-field select:focus,
+.premium-control-field input:not([type='hidden']):focus,
+.premium-control-field textarea:focus {
+  border-color: var(--control-border-strong);
+  box-shadow:
+    0 0 0 4px var(--control-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065),
+    0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.premium-control-field select:active,
+.premium-control-field input:not([type='hidden']):active {
+  transform: scale(0.995);
+}
+
+.premium-control-field select option {
+  color: #07111f;
+  background: #eaf7ff;
+  font-weight: 700;
+}
+
+.inline-calibration-grid .premium-control-field,
+.manual-calibration-panel .premium-control-field {
+  padding: 0.58rem;
+  border-radius: 18px;
+}
+
+.inline-calibration-grid .premium-control-field::before,
+.manual-calibration-panel .premium-control-field::before {
+  left: 0.88rem;
+  bottom: 1.02rem;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 0.62rem;
+  font-size: 0.78rem;
+}
+
+.inline-calibration-grid .premium-control-field:has(select)::after,
+.manual-calibration-panel .premium-control-field:has(select)::after {
+  right: 1rem;
+  bottom: 1.5rem;
+}
+
+.inline-calibration-grid .premium-control-field select,
+.manual-calibration-panel .premium-control-field select {
+  min-height: 48px;
+  border-radius: 14px;
+  padding-left: 2.65rem;
+}
+
+.select-hint,
+.premium-control-field small {
+  color: rgba(170, 179, 197, 0.86);
+}
+
+@media (max-width: 640px) {
+  .premium-control-field {
+    padding: 0.62rem;
+    border-radius: 19px;
+  }
+
+  .premium-control-field select,
+  .premium-control-field input:not([type='hidden']) {
+    min-height: 54px;
+    padding-left: 2.85rem;
+    font-size: 0.96rem;
+  }
+
+  .premium-control-field::before {
+    left: 0.9rem;
+    bottom: 1.08rem;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 0.65rem;
+  }
+
+  .premium-control-field:has(select)::after {
+    right: 1rem;
+    bottom: 1.58rem;
+  }
+}
