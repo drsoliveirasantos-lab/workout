@@ -54,7 +54,7 @@ test('premium controls include custom dropdown menus for short selects', async (
   assert.match(ux, /custom-select-native/);
   assert.match(ux, /premium-controls\.css\?v=20260703-select2/);
   assert.match(ux, /loadVisualPickers/);
-  assert.match(ux, /visual-pickers\.js\?v=20260703-picker3/);
+  assert.match(ux, /visual-pickers\.js\?v=20260703-picker4/);
   assert.match(ux, /sex', 'physicalProfile/);
   assert.match(ux, /premium-control-field/);
   assert.match(css, /--control-bg-top/);
@@ -67,18 +67,20 @@ test('premium controls include custom dropdown menus for short selects', async (
   assert.match(workflow, /dist\/src\/visual-pickers\.js/);
 });
 
-test('visual pickers use compact steppers and collapsed profile dropdowns', async () => {
+test('visual pickers use ultra compact steppers and collapsed profile dropdowns', async () => {
   const visual = await text('src/visual-pickers.js');
   const css = await text('src/visual-pickers.css');
 
   assert.match(visual, /pickerConfig/);
   assert.match(visual, /heightCm/);
-  assert.match(visual, /number-stepper/);
+  assert.match(visual, /compact-number-control/);
+  assert.match(visual, /number-stepper-compact/);
   assert.match(visual, /visualChoiceMeta/);
   assert.match(visual, /physicalProfile/);
   assert.match(visual, /visual-choice-dropdown/);
   assert.match(visual, /visual-choice-menu/);
   assert.match(visual, /removeNativeCustomSelect/);
+  assert.match(css, /compact-number-control/);
   assert.match(css, /number-stepper-display/);
   assert.match(css, /visual-choice-dropdown/);
   assert.match(css, /visual-choice-trigger/);
