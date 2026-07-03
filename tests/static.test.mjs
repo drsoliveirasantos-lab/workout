@@ -42,6 +42,22 @@ test('plan page exposes quick mode, resume action and local workout tracking', a
   assert.match(homeResume, /hasSavedPlan/);
 });
 
+test('premium controls are injected and styled for fitness UI', async () => {
+  const ux = await text('src/ux-polish.js');
+  const css = await text('src/premium-controls.css');
+  const workflow = await text('.github/workflows/validate.yml');
+
+  assert.match(ux, /injectPremiumControlStyles/);
+  assert.match(ux, /decoratePremiumControls/);
+  assert.match(ux, /premium-controls\.css\?v=20260703-select1/);
+  assert.match(ux, /premium-control-field/);
+  assert.match(css, /--control-bg-top/);
+  assert.match(css, /appearance: none/);
+  assert.match(css, /var\(--control-border-strong\)/);
+  assert.match(css, /data-control-icon/);
+  assert.match(workflow, /dist\/src\/premium-controls\.css/);
+});
+
 test('sources page explains the public method without exposing exact internal coefficients', async () => {
   const sources = await text('sources.html');
 
