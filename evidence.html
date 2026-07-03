@@ -6,10 +6,10 @@
     <title>Evidence base — Workout Nykuto</title>
     <meta
       name="description"
-      content="Base scientifique de Workout Nykuto : formules e1RM, Training Max, progression, nutrition et garde-fous."
+      content="Base scientifique publique de Workout Nykuto : repères, limites et transparence sans documentation interne complète."
     />
-    <link rel="stylesheet" href="src/styles.css" />
-    <link rel="stylesheet" href="src/glossary.css" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-public-evidence1" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-public-evidence1" />
   </head>
   <body>
     <div class="page-shell">
@@ -30,90 +30,90 @@
       <main>
         <section class="panel" aria-labelledby="evidence-title">
           <p class="eyebrow">Evidence base</p>
-          <h1 id="evidence-title">Formules, règles et limites du moteur</h1>
+          <h1 id="evidence-title">Repères scientifiques et limites du moteur</h1>
           <p class="muted">
-            Cette page explique les règles utilisées par le MVP. Clique sur les petits termes soulignés pour afficher leur définition.
+            Cette page présente les principes publics utilisés par Workout Nykuto. La documentation technique complète,
+            les coefficients internes détaillés et les règles d’implémentation ne sont pas publiés sur le site.
           </p>
         </section>
 
         <section class="panel result-section" aria-labelledby="training-evidence">
           <h2 id="training-evidence">1. Estimation de charge</h2>
+          <p>
+            Le moteur utilise des formules publiques d’estimation de répétition maximale, comme Epley et Brzycki, à partir
+            d’une série sous-maximale. Ces formules servent uniquement à créer un point de départ, jamais une vérité absolue.
+          </p>
           <div class="two-columns">
             <article class="mini-card">
-              <p class="eyebrow">Epley</p>
-              <h3><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button> = charge × (1 + <button class="glossary-term" type="button" data-glossary="reps">reps</button> / 30)</h3>
-              <p class="muted">Formule simple pour estimer une répétition maximale à partir d'une <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>.</p>
+              <p class="eyebrow">Principe</p>
+              <h3>Charge + répétitions + réserve perçue</h3>
+              <p class="muted">
+                Une série proche de l’échec technique donne une estimation plus stable qu’une série très facile ou très longue.
+              </p>
             </article>
             <article class="mini-card">
-              <p class="eyebrow">Brzycki</p>
-              <h3><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button> = charge × 36 / (37 - <button class="glossary-term" type="button" data-glossary="reps">reps</button>)</h3>
-              <p class="muted">Formule alternative. Le MVP moyenne Epley et Brzycki pour éviter de dépendre d'une seule estimation.</p>
+              <p class="eyebrow">Prudence</p>
+              <h3>Plage de travail plutôt qu’une charge unique</h3>
+              <p class="muted">
+                L’application propose une fourchette et demande d’ajuster selon la technique, le RIR réel et les sensations.
+              </p>
             </article>
           </div>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="transfer-evidence">
+          <h2 id="transfer-evidence">2. Transfert entre exercices</h2>
           <p>
-            Le moteur transforme ensuite l'e1RM en <strong><button class="glossary-term" type="button" data-glossary="trainingMax">Training Max</button> à 90 %</strong>. C'est volontairement prudent,
-            surtout pour débutants et intermédiaires.
+            Deux exercices ne sont reliés que s’ils partagent une logique suffisamment proche : muscles principaux,
+            muscles secondaires, direction du mouvement, mécanique, stabilité et type de matériel. Plus ces éléments se
+            ressemblent, plus l’estimation est considérée comme fiable.
           </p>
-          <ul class="clean-list">
-            <li><strong>3-10 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité haute.</li>
-            <li><strong>11-15 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité moyenne.</li>
-            <li><strong>&gt;15 <button class="glossary-term" type="button" data-glossary="reps">répétitions</button> :</strong> fiabilité basse.</li>
-          </ul>
+          <p>
+            Quand la proximité biomécanique est trop faible, le moteur ne force pas une estimation chiffrée. Il recommande
+            plutôt une sélection de charge par RIR, ce qui évite de donner une fausse précision.
+          </p>
         </section>
 
         <section class="panel result-section" aria-labelledby="progression-evidence">
-          <h2 id="progression-evidence">2. Progression</h2>
+          <h2 id="progression-evidence">3. Progression</h2>
           <p>
-            Le MVP utilise une <button class="glossary-term" type="button" data-glossary="doubleProgression">double progression</button> : on augmente la charge seulement quand toutes les séries atteignent
-            le haut de la fourchette avec une technique propre.
+            Workout Nykuto utilise une logique de progression progressive : augmenter la charge seulement quand la plage de
+            répétitions cible est atteinte avec une technique propre, sans douleur et avec une récupération suffisante.
           </p>
           <ul class="clean-list">
-            <li><strong>Haut du corps :</strong> +2 à +2,5 kg ou +2,5 à 5 %.</li>
-            <li><strong>Bas du corps :</strong> +2,5 à +5 kg ou +5 à 10 %.</li>
-            <li><strong>Fatigue, douleur ou baisse nette :</strong> maintien ou <button class="glossary-term" type="button" data-glossary="deload">deload</button>.</li>
+            <li><strong>Technique propre :</strong> priorité avant l’augmentation de charge.</li>
+            <li><strong>Fatigue élevée :</strong> maintien ou réduction temporaire du volume.</li>
+            <li><strong>Douleur inhabituelle :</strong> prudence et recommandation d’avis professionnel si nécessaire.</li>
           </ul>
         </section>
 
         <section class="panel result-section" aria-labelledby="nutrition-evidence">
-          <h2 id="nutrition-evidence">3. Nutrition</h2>
+          <h2 id="nutrition-evidence">4. Nutrition</h2>
           <p>
-            Les calories sont estimées avec Mifflin-St Jeor, puis ajustées selon l'activité et l'objectif.
+            Les repères nutritionnels s’appuient sur des équations publiques d’estimation du métabolisme de base et sur des
+            plages de calories et protéines couramment utilisées chez les adultes actifs. Ces valeurs sont des repères
+            personnalisables, pas une prescription médicale.
           </p>
-          <div class="two-columns">
-            <article class="mini-card">
-              <p class="eyebrow">Homme</p>
-              <h3><button class="glossary-term" type="button" data-glossary="bmr">BMR</button> = 10×kg + 6,25×cm - 5×âge + 5</h3>
-            </article>
-            <article class="mini-card">
-              <p class="eyebrow">Femme</p>
-              <h3><button class="glossary-term" type="button" data-glossary="bmr">BMR</button> = 10×kg + 6,25×cm - 5×âge - 161</h3>
-            </article>
-          </div>
-          <ul class="clean-list">
-            <li><strong>Perte de gras :</strong> <button class="glossary-term" type="button" data-glossary="deficit">déficit</button> modéré de 300-500 kcal/jour.</li>
-            <li><strong>Prise de muscle :</strong> <button class="glossary-term" type="button" data-glossary="surplus">surplus</button> modéré de 150-300 kcal/jour.</li>
-            <li><strong>Protéines utilisateur actif :</strong> repère de 1,4 à 2,0 g/kg/jour selon objectif.</li>
-          </ul>
         </section>
 
         <section class="panel result-section" aria-labelledby="limits-evidence">
-          <h2 id="limits-evidence">4. Limites et sécurité</h2>
+          <h2 id="limits-evidence">5. Limites et sécurité</h2>
           <p>
-            Le site ne remplace pas un médecin, un kinésithérapeute, un diététicien ou un coach diplômé.
-            Il doit recommander un avis professionnel si l'utilisateur déclare une douleur thoracique, un malaise,
-            une pathologie cardiaque, une hypertension non contrôlée, une grossesse, une maladie rénale ou métabolique,
-            une blessure récente ou une douleur aiguë à l'effort.
+            Le site ne remplace pas un médecin, un kinésithérapeute, un diététicien ou un coach diplômé. Il doit recommander
+            un avis professionnel si l’utilisateur déclare une douleur thoracique, un malaise, une pathologie cardiaque,
+            une hypertension non contrôlée, une grossesse, une maladie rénale ou métabolique, une blessure récente ou une
+            douleur aiguë à l’effort.
           </p>
           <p class="muted">
-            Version documentaire complète : <a href="docs/evidence.md">docs/evidence.md</a>
+            Pour les formules publiques et les références externes, consulte la page <a href="sources.html">Sources</a>.
           </p>
         </section>
       </main>
 
       <footer class="site-footer">
-        <p>Les formules donnent des repères. L'évolution réelle dépend de la technique, récupération, sommeil, nutrition et contexte médical.</p>
+        <p>Les formules donnent des repères. L’évolution réelle dépend de la technique, récupération, sommeil, nutrition et contexte médical.</p>
       </footer>
     </div>
-    <script type="module" src="src/glossary.js"></script>
+    <script type="module" src="src/glossary.js?v=20260703-public-evidence1"></script>
   </body>
 </html>
