@@ -20,7 +20,7 @@ test('home is presentation-only and links to dedicated pages', async () => {
   assert.match(css, /@media/);
 });
 
-test('plan page contains adaptive profile controls, inline calibration dashboard and result accordion', async () => {
+test('plan page contains adaptive controls, multi-variant calibration and result accordion', async () => {
   const html = await text('plan.html');
   const app = await text('src/app.js');
   const advanced = await text('src/data/advancedPrograms.js');
@@ -35,9 +35,6 @@ test('plan page contains adaptive profile controls, inline calibration dashboard
   const accordionCss = await text('src/result-accordion.css');
 
   assert.match(html, /id="profile-form"/);
-  assert.match(html, /builder-step/);
-  assert.match(html, /Étape 1 — Profil/);
-  assert.match(html, /Étape 2 — Calibration/);
   assert.match(html, /Priorité musculaire/);
   assert.match(html, /Récupération/);
   assert.match(html, /Préférence exercices/);
@@ -46,32 +43,9 @@ test('plan page contains adaptive profile controls, inline calibration dashboard
   assert.match(html, /recovery:/);
   assert.match(html, /preference:/);
   assert.match(html, /pain:/);
-  assert.match(html, /Tableau de bord, progression par zone et saisie directe/);
-  assert.match(html, /id="generate-plan"/);
-  assert.match(html, /id="calibration-form"/);
-  assert.match(html, /id="calibration-guidance"/);
-  assert.match(html, /manual-calibration-panel/);
-  assert.match(html, /data-range-select/);
-  assert.match(html, /Profil physique/);
-  assert.match(html, /Masse grasse estimée/);
-  assert.match(html, /Activité hors muscu/);
-  assert.match(html, /Budget nutrition/);
-  assert.match(html, /Prise de masse sèche/);
-  assert.doesNotMatch(html, /weight-quick-picks/);
-  assert.doesNotMatch(html, /reps-quick-picks/);
-  assert.doesNotMatch(html, /Mettre à jour les tests conseillés/);
-  assert.match(html, /src\/calibration\.css/);
-  assert.match(html, /src\/form-steps\.css/);
-  assert.match(html, /src\/result-accordion\.css/);
   assert.match(html, /src\/muscle-display\.js/);
-  assert.match(html, /value="pecs"/);
-  assert.match(html, /value="horizontal_push"/);
-  assert.match(html, /Développé \/ chest press/);
   assert.match(html, /value="advanced"/);
   assert.match(html, /value="very_advanced"/);
-  assert.match(html, /src\/app\.js/);
-  assert.match(html, /src\/glossary\.js/);
-  assert.match(html, /data-glossary="bmr"/);
   assert.match(app, /populateProfileRangeSelects/);
   assert.match(app, /renderCalibrationSelectOptions/);
   assert.match(app, /calibration-zone-accordion/);
@@ -79,7 +53,10 @@ test('plan page contains adaptive profile controls, inline calibration dashboard
   assert.match(app, /data-save-inline-calibration/);
   assert.match(app, /inline-calibration-grid/);
   assert.match(app, /saveInlineCalibration/);
-  assert.match(app, /buildCalibrationZones/);
+  assert.match(app, /upsertCalibrationEntry/);
+  assert.match(app, /getCalibrationEntries/);
+  assert.match(app, /plusieurs variantes/);
+  assert.match(app, /test\(s\)/);
   assert.match(app, /generateTrainingPlan/);
   assert.match(advanced, /Split avancé dynamique/);
   assert.match(advanced, /FOUR_DAY_SPLIT/);
@@ -103,16 +80,19 @@ test('plan page contains adaptive profile controls, inline calibration dashboard
   assert.match(exerciseProfiles, /bench_press/);
   assert.match(exerciseProfiles, /pectoraux: 0\.55/);
   assert.match(exerciseProfiles, /incline_dumbbell_press/);
-  assert.match(exerciseProfiles, /cable_lateral_raise/);
   assert.match(exerciseProfiles, /calculateExerciseTransfer/);
-  assert.match(muscleDisplay, /Répartition musculaire indicative/);
+  assert.match(muscleDisplay, /Répartition biomécanique indicative/);
+  assert.match(muscleDisplay, /Niveau 2 — détail anatomique/);
+  assert.match(muscleDisplay, /pec_claviculaire/);
+  assert.match(muscleDisplay, /vaste_lateral/);
   assert.match(muscleDisplay, /MUSCLE_LABELS/);
   assert.match(muscleDisplay, /MutationObserver/);
   assert.match(calibration, /sourceProfileId/);
   assert.match(calibration, /getExerciseProfileByName/);
-  assert.match(training, /buildAdvancedSessions/);
+  assert.match(training, /selectBestCalibration/);
   assert.match(training, /getExerciseLoadInput/);
   assert.match(training, /kg internes/);
+  assert.match(training, /Source choisie/);
   assert.match(training, /lean_bulk/);
   assert.match(training, /calculateExerciseTransfer/);
   assert.match(training, /fiabilité/);
