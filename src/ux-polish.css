@@ -46,6 +46,157 @@
   backdrop-filter: blur(14px);
 }
 
+.mode-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1rem 0 0.75rem;
+}
+
+.mode-pill {
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.045);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.mode-pill.is-active {
+  color: var(--text);
+  border-color: rgba(45, 212, 255, 0.72);
+  background: rgba(45, 212, 255, 0.14);
+  box-shadow: 0 0 20px rgba(45, 212, 255, 0.12);
+}
+
+.plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.ux-mode-quick .calibration-step {
+  display: none;
+}
+
+.ux-mode-quick .generation-panel {
+  border-color: rgba(45, 212, 255, 0.32);
+  background: linear-gradient(135deg, rgba(45, 212, 255, 0.08), rgba(255, 255, 255, 0.03));
+}
+
+.saved-state-pill {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.75rem;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid rgba(45, 212, 255, 0.32);
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(45, 212, 255, 0.1);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.today-workout {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.today-workout-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.today-workout-header h3 {
+  margin: 0.2rem 0;
+  font-size: clamp(1.25rem, 4vw, 1.8rem);
+}
+
+.today-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.today-exercise-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.today-exercise {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.today-exercise.is-done {
+  border-color: rgba(34, 197, 94, 0.42);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.today-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.7rem;
+  align-items: start;
+  cursor: pointer;
+}
+
+.today-check input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.1rem;
+  accent-color: var(--brand);
+}
+
+.today-check span {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.today-check small,
+.feedback-advice {
+  color: var(--muted);
+}
+
+.feedback-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding-left: 1.9rem;
+}
+
+.feedback-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.feedback-chip.is-active {
+  color: var(--text);
+  border-color: rgba(45, 212, 255, 0.6);
+  background: rgba(45, 212, 255, 0.14);
+}
+
+.feedback-advice {
+  margin: 0;
+  padding-left: 1.9rem;
+  font-size: 0.86rem;
+}
+
 .compact-help,
 .session-notes,
 .exercise-details-compact {
@@ -211,7 +362,16 @@
     line-height: 1.4;
   }
 
+  .mode-switch,
+  .plan-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mode-pill,
   .panel[aria-labelledby='page-title'] .btn {
+    width: 100%;
     min-height: 42px;
     padding-inline: 15px;
     font-size: 0.92rem;
@@ -241,6 +401,23 @@
 
   .result-panel {
     padding: 18px;
+  }
+
+  .today-workout-header {
+    display: grid;
+  }
+
+  .today-nav {
+    justify-content: stretch;
+  }
+
+  .today-nav .btn {
+    flex: 1;
+  }
+
+  .feedback-row,
+  .feedback-advice {
+    padding-left: 0;
   }
 
   .result-generated-compact {
