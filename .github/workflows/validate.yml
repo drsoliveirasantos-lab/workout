@@ -49,4 +49,4 @@ jobs:
           test -f dist/src/data/movementFamilies.js
           test -f dist/src/data/exerciseProfiles.js
           test -f dist/src/engine/calibration.js
-          test -f dist/docs/evidence.md
+          test ! -e dist/docs/evidence.md
