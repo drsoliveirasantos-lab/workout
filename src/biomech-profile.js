@@ -1,4 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent5';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent6';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -61,7 +61,7 @@ function collectView(doc, candidates, options) {
   const image = imageChoice?.images[options.view === 'front' ? imageChoice.images.length - 1 : 0] || allImages[options.imageIndex] || allImages[0];
   const pathNodes = zoneChoice?.paths.length ? zoneChoice.paths : [...doc.querySelectorAll('path')];
   if (!image || !pathNodes.length) throw new Error(`Vue ${options.view} incomplète: image ou zones introuvable`);
-  const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height') };
+  const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height'), transform: collectTransformChain(image) };
   const seen = new Map();
   const paths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter(Boolean);
   return { label: options.view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
@@ -92,11 +92,15 @@ function normalizePath(path, view, seen) {
   const baseId = `${view}_${part}_${side || 'center'}`;
   const count = (seen.get(baseId) || 0) + 1;
   seen.set(baseId, count);
-  return { id: count === 1 ? baseId : `${baseId}_${count}`, zone, part, name, rawLabel, side, d };
+  return { id: count === 1 ? baseId : `${baseId}_${count}`, zone, part, name, rawLabel, side, d, transform: collectTransformChain(path) };
 }
 function renderBodySvg(view, data) {
-  const paths = data.paths.map((path) => `<path id="${path.id}" class="hotspot ${path.zone}" data-zone="${path.zone}" data-part="${path.part}" data-side="${path.side}" d="${path.d}"><title>${path.name}</title></path>`).join('');
-  return `<svg class="body-map-svg body-map-${view}" viewBox="${data.viewBox.join(' ')}" role="img" aria-label="Carte musculaire ${data.label}"><image class="body-map-image" href="${data.image.href}" x="${data.image.x}" y="${data.image.y}" width="${data.image.width}" height="${data.image.height}" preserveAspectRatio="xMidYMid meet"></image><g class="hotspot-layer hotspot-${view}">${paths}</g></svg>`;
+  const imageTransform = data.image.transform ? ` transform="${escapeAttr(data.image.transform)}"` : '';
+  const paths = data.paths.map((path) => {
+    const transform = path.transform ? ` transform="${escapeAttr(path.transform)}"` : '';
+    return `<path id="${path.id}" class="hotspot ${path.zone}" data-zone="${path.zone}" data-part="${path.part}" data-side="${path.side}" d="${path.d}"${transform}><title>${path.name}</title></path>`;
+  }).join('');
+  return `<svg class="body-map-svg body-map-${view}" viewBox="${data.viewBox.join(' ')}" role="img" aria-label="Carte musculaire ${data.label}"><image class="body-map-image" href="${data.image.href}" x="${data.image.x}" y="${data.image.y}" width="${data.image.width}" height="${data.image.height}" preserveAspectRatio="xMidYMid meet"${imageTransform}></image><g class="hotspot-layer hotspot-${view}">${paths}</g></svg>`;
 }
 function classifyLabel(label) {
   const text = normalizeText(label);
@@ -141,7 +145,18 @@ function part(zone, partName, name) { return { zone, part: partName, name }; }
 function normalizeText(value) { return (value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
 function inferSide(label) { const last = normalizeText(label).split(' ').at(-1); if (['d', 'r', 'right', 'droite'].includes(last)) return 'right'; if (['g', 'i', 'l', 'left', 'gauche'].includes(last)) return 'left'; return ''; }
 function numberAttr(node, name) { return Number.parseFloat(node.getAttribute(name) || '0'); }
+function collectTransformChain(node) {
+  const transforms = [];
+  let current = node;
+  while (current && current.nodeType === 1 && current.tagName.toLowerCase() !== 'svg') {
+    const transform = current.getAttribute('transform');
+    if (transform) transforms.unshift(transform);
+    current = current.parentElement;
+  }
+  return transforms.join(' ');
+}
 function escapeHtml(value) { return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]); }
+function escapeAttr(value) { return escapeHtml(value || ''); }
 function statusForScore(score) { if (score >= 75) return 'Fort'; if (score >= 60) return 'Équilibré'; return 'À renforcer'; }
 function statusClass(score) { if (score >= 75) return 'strong'; if (score >= 60) return 'balanced'; return 'weak'; }
 function renderTabs() {
