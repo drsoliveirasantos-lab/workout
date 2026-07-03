@@ -60,7 +60,7 @@ function injectPremiumControlStyles() {
 function loadVisualPickers() {
   if (document.querySelector('script[data-visual-pickers]')) return;
   const script = document.createElement('script');
-  script.src = 'src/visual-pickers.js?v=20260703-picker3';
+  script.src = 'src/visual-pickers.js?v=20260703-picker4';
   script.dataset.visualPickers = 'true';
   script.defer = true;
   document.body.appendChild(script);
