@@ -243,6 +243,94 @@
     padding: 18px;
   }
 
+  .result-generated-compact {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .result-generated-compact .result-header {
+    margin-bottom: 12px;
+  }
+
+  .result-generated-compact .result-header .eyebrow {
+    margin-bottom: 8px;
+    font-size: 0.64rem;
+    letter-spacing: 0.13em;
+  }
+
+  .result-generated-compact .result-header h2 {
+    margin-bottom: 8px;
+    font-size: clamp(1.55rem, 8vw, 2.15rem);
+    line-height: 1.08;
+    letter-spacing: -0.055em;
+  }
+
+  .result-generated-compact .result-header p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .result-generated-compact .accordion-stack {
+    gap: 10px;
+  }
+
+  .result-generated-compact .accordion-section {
+    border-radius: 16px;
+  }
+
+  .result-generated-compact .accordion-summary {
+    min-height: 48px;
+    padding: 11px 12px;
+    gap: 3px;
+  }
+
+  .result-generated-compact .accordion-summary span {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  .result-generated-compact .accordion-summary small {
+    font-size: 0.76rem;
+  }
+
+  .result-generated-compact .accordion-summary::after {
+    width: 30px;
+    height: 30px;
+    right: 10px;
+    top: 10px;
+  }
+
+  .result-generated-compact .accordion-content {
+    padding: 0 12px 12px;
+    gap: 10px;
+  }
+
+  .result-generated-compact .metric-grid {
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .result-generated-compact .metric {
+    padding: 11px;
+    border-radius: 14px;
+  }
+
+  .result-generated-compact .metric strong {
+    font-size: 1.18rem;
+  }
+
+  .result-generated-compact .alert {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .result-generated-compact .alert p {
+    margin-bottom: 0;
+    font-size: 0.94rem;
+    line-height: 1.4;
+  }
+
   .exercise-list {
     gap: 10px;
   }
@@ -275,5 +363,9 @@
   .nav a {
     font-size: 0.82rem;
     padding-inline: 9px;
+  }
+
+  .result-generated-compact .result-header h2 {
+    font-size: clamp(1.38rem, 7.5vw, 1.9rem);
   }
 }
