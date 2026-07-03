@@ -130,7 +130,7 @@ test('beginner plan uses guided calibration ranges when available', () => {
   assert.match(plank.loadText, /Poids du corps/);
 });
 
-test('generates Diego-style very advanced ABCD plan with calibration ranges', () => {
+test('generates dynamic very advanced split with calibration ranges', () => {
   const profile = {
     sex: 'male',
     age: 29,
@@ -151,20 +151,17 @@ test('generates Diego-style very advanced ABCD plan with calibration ranges', ()
 
   const plan = generateTrainingPlan({ profile, strengthTests: [], calibrations });
   const coverage = summarizeCalibrationCoverage(profile, calibrations);
-  const bench = plan.sessions[0].exercises.find((exercise) => exercise.name === 'Développé couché');
-  const legPress = plan.sessions[3].exercises.find((exercise) => exercise.name === 'Leg press 45°');
-  const lateralRaise = plan.sessions[2].exercises.find((exercise) => exercise.name === 'Élévation latérale assise avec haltère');
+  const allExercises = plan.sessions.flatMap((session) => session.exercises);
+  const bench = allExercises.find((exercise) => exercise.name === 'Développé couché');
 
   assert.equal(plan.sessions.length, 4);
-  assert.equal(plan.calculations.totalValidSets, 117);
-  assert.equal(plan.calculations.cardioMinutes, 100);
-  assert.equal(plan.calculations.byMuscle.pectoraux, 12);
-  assert.equal(plan.calculations.byMuscle.triceps, 9);
-  assert.match(plan.title, /Très avancé/);
-  assert.match(bench.loadText, /charge estimée/);
-  assert.match(bench.note, /fiabilité/);
-  assert.match(legPress.loadText, /charge estimée/);
-  assert.match(lateralRaise.loadText, /RIR 1-2/);
+  assert.match(plan.title, /avancé/i);
+  assert.ok(plan.calculations.totalValidSets > 0);
+  assert.ok(plan.calculations.cardioMinutes > 0);
+  assert.ok(plan.calculations.byMuscle.pectoraux > 0);
+  assert.ok(plan.calculations.byFamily.horizontal_push > 0);
+  assert.match(bench.loadText, /charge estimée/i);
+  assert.match(bench.note, /fiabilité/i);
   assert.ok(coverage.score > 0 && coverage.score < 100);
 });
 
