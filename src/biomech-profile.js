@@ -1,5 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent3';
-const LEGACY_BODY_MAP_LOADER_MARKERS = 'loadSvgTextFromZip extractFirstZipFile';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent4';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -39,24 +38,52 @@ async function loadDirectSvgText(url) {
   return text;
 }
 function buildMapFromSvgDocument(doc) {
+  const candidates = collectLayerCandidates(doc);
   return {
-    front: collectView(doc, 'front', 'zones_front', ['image_reference_front', 'image_reference_back copy']),
-    back: collectView(doc, 'back', 'zones_back', ['image_reference_back'])
+    front: collectView(doc, candidates, {
+      view: 'front',
+      imageAliases: ['image_reference_front', 'image reference front', 'front', 'avant', 'image_reference_back copy'],
+      zoneAliases: ['zones_front', 'zones front', 'front', 'avant'],
+      imageIndex: 1,
+      zoneIndex: 1
+    }),
+    back: collectView(doc, candidates, {
+      view: 'back',
+      imageAliases: ['image_reference_back', 'image reference back', 'back', 'arriere', 'arrière', 'posterior'],
+      zoneAliases: ['zones_back', 'zones back', 'back', 'arriere', 'arrière', 'posterior'],
+      imageIndex: 0,
+      zoneIndex: 0
+    })
   };
 }
-function collectView(doc, view, zoneLayerName, imageLayerNames) {
-  const zoneLayer = findLayer(doc, zoneLayerName);
-  const imageLayer = findLayer(doc, imageLayerNames);
-  const image = imageLayer?.querySelector('image');
-  if (!zoneLayer || !image) throw new Error(`Vue ${view} incomplète: calque image ou zones introuvable`);
+function collectView(doc, candidates, options) {
+  const imageChoice = pickLayer(candidates.filter((candidate) => candidate.images.length), options.imageAliases, options.imageIndex);
+  const zoneChoice = pickLayer(candidates.filter((candidate) => candidate.paths.length), options.zoneAliases, options.zoneIndex);
+  const allImages = [...doc.querySelectorAll('image')];
+  const image = imageChoice?.images[options.view === 'front' ? imageChoice.images.length - 1 : 0] || allImages[options.imageIndex] || allImages[0];
+  const pathNodes = zoneChoice?.paths.length ? zoneChoice.paths : [...doc.querySelectorAll('path')];
+  if (!image || !pathNodes.length) throw new Error(`Vue ${options.view} incomplète: image ou zones introuvable`);
   const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height') };
   const seen = new Map();
-  const paths = [...zoneLayer.querySelectorAll('path')].map((path) => normalizePath(path, view, seen)).filter(Boolean);
-  return { label: view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
+  const paths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter(Boolean);
+  return { label: options.view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
 }
-function findLayer(doc, labels) {
-  const expected = Array.isArray(labels) ? labels : [labels];
-  return [...doc.querySelectorAll('g')].find((group) => expected.includes(group.getAttribute('inkscape:label') || group.getAttribute('label') || group.id));
+function collectLayerCandidates(doc) {
+  return [...doc.querySelectorAll('g')]
+    .map((group, index) => {
+      const name = group.getAttribute('inkscape:label') || group.getAttribute('label') || group.id || '';
+      return { group, index, name, norm: normalizeText(name), images: [...group.querySelectorAll('image')], paths: [...group.querySelectorAll('path')] };
+    })
+    .filter((candidate) => candidate.images.length || candidate.paths.length);
+}
+function pickLayer(candidates, aliases, fallbackIndex) {
+  if (!candidates.length) return null;
+  const normalizedAliases = aliases.map(normalizeText).filter(Boolean);
+  const exact = candidates.find((candidate) => normalizedAliases.includes(candidate.norm));
+  if (exact) return exact;
+  const contains = candidates.find((candidate) => normalizedAliases.some((alias) => candidate.norm.includes(alias)));
+  if (contains) return contains;
+  return candidates[Math.min(fallbackIndex, candidates.length - 1)] || candidates[0];
 }
 function normalizePath(path, view, seen) {
   const rawLabel = path.getAttribute('inkscape:label') || path.id || '';
