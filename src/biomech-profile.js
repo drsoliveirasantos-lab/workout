@@ -1,5 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svgz.zip?v=20260703-transparent2';
-const BODY_MAP_DIRECT_FALLBACK_URL = 'body_back_and_front_zones.svg?v=20260703-transparent2';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent3';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -17,9 +16,9 @@ async function init() { renderTabs(); bindEvents(); renderZone('global'); render
 async function loadBodyMap() {
   const mount = document.querySelector('#body-map-mount');
   if (!mount) return;
-  mount.innerHTML = '<div class="body-map-loading">Chargement des zones Inkscape…</div>';
+  mount.innerHTML = '<div class="body-map-loading">Chargement du SVG Inkscape transparent…</div>';
   try {
-    const svgText = await loadSvgText();
+    const svgText = await loadDirectSvgText(BODY_MAP_URL);
     const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
     const parserError = doc.querySelector('parsererror');
     if (parserError) throw new Error('SVG invalide après lecture');
@@ -28,15 +27,7 @@ async function loadBodyMap() {
     paintBody(state.zone, ZONES[state.zone] || ZONES.global);
   } catch (error) {
     console.error(error);
-    mount.innerHTML = `<div class="body-map-error">Impossible de charger la carte anatomique tracée.<br><small>${escapeHtml(error.message || String(error))}</small></div>`;
-  }
-}
-async function loadSvgText() {
-  try {
-    return await loadSvgTextFromZip(BODY_MAP_URL);
-  } catch (zipError) {
-    console.warn('Chargement ZIP impossible, tentative SVG direct.', zipError);
-    return loadDirectSvgText(BODY_MAP_DIRECT_FALLBACK_URL);
+    mount.innerHTML = `<div class="body-map-error">Impossible de charger le SVG anatomique transparent.<br><small>${escapeHtml(error.message || String(error))}</small></div>`;
   }
 }
 async function loadDirectSvgText(url) {
@@ -45,65 +36,6 @@ async function loadDirectSvgText(url) {
   const text = await response.text();
   if (!text.includes('<svg')) throw new Error('Le fichier SVG direct est vide ou invalide');
   return text;
-}
-async function loadSvgTextFromZip(url) {
-  const buffer = await fetch(url, { cache: 'no-store' }).then((response) => {
-    if (!response.ok) throw new Error(`Fichier anatomique introuvable: ${response.status}`);
-    return response.arrayBuffer();
-  });
-  const entry = await extractFirstSvgEntry(buffer);
-  if (entry.name.endsWith('.svgz')) return inflateGzipToText(entry.bytes);
-  return new TextDecoder().decode(entry.bytes);
-}
-async function extractFirstSvgEntry(buffer) {
-  const entry = findCentralDirectorySvgEntry(buffer);
-  const view = new DataView(buffer);
-  const localOffset = entry.localHeaderOffset;
-  if (view.getUint32(localOffset, true) !== 0x04034b50) throw new Error('Entrée ZIP invalide');
-  const nameLength = view.getUint16(localOffset + 26, true);
-  const extraLength = view.getUint16(localOffset + 28, true);
-  const dataOffset = localOffset + 30 + nameLength + extraLength;
-  const compressed = buffer.slice(dataOffset, dataOffset + entry.compressedSize);
-  let bytes;
-  if (entry.method === 0) bytes = compressed;
-  else if (entry.method === 8) bytes = await inflateArrayBuffer(compressed, 'deflate-raw');
-  else throw new Error(`Méthode ZIP non supportée: ${entry.method}`);
-  return { name: entry.name, bytes };
-}
-function findCentralDirectorySvgEntry(buffer) {
-  const view = new DataView(buffer);
-  let eocdOffset = -1;
-  for (let index = buffer.byteLength - 22; index >= 0; index -= 1) {
-    if (view.getUint32(index, true) === 0x06054b50) { eocdOffset = index; break; }
-  }
-  if (eocdOffset < 0) throw new Error('Répertoire ZIP introuvable');
-  let offset = view.getUint32(eocdOffset + 16, true);
-  const decoder = new TextDecoder();
-  while (offset < buffer.byteLength && view.getUint32(offset, true) === 0x02014b50) {
-    const method = view.getUint16(offset + 10, true);
-    const compressedSize = view.getUint32(offset + 20, true);
-    const nameLength = view.getUint16(offset + 28, true);
-    const extraLength = view.getUint16(offset + 30, true);
-    const commentLength = view.getUint16(offset + 32, true);
-    const localHeaderOffset = view.getUint32(offset + 42, true);
-    const name = decoder.decode(new Uint8Array(buffer, offset + 46, nameLength));
-    const normalizedName = name.toLowerCase();
-    if ((normalizedName.endsWith('.svgz') || normalizedName.endsWith('.svg')) && !normalizedName.startsWith('__macosx/')) {
-      return { name: normalizedName, method, compressedSize, localHeaderOffset };
-    }
-    offset += 46 + nameLength + extraLength + commentLength;
-  }
-  throw new Error('Aucun fichier .svg ou .svgz trouvé dans le ZIP');
-}
-async function inflateArrayBuffer(buffer, format) {
-  if (!('DecompressionStream' in window)) throw new Error('Décompression non supportée par ce navigateur');
-  const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream(format));
-  return new Response(stream).arrayBuffer();
-}
-async function inflateGzipToText(buffer) {
-  if (!('DecompressionStream' in window)) throw new Error('Décompression gzip non supportée par ce navigateur');
-  const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return new Response(stream).text();
 }
 function buildMapFromSvgDocument(doc) {
   return {
