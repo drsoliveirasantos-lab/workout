@@ -53,6 +53,8 @@ test('premium controls include custom dropdown menus for short selects', async (
   assert.match(ux, /customSelectLongNames/);
   assert.match(ux, /custom-select-native/);
   assert.match(ux, /premium-controls\.css\?v=20260703-select2/);
+  assert.match(ux, /loadVisualPickers/);
+  assert.match(ux, /visual-pickers\.js\?v=20260703-picker1/);
   assert.match(ux, /premium-control-field/);
   assert.match(css, /--control-bg-top/);
   assert.match(css, /appearance: none/);
@@ -61,6 +63,23 @@ test('premium controls include custom dropdown menus for short selects', async (
   assert.match(css, /var\(--control-border-strong\)/);
   assert.match(css, /data-control-icon/);
   assert.match(workflow, /dist\/src\/premium-controls\.css/);
+  assert.match(workflow, /dist\/src\/visual-pickers\.js/);
+});
+
+test('visual pickers add compact number wheels and profile cards', async () => {
+  const visual = await text('src/visual-pickers.js');
+  const css = await text('src/visual-pickers.css');
+
+  assert.match(visual, /pickerConfig/);
+  assert.match(visual, /heightCm/);
+  assert.match(visual, /number-wheel/);
+  assert.match(visual, /visualChoiceMeta/);
+  assert.match(visual, /physicalProfile/);
+  assert.match(visual, /sex-card-group/);
+  assert.match(visual, /physique-card-group/);
+  assert.match(css, /number-wheel-track/);
+  assert.match(css, /visual-choice-card/);
+  assert.match(css, /visual-choice-icon/);
 });
 
 test('sources page explains the public method without exposing exact internal coefficients', async () => {
