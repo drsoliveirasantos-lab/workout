@@ -84,7 +84,6 @@ function enhanceCalibrationCard(card, { force = false } = {}) {
   const profile = getExerciseProfileByName(exerciseName, familyId);
   const item = card.querySelector('.calibration-movement-item');
   if (!item || !profile) return;
-
   let box = item.querySelector('.muscle-distribution');
   if (!box) {
     box = document.createElement('div');
@@ -102,11 +101,11 @@ function renderMuscleDistribution(profile) {
   const anatomy = ANATOMY_DETAILS[profile.id] || null;
   const detailRows = anatomy ? renderRows(anatomy) : '';
   return `
-    <strong>Répartition biomécanique indicative utilisée par le moteur</strong>
-    <small>Niveau 1 — groupes principaux</small>
+    <strong>Répartition biomécanique indicative</strong>
+    <small>Niveau 1 — groupes principaux utilisés dans le transfert de charge</small>
     <ul>${macroRows}</ul>
-    ${detailRows ? `<small>Niveau 2 — détail anatomique</small><ul>${detailRows}</ul>` : '<small>Détail anatomique fin non encore renseigné pour cette variante.</small>'}
-    <small>Ces valeurs ne sont pas une mesure EMG exacte : elles guident seulement le score de transfert et la fiabilité de charge.</small>
+    ${detailRows ? `<small>Niveau 2 — détail anatomique pour lecture expert</small><ul>${detailRows}</ul>` : '<small>Détail anatomique fin non encore renseigné pour cette variante.</small>'}
+    <small>Ces valeurs ne sont pas une mesure EMG exacte : elles expliquent la logique biomécanique et complètent la lecture de fiabilité.</small>
   `;
 }
 
