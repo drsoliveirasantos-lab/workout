@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profil biomécanique — Workout Nykuto</title>
     <meta name="description" content="Carte biomécanique interactive et analyse musculaire par zone." />
-    <link rel="stylesheet" href="src/styles.css?v=20260703-ux33" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux33" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux33" />
-    <link rel="stylesheet" href="src/biomech-map-overrides.css?v=20260703-ux33" />
-    <link rel="stylesheet" href="src/biomech-zone-visibility.css?v=20260703-ux33" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux34" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux34" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux34" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
@@ -41,7 +39,7 @@
             <p class="eyebrow">Zones</p>
             <h2>Carte musculaire</h2>
             <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
-            <div class="data-quality-card"><strong>Qualité des données</strong><p>La carte utilise les zones tracées manuellement dans Inkscape. Les formes sont regroupées ensuite par région musculaire.</p></div>
+            <div class="data-quality-card"><strong>Qualité des données</strong><p>La carte utilise deux fichiers SVG séparés : vue avant et vue arrière. Aucune reconstruction automatique des calques Inkscape.</p></div>
           </aside>
           <section class="panel body-map-panel hud-map-panel" aria-label="Silhouette musculaire avec indicateurs">
             <div class="scan-header"><span>Vue anatomique</span><button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button></div>
@@ -76,10 +74,7 @@
       </main>
       <footer class="site-footer"><p>Le profil biomécanique est une estimation éducative.</p></footer>
     </div>
-    <script type="module" src="src/biomech-profile.js?v=20260703-ux33"></script>
-    <script type="module" src="src/biomech-zone-filter.js?v=20260703-ux33"></script>
-    <script type="module" src="src/biomech-background-key.js?v=20260703-ux33"></script>
-    <script type="module" src="src/biomech-map-cleanup.js?v=20260703-ux33"></script>
-    <script type="module" src="src/glossary.js?v=20260703-ux33"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260703-ux34"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux34"></script>
   </body>
 </html>
