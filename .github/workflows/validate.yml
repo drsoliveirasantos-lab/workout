@@ -29,9 +29,12 @@ jobs:
         run: |
           test -f dist/index.html
           test -f dist/plan.html
+          test -f dist/profil.html
           test -f dist/sources.html
           test -f dist/evidence.html
           test -f dist/src/app.js
+          test -f dist/src/biomech-profile.js
+          test -f dist/src/biomech-profile.css
           test -f dist/src/muscle-display.js
           test -f dist/src/sources-page.js
           test -f dist/src/glossary.js
