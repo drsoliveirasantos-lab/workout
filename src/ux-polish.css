@@ -1,0 +1,157 @@
+.field-label-with-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.help-popover {
+  position: relative;
+  display: inline-block;
+}
+
+.help-popover > summary {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid rgba(125, 211, 252, 0.45);
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(125, 211, 252, 0.08);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  list-style: none;
+}
+
+.help-popover > summary::-webkit-details-marker {
+  display: none;
+}
+
+.help-content {
+  position: absolute;
+  z-index: 20;
+  top: 1.65rem;
+  left: 0;
+  width: min(300px, calc(100vw - 48px));
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 1rem;
+  color: var(--muted);
+  background: rgba(8, 14, 28, 0.96);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(14px);
+}
+
+.compact-help,
+.session-notes,
+.exercise-details-compact {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.compact-help > summary,
+.session-notes > summary,
+.exercise-details-compact > summary {
+  padding: 0.55rem 0.75rem;
+  color: var(--brand);
+  cursor: pointer;
+  font-weight: 850;
+  list-style: none;
+}
+
+.compact-help > summary::-webkit-details-marker,
+.session-notes > summary::-webkit-details-marker,
+.exercise-details-compact > summary::-webkit-details-marker {
+  display: none;
+}
+
+.compact-help > summary::after,
+.session-notes > summary::after,
+.exercise-details-compact > summary::after {
+  content: ' +';
+  color: var(--muted);
+}
+
+.compact-help[open] > summary::after,
+.session-notes[open] > summary::after,
+.exercise-details-compact[open] > summary::after {
+  content: ' −';
+}
+
+.compact-help p,
+.session-notes p,
+.exercise-details-compact .details-body {
+  margin: 0;
+  padding: 0 0.75rem 0.75rem;
+  color: var(--muted);
+}
+
+.exercise-row {
+  align-items: start;
+}
+
+.exercise-row > div:first-child {
+  min-width: 0;
+}
+
+.exercise-row > div:first-child > strong {
+  font-size: 1.02rem;
+}
+
+.exercise-dose span {
+  max-width: 18rem;
+  line-height: 1.35;
+}
+
+.exercise-details-compact {
+  margin-top: 0.55rem;
+}
+
+.exercise-details-compact .details-body {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.exercise-details-compact small {
+  font-size: 0.86rem;
+}
+
+.result-panel .muted {
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .exercise-dose span {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .result-panel {
+    padding: 18px;
+  }
+
+  .exercise-list {
+    gap: 10px;
+  }
+
+  .exercise-row {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .exercise-dose strong {
+    font-size: 1.05rem;
+  }
+
+  .help-content {
+    left: auto;
+    right: -1rem;
+  }
+}
