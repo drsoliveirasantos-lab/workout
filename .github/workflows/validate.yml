@@ -32,6 +32,7 @@ jobs:
           test -f dist/profil.html
           test -f dist/sources.html
           test -f dist/evidence.html
+          test -f dist/body_back_and_front_zones.svgz.zip
           test -f dist/src/app.js
           test -f dist/src/biomech-profile.js
           test -f dist/src/biomech-profile.css
