@@ -12,6 +12,8 @@ test('home is presentation-only and links to dedicated pages', async () => {
 
   assert.match(html, /Workout Nykuto/);
   assert.match(html, /href="plan\.html"/);
+  assert.match(html, /href="profil\.html"/);
+  assert.match(html, /Profil biomécanique/);
   assert.match(html, /href="sources\.html"/);
   assert.match(html, /href="evidence\.html"/);
   assert.match(html, /src\/glossary\.js/);
@@ -107,6 +109,31 @@ test('plan page contains adaptive controls, multi-variant calibration and result
   assert.match(formStepsCss, /position: fixed/);
   assert.match(accordionCss, /accordion-section/);
   assert.match(accordionCss, /accordion-summary/);
+});
+
+test('biomechanical profile page has interactive body map and analysis panels', async () => {
+  const html = await text('profil.html');
+  const script = await text('src/biomech-profile.js');
+  const css = await text('src/biomech-profile.css');
+
+  assert.match(html, /Profil biomécanique/);
+  assert.match(html, /Carte corporelle interactive/);
+  assert.match(html, /body-map/);
+  assert.match(html, /data-zone="pecs"/);
+  assert.match(html, /data-part="pec_claviculaire"/);
+  assert.match(html, /data-part="vaste_lateral"/);
+  assert.match(html, /id="zone-tabs"/);
+  assert.match(html, /src\/biomech-profile\.js/);
+  assert.match(script, /ZONES/);
+  assert.match(script, /renderZone/);
+  assert.match(script, /paintBody/);
+  assert.match(script, /Pectoraux/);
+  assert.match(script, /Quadriceps/);
+  assert.match(script, /reliability/);
+  assert.match(css, /biomech-grid/);
+  assert.match(css, /strength-hot/);
+  assert.match(css, /scan-ring/);
+  assert.match(css, /body-map\.is-back/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
