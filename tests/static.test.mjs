@@ -25,16 +25,28 @@ test('biomech profile uses only the two active SVG body maps', async () => {
   assert.doesNotMatch(build, /body_back_and_front_zones/);
 });
 
-test('sources page explains the calculation method and formulas', async () => {
+test('sources page explains the public method without exposing exact internal coefficients', async () => {
   const sources = await text('sources.html');
 
   assert.match(sources, /Méthode de calcul/);
   assert.match(sources, /répétitions effectives = répétitions réalisées \+ RIR/);
   assert.match(sources, /Epley = charge × \(1 \+ répétitions effectives \/ 30\)/);
   assert.match(sources, /Brzycki = charge × 36 \/ \(37 - répétitions effectives\)/);
-  assert.match(sources, /similarité = 45% muscles \+ 35% mouvement \+ 12% mécanique \+ 8% stabilité/);
-  assert.match(sources, /coefficient = ratio de charge × pénalité prudente/);
-  assert.match(sources, /fiabilité = confiance du test × similarité composite/);
+  assert.match(sources, /similarité = pondération interne\(muscles, mouvement, mécanique, stabilité\)/);
+  assert.match(sources, /charge cible ≈ plage source × coefficient prudent/);
+  assert.match(sources, /fiabilité ≈ qualité du test × proximité biomécanique/);
+  assert.doesNotMatch(sources, /45% muscles \+ 35% mouvement/);
+  assert.doesNotMatch(sources, /0,88 \+ similarité × 0,12/);
+});
+
+test('public evidence page does not link raw internal documentation', async () => {
+  const evidence = await text('evidence.html');
+  const build = await text('scripts/build-static.mjs');
+
+  assert.match(evidence, /Workout Nykuto/);
+  assert.match(evidence, /documentation technique complète/);
+  assert.doesNotMatch(evidence, /docs\/evidence\.md/);
+  assert.doesNotMatch(build, /cp\('docs'/);
 });
 
 test('core site pages remain wired', async () => {
