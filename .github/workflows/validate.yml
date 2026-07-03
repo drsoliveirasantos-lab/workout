@@ -20,7 +20,7 @@ jobs:
           node-version: 22
 
       - name: Run tests
-        run: node -e "console.log('Static smoke tests deferred while the large transparent SVG body map is stabilized')"
+        run: npm test
 
       - name: Build static site
         run: npm run build
@@ -32,16 +32,11 @@ jobs:
           test -f dist/profil.html
           test -f dist/sources.html
           test -f dist/evidence.html
-          test -f dist/body_back_and_front_zones.svg
+          test -f dist/body_front_zones.svg
+          test -f dist/body_back.svg
           test -f dist/src/app.js
           test -f dist/src/biomech-profile.js
-          test -f dist/src/biomech-zone-filter.js
-          test -f dist/src/biomech-click-zones.js
           test -f dist/src/biomech-profile.css
-          test -f dist/src/biomech-zone-visibility.css
-          test -f dist/src/biomech-background-key.js
-          test -f dist/src/biomech-map-cleanup.js
-          test -f dist/src/biomech-map-overrides.css
           test -f dist/src/muscle-display.js
           test -f dist/src/sources-page.js
           test -f dist/src/glossary.js
