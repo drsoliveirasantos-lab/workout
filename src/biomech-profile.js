@@ -1,4 +1,5 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svgz.zip';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent1';
+const BODY_MAP_FALLBACK_URL = 'body_back_and_front_zones.svgz.zip?v=20260703-transparent1';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -18,7 +19,7 @@ async function loadBodyMap() {
   if (!mount) return;
   mount.innerHTML = '<div class="body-map-loading">Chargement des zones Inkscape…</div>';
   try {
-    const svgText = await loadSvgTextFromZip(BODY_MAP_URL);
+    const svgText = await loadSvgText(BODY_MAP_URL);
     const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
     const map = buildMapFromSvgDocument(doc);
     mount.innerHTML = renderBodySvg('front', map.front) + renderBodySvg('back', map.back);
@@ -28,8 +29,20 @@ async function loadBodyMap() {
     mount.innerHTML = '<div class="body-map-error">Impossible de charger la carte anatomique tracée. Réessaie après le prochain déploiement.</div>';
   }
 }
+async function loadSvgText(url) {
+  try {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Fichier SVG introuvable: ${response.status}`);
+    const text = await response.text();
+    if (!text.includes('<svg')) throw new Error('Le fichier SVG direct est vide ou invalide');
+    return text;
+  } catch (error) {
+    console.warn('Chargement SVG direct impossible, fallback SVGZ ZIP.', error);
+    return loadSvgTextFromZip(BODY_MAP_FALLBACK_URL);
+  }
+}
 async function loadSvgTextFromZip(url) {
-  const buffer = await fetch(url).then((response) => {
+  const buffer = await fetch(url, { cache: 'no-store' }).then((response) => {
     if (!response.ok) throw new Error(`Fichier anatomique introuvable: ${response.status}`);
     return response.arrayBuffer();
   });
@@ -81,10 +94,15 @@ async function inflateGzipToText(buffer) {
   const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'));
   return new Response(stream).text();
 }
-function buildMapFromSvgDocument(doc) { return { front: collectView(doc, 'front', 'zones_front', 'image_reference_back copy'), back: collectView(doc, 'back', 'zones_back', 'image_reference_back') }; }
-function collectView(doc, view, zoneLayerName, imageLayerName) {
+function buildMapFromSvgDocument(doc) {
+  return {
+    front: collectView(doc, 'front', 'zones_front', ['image_reference_front', 'image_reference_back copy']),
+    back: collectView(doc, 'back', 'zones_back', ['image_reference_back'])
+  };
+}
+function collectView(doc, view, zoneLayerName, imageLayerNames) {
   const zoneLayer = findLayer(doc, zoneLayerName);
-  const imageLayer = findLayer(doc, imageLayerName);
+  const imageLayer = findLayer(doc, imageLayerNames);
   const image = imageLayer?.querySelector('image');
   if (!zoneLayer || !image) throw new Error(`Vue ${view} incomplète`);
   const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height') };
@@ -92,7 +110,10 @@ function collectView(doc, view, zoneLayerName, imageLayerName) {
   const paths = [...zoneLayer.querySelectorAll('path')].map((path) => normalizePath(path, view, seen)).filter(Boolean);
   return { label: view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
 }
-function findLayer(doc, label) { return [...doc.querySelectorAll('g')].find((group) => (group.getAttribute('inkscape:label') || group.getAttribute('label')) === label); }
+function findLayer(doc, labels) {
+  const expected = Array.isArray(labels) ? labels : [labels];
+  return [...doc.querySelectorAll('g')].find((group) => expected.includes(group.getAttribute('inkscape:label') || group.getAttribute('label') || group.id));
+}
 function normalizePath(path, view, seen) {
   const rawLabel = path.getAttribute('inkscape:label') || path.id || '';
   const d = path.getAttribute('d');
