@@ -1,8 +1,10 @@
-# Evidence base — Workout Nekouto
+# Evidence base — Workout Nykuto
 
-Ce document centralise les sources utilisées par le moteur d'entraînement et de nutrition.
+Document interne de référence pour les sources utilisées par le moteur d'entraînement et de nutrition.
 
-Dernière mise à jour : 2026-07-02.
+Dernière mise à jour : 2026-07-03.
+
+> Note : ce fichier sert au suivi technique du projet. Il ne doit pas être publié tel quel dans le site public.
 
 ---
 
