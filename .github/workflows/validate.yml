@@ -36,6 +36,8 @@ jobs:
           test -f dist/src/app.js
           test -f dist/src/biomech-profile.js
           test -f dist/src/biomech-profile.css
+          test -f dist/src/biomech-map-cleanup.js
+          test -f dist/src/biomech-map-overrides.css
           test -f dist/src/muscle-display.js
           test -f dist/src/sources-page.js
           test -f dist/src/glossary.js
