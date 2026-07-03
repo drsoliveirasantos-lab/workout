@@ -1,12 +1,68 @@
 const lateralRaiseNames = ['elevation laterale halteres', 'elevation laterale assise avec haltere', 'lateral raise'];
 const cableLateralNames = ['elevation laterale poulie', 'elevation laterale unilaterale avec cable', 'cable lateral raise'];
+const premiumControlIcons = {
+  sex: '⚥',
+  age: '◷',
+  heightCm: '↕',
+  weightKg: '◉',
+  physicalProfile: '◌',
+  bodyFatEstimate: '%',
+  level: '◆',
+  goal: '◎',
+  daysPerWeek: '7',
+  priorityMuscleUi: '✦',
+  recoveryLevelUi: '↺',
+  exercisePreferenceUi: '⌁',
+  painZoneUi: '!',
+  activity: '↯',
+  budget: '€',
+  equipment: '▣',
+  injuriesText: '⚕',
+  medicalFlagsText: '☤',
+  zoneId: '◇',
+  familyId: '↔',
+  calibrationExercise: '🏋',
+  calibrationWeight: 'kg',
+  calibrationReps: '#',
+  calibrationRir: 'R',
+  calibrationPain: '!',
+  calibrationTechnique: '✓',
+  inlineExercise: '🏋',
+  inlineWeight: 'kg',
+  inlineReps: '#',
+  inlineRir: 'R',
+  inlinePain: '!',
+  inlineTechnique: '✓'
+};
 
 function initUxPolish() {
+  injectPremiumControlStyles();
+  decoratePremiumControls();
   addRecoveryHelp();
   bindManualWeightSelect();
   bindInlineCalibrationWeights();
   polishRenderedResults();
   observeResultChanges();
+}
+
+function injectPremiumControlStyles() {
+  if (document.querySelector('link[data-premium-controls]')) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'src/premium-controls.css?v=20260703-select1';
+  link.dataset.premiumControls = 'true';
+  document.head.appendChild(link);
+}
+
+function decoratePremiumControls(root = document) {
+  root.querySelectorAll('select, textarea, input:not([type="hidden"])').forEach((control) => {
+    const label = control.closest('label');
+    if (!label || label.dataset.premiumDecorated === 'true') return;
+    label.classList.add('premium-control-field');
+    label.dataset.premiumDecorated = 'true';
+    label.dataset.controlIcon = premiumControlIcons[control.name] || '⌄';
+    control.dataset.premiumControl = 'true';
+  });
 }
 
 function addRecoveryHelp() {
@@ -124,6 +180,7 @@ function getDefaultWeight(familyId, exerciseName = '') {
 }
 
 function polishRenderedResults() {
+  decoratePremiumControls();
   compactGeneratedResult();
   replaceReliabilityVocabulary();
   addReliabilityHelp();
