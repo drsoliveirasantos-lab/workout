@@ -6,9 +6,9 @@
     <title>Sources — Workout Nykuto</title>
     <meta
       name="description"
-      content="Sources officielles et scientifiques utilisées par Workout Nykuto pour les repères d'entraînement, nutrition et prix."
+      content="Sources scientifiques, méthode de calcul et logique de fiabilité utilisées par Workout Nykuto."
     />
-    <link rel="stylesheet" href="src/styles.css" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-method1" />
   </head>
   <body>
     <div class="page-shell">
@@ -31,12 +31,134 @@
           <p class="eyebrow">Transparence</p>
           <h1 id="sources-title">Sources utilisées</h1>
           <p class="muted">
-            Cette page liste les organismes et bases utilisés comme références du MVP. Les formules et règles
-            internes détaillées sont dans la page Evidence base.
+            Cette page explique les références du MVP et la logique utilisée pour relier les exercices entre eux.
+            L’objectif n’est pas de promettre une charge parfaite, mais de produire une estimation prudente, lisible et
+            ajustable à partir des données réelles de l’utilisateur.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="method-title">
+          <p class="eyebrow">Méthode de calcul</p>
+          <h2 id="method-title">Comment le moteur transforme un test en recommandations</h2>
+          <p>
+            Workout Nykuto part d’une idée simple : une performance isolée ne suffit pas. Le moteur combine la charge,
+            les répétitions, le RIR, la qualité du mouvement et la proximité biomécanique entre exercices. Un développé
+            couché peut aider à estimer une chest press, parce que les deux exercices partagent une poussée horizontale
+            et une forte implication des pectoraux, des triceps et du deltoïde antérieur. En revanche, ce même test ne
+            doit pas servir à estimer un leg curl, car le mouvement et les muscles sont trop éloignés.
+          </p>
+          <p>
+            Chaque exercice possède un profil interne : famille de mouvement, groupe de mouvement, mécanique, type de
+            charge ou machine, stabilité nécessaire, échelle de charge et répartition musculaire indicative. Le moteur
+            compare ces profils pour décider si le transfert est direct, proche, prudent ou non transférable.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="formula-title">
+          <p class="eyebrow">Formules principales</p>
+          <h2 id="formula-title">Ce qui est calculé derrière les recommandations</h2>
+
+          <div class="result-grid">
+            <article class="result-card">
+              <h3>1. Répétitions effectives</h3>
+              <p>
+                Le RIR indique combien de répétitions l’utilisateur pense avoir gardées en réserve. Le moteur convertit
+                donc une série sous-maximale en répétitions effectives.
+              </p>
+              <p><code>répétitions effectives = répétitions réalisées + RIR</code></p>
+              <p class="muted">La valeur est plafonnée pour éviter qu’une série très longue produise une estimation trop optimiste.</p>
+            </article>
+
+            <article class="result-card">
+              <h3>2. Estimation du 1RM</h3>
+              <p>
+                Le moteur combine deux formules classiques d’estimation de charge maximale afin d’éviter de dépendre
+                d’une seule équation.
+              </p>
+              <p><code>Epley = charge × (1 + répétitions effectives / 30)</code></p>
+              <p><code>Brzycki = charge × 36 / (37 - répétitions effectives)</code></p>
+              <p><code>1RM estimé = moyenne(Epley, Brzycki)</code></p>
+              <p><code>Training Max = 1RM estimé × 0,90</code></p>
+            </article>
+
+            <article class="result-card">
+              <h3>3. Similarité entre exercices</h3>
+              <p>
+                Pour relier deux exercices, le moteur calcule un score composite. Les muscles comptent le plus, mais le
+                type de mouvement, la mécanique et la stabilité influencent aussi la confiance.
+              </p>
+              <p><code>similarité = 45% muscles + 35% mouvement + 12% mécanique + 8% stabilité</code></p>
+              <p class="muted">
+                Si le mouvement est incompatible ou si la similarité globale est trop basse, l’application ne donne pas
+                de charge précise et propose plutôt une consigne en RIR.
+              </p>
+            </article>
+
+            <article class="result-card">
+              <h3>4. Coefficient de transfert</h3>
+              <p>
+                Quand le transfert est acceptable, le moteur applique un coefficient entre l’exercice testé et l’exercice
+                cible. Ce coefficient tient compte de l’échelle de charge et ajoute une pénalité de prudence.
+              </p>
+              <p><code>ratio de charge = échelle cible / échelle source</code></p>
+              <p><code>pénalité prudente = 0,88 + similarité × 0,12</code></p>
+              <p><code>coefficient = ratio de charge × pénalité prudente</code></p>
+            </article>
+
+            <article class="result-card">
+              <h3>5. Fiabilité du transfert</h3>
+              <p>
+                Une bonne formule ne suffit pas si la donnée d’entrée est mauvaise. La fiabilité combine donc la qualité
+                du test utilisateur avec la proximité entre l’exercice source et l’exercice cible.
+              </p>
+              <p><code>fiabilité = confiance du test × similarité composite</code></p>
+              <p class="muted">
+                Une série propre, proche de l’échec, sans douleur et dans une plage de répétitions raisonnable produit
+                une donnée plus fiable.
+              </p>
+            </article>
+
+            <article class="result-card">
+              <h3>6. Plage de charge proposée</h3>
+              <p>
+                L’application ne recommande pas une seule charge fixe. Elle propose une plage de départ, arrondie, puis
+                l’utilisateur ajuste selon le RIR réel à l’entraînement.
+              </p>
+              <p><code>charge cible basse = plage source basse × coefficient</code></p>
+              <p><code>charge cible haute = plage source haute × coefficient</code></p>
+              <p class="muted">
+                Les haltères et exercices unilatéraux sont convertis dans la bonne unité : kg total, kg par haltère, kg
+                par côté ou kg machine.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="reliability-title">
+          <p class="eyebrow">Pourquoi c’est fiable</p>
+          <h2 id="reliability-title">Une estimation prudente, pas une devinette</h2>
+          <p>
+            La fiabilité vient du fait que le moteur ne considère pas tous les exercices comme interchangeables. Il
+            mesure d’abord ce que les exercices ont en commun : muscles principaux, muscles secondaires, direction du
+            mouvement, type de contraction, stabilité et matériel utilisé. Plus ces éléments se ressemblent, plus le
+            transfert est fiable.
+          </p>
+          <p>
+            Quand la similarité est faible, l’application ne force pas une fausse précision. Elle indique que le transfert
+            est bas ou non transférable et demande d’utiliser une charge guidée par le RIR. Plus l’utilisateur complète
+            ses tests, plus le profil devient précis, parce que le moteur dépend moins des transferts lointains et plus
+            de données directes.
+          </p>
+          <p class="muted">
+            En résumé : l’application ne devine pas. Elle compare les exercices selon leur logique musculaire et
+            biomécanique, applique une pénalité de prudence, puis affiche une fiabilité pour que l’utilisateur sache si
+            la recommandation est solide ou approximative.
           </p>
         </section>
 
         <section class="panel" aria-label="Liste des sources">
+          <p class="eyebrow">Références externes</p>
+          <h2>Organismes et bases consultés</h2>
           <ul id="sources-list" class="sources-list"></ul>
         </section>
       </main>
@@ -46,6 +168,6 @@
       </footer>
     </div>
 
-    <script type="module" src="src/sources-page.js"></script>
+    <script type="module" src="src/sources-page.js?v=20260703-method1"></script>
   </body>
 </html>
