@@ -112,7 +112,7 @@
 
 .body-stage {
   position: relative;
-  min-height: 640px;
+  min-height: 690px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -120,39 +120,71 @@
   background:
     linear-gradient(rgba(104, 216, 255, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(104, 216, 255, 0.07) 1px, transparent 1px),
-    radial-gradient(circle, rgba(104, 216, 255, 0.12), rgba(255, 57, 95, 0.04) 45%, transparent 72%);
+    radial-gradient(circle, rgba(104, 216, 255, 0.14), rgba(255, 57, 95, 0.04) 45%, transparent 72%);
   background-size: 34px 34px, 34px 34px, auto;
 }
 
+.body-stage::before {
+  content: '';
+  position: absolute;
+  width: 72%;
+  height: 88%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(104, 216, 255, 0.08), transparent 65%);
+  filter: blur(2px);
+}
+
 .body-map {
-  width: min(100%, 390px);
+  width: min(100%, 430px);
+  max-height: 680px;
   height: auto;
   position: relative;
   z-index: 2;
 }
 
-.body-outline circle,
-.body-outline path {
-  fill: rgba(187, 220, 255, 0.08);
-  stroke: rgba(170, 226, 255, 0.42);
-  stroke-width: 2;
+.body-silhouette path,
+.body-silhouette .head,
+.body-silhouette .neck,
+.body-silhouette .torso,
+.body-silhouette .pelvis,
+.body-silhouette .arm,
+.body-silhouette .leg,
+.body-silhouette .foot {
+  fill: url(#bodyGlass);
+  stroke: rgba(170, 226, 255, 0.38);
+  stroke-width: 1.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.body-silhouette .detail {
+  fill: none;
+  stroke: rgba(170, 226, 255, 0.16);
+  stroke-width: 1.2;
 }
 
 .muscle {
-  fill: rgba(110, 190, 255, 0.18);
-  stroke: rgba(151, 231, 255, 0.28);
-  stroke-width: 1.4;
+  fill: url(#muscleIdle);
+  stroke: rgba(151, 231, 255, 0.72);
+  stroke-width: 1.3;
   cursor: pointer;
-  transition: transform 0.22s ease, fill 0.22s ease, opacity 0.22s ease, filter 0.22s ease;
-  opacity: 0.42;
+  transition: transform 0.22s ease, fill 0.22s ease, opacity 0.22s ease, filter 0.22s ease, stroke 0.22s ease;
+  opacity: 0.5;
   transform-origin: center;
+  vector-effect: non-scaling-stroke;
 }
 
 .muscle:hover,
 .muscle.is-active {
   opacity: 1;
-  filter: url(#glow);
-  transform: scale(1.015);
+  filter: url(#glow) drop-shadow(0 0 12px rgba(104, 216, 255, 0.45));
+  transform: scale(1.01);
+  stroke: rgba(215, 250, 255, 0.96);
+}
+
+.abs-line {
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0.62;
 }
 
 .body-map[data-zone="pecs"] .pecs,
@@ -168,9 +200,9 @@
 }
 
 .body-map .strength-hot { fill: rgba(255, 57, 95, 0.82); }
-.body-map .strength-warm { fill: rgba(255, 138, 61, 0.74); }
+.body-map .strength-warm { fill: rgba(255, 138, 61, 0.76); }
 .body-map .strength-mid { fill: rgba(246, 214, 91, 0.72); }
-.body-map .strength-low { fill: rgba(91, 188, 255, 0.55); }
+.body-map .strength-low { fill: rgba(91, 188, 255, 0.58); }
 
 .back-muscles { display: none; }
 .body-map.is-back .front-muscles { display: none; }
@@ -178,7 +210,7 @@
 
 .scan-ring {
   position: absolute;
-  inset: 8%;
+  inset: 6%;
   border: 1px solid rgba(104, 216, 255, 0.16);
   border-radius: 50%;
   box-shadow: inset 0 0 80px rgba(104, 216, 255, 0.08), 0 0 80px rgba(104, 216, 255, 0.08);
@@ -245,13 +277,8 @@
 }
 
 @media (max-width: 1080px) {
-  .biomech-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .body-stage {
-    min-height: 560px;
-  }
+  .biomech-grid { grid-template-columns: 1fr; }
+  .body-stage { min-height: 620px; }
 }
 
 @media (max-width: 720px) {
@@ -262,7 +289,6 @@
     display: grid;
   }
 
-  .body-stage {
-    min-height: 480px;
-  }
+  .body-stage { min-height: 560px; }
+  .body-map { width: min(100%, 390px); }
 }
