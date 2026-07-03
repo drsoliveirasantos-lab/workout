@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sources — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Sources scientifiques, méthode de calcul et logique de fiabilité utilisées par Workout Nykuto."
+    />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-method2" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="profil.html">Profil biomécanique</a>
+          <a href="sources.html" aria-current="page">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="sources-title">
+          <p class="eyebrow">Transparence</p>
+          <h1 id="sources-title">Sources utilisées</h1>
+          <p class="muted">
+            Cette page explique les références publiques du MVP et la logique générale utilisée pour relier les exercices.
+            Les formules scientifiques connues sont citées, mais les coefficients internes détaillés du moteur ne sont pas
+            publiés.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="method-title">
+          <p class="eyebrow">Méthode de calcul</p>
+          <h2 id="method-title">Comment le moteur transforme un test en recommandations</h2>
+          <p>
+            Workout Nykuto part d’une performance réelle : charge, répétitions, RIR, technique et présence éventuelle de
+            douleur. Cette donnée sert de point de référence. Le moteur la compare ensuite aux autres exercices selon leur
+            proximité biomécanique : muscles impliqués, direction du mouvement, stabilité, machine ou charge libre, et type
+            de contrainte.
+          </p>
+          <p>
+            Par exemple, un développé couché peut aider à estimer une chest press, car les deux exercices partagent une
+            poussée horizontale avec une forte implication des pectoraux, des triceps et du deltoïde antérieur. En revanche,
+            ce même test ne doit pas servir à estimer précisément un leg curl : les muscles et la mécanique sont trop éloignés.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="formula-title">
+          <p class="eyebrow">Formules principales</p>
+          <h2 id="formula-title">Ce qui peut être expliqué publiquement</h2>
+
+          <div class="result-grid">
+            <article class="result-card">
+              <h3>1. Répétitions effectives</h3>
+              <p>
+                Le RIR indique combien de répétitions l’utilisateur pense avoir gardées en réserve. Le moteur utilise cette
+                information pour mieux interpréter une série sous-maximale.
+              </p>
+              <p><code>répétitions effectives = répétitions réalisées + RIR</code></p>
+              <p class="muted">Une série trop longue ou trop facile est moins fiable qu’une série contrôlée proche de l’échec technique.</p>
+            </article>
+
+            <article class="result-card">
+              <h3>2. Estimation du 1RM</h3>
+              <p>
+                Le moteur s’appuie sur des formules publiques classiques pour estimer une charge maximale théorique à partir
+                d’une série sous-maximale.
+              </p>
+              <p><code>Epley = charge × (1 + répétitions effectives / 30)</code></p>
+              <p><code>Brzycki = charge × 36 / (37 - répétitions effectives)</code></p>
+              <p class="muted">Ces équations servent de repères. Elles sont ensuite ajustées avec prudence dans la recommandation.</p>
+            </article>
+
+            <article class="result-card">
+              <h3>3. Similarité entre exercices</h3>
+              <p>
+                Le transfert entre deux exercices dépend d’un score de proximité. Ce score tient compte des muscles communs,
+                de la famille de mouvement, de la mécanique et de la stabilité nécessaire.
+              </p>
+              <p><code>similarité = pondération interne(muscles, mouvement, mécanique, stabilité)</code></p>
+              <p class="muted">
+                Les pondérations exactes sont internes. L’idée publique est simple : plus les exercices se ressemblent, plus
+                la recommandation est fiable.
+              </p>
+            </article>
+
+            <article class="result-card">
+              <h3>4. Transfert de charge</h3>
+              <p>
+                Quand le transfert est acceptable, l’application adapte la plage de charge de l’exercice source vers
+                l’exercice cible. Cette adaptation tient compte de l’échelle de charge et ajoute une marge de prudence.
+              </p>
+              <p><code>charge cible ≈ plage source × coefficient prudent</code></p>
+              <p class="muted">Si le transfert est trop éloigné, la charge chiffrée est remplacée par une consigne en RIR.</p>
+            </article>
+
+            <article class="result-card">
+              <h3>5. Fiabilité du transfert</h3>
+              <p>
+                La fiabilité dépend à la fois de la qualité du test utilisateur et de la proximité entre les exercices.
+              </p>
+              <p><code>fiabilité ≈ qualité du test × proximité biomécanique</code></p>
+              <p class="muted">
+                Une série propre, sans douleur, avec une plage de répétitions cohérente, donne une donnée plus exploitable.
+              </p>
+            </article>
+
+            <article class="result-card">
+              <h3>6. Plage de charge proposée</h3>
+              <p>
+                L’application évite de donner une seule charge fixe. Elle propose une plage de départ, arrondie, puis
+                l’utilisateur ajuste selon le RIR réel à l’entraînement.
+              </p>
+              <p><code>plage recommandée = estimation prudente + ajustement terrain</code></p>
+              <p class="muted">
+                Les haltères et exercices unilatéraux sont affichés dans la bonne unité : kg total, kg par haltère, kg par
+                côté ou kg machine.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="reliability-title">
+          <p class="eyebrow">Pourquoi c’est fiable</p>
+          <h2 id="reliability-title">Une estimation prudente, pas une devinette</h2>
+          <p>
+            La fiabilité vient du fait que le moteur ne considère pas tous les exercices comme interchangeables. Il mesure
+            d’abord ce que les exercices ont en commun : muscles principaux, muscles secondaires, direction du mouvement,
+            type de contraction, stabilité et matériel utilisé.
+          </p>
+          <p>
+            Quand la similarité est faible, l’application ne force pas une fausse précision. Elle indique que le transfert
+            est bas ou non transférable et demande d’utiliser une charge guidée par le RIR. Plus l’utilisateur complète ses
+            tests, plus le profil devient précis.
+          </p>
+          <p class="muted">
+            En résumé : l’application ne devine pas. Elle compare les exercices selon leur logique musculaire et
+            biomécanique, applique une marge de prudence, puis affiche une fiabilité pour que l’utilisateur sache si la
+            recommandation est solide ou approximative.
+          </p>
+        </section>
+
+        <section class="panel" aria-label="Liste des sources">
+          <p class="eyebrow">Références externes</p>
+          <h2>Organismes et bases consultés</h2>
+          <ul id="sources-list" class="sources-list"></ul>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Les sources guident le moteur, mais ne remplacent pas une évaluation individuelle par un professionnel.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="src/sources-page.js?v=20260703-method2"></script>
+  </body>
+</html>

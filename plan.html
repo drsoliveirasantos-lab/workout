@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Créer un plan — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
+    />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/ux-polish.css?v=20260703-ux35" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html" aria-current="page">Créer un plan</a>
+          <a href="profil.html">Profil biomécanique</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="page-title">
+          <p class="eyebrow">Créer un plan</p>
+          <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
+          <p class="muted">
+            Choisis un mode, complète les informations utiles, puis génère ton plan. Les données sont sauvegardées localement sur cet appareil.
+          </p>
+          <div class="mode-switch" aria-label="Mode d’utilisation">
+            <button class="mode-pill" type="button" data-set-mode="quick">Mode rapide</button>
+            <button class="mode-pill" type="button" data-set-mode="advanced">Mode avancé</button>
+          </div>
+          <div class="hero-actions plan-actions">
+            <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
+            <button class="btn primary" id="resume-plan" type="button" hidden>Reprendre mon dernier plan</button>
+            <button class="btn ghost" id="clear-saved-plan" type="button" hidden>Effacer la sauvegarde</button>
+          </div>
+        </section>
+
+        <section class="builder-grid" aria-label="Générateur de programme">
+          <div class="builder-steps">
+            <div id="notice" class="notice" aria-live="polite">Remplis le profil, ajoute les calibrations utiles, puis génère le plan.</div>
+
+            <details class="builder-step" open>
+              <summary class="builder-step-summary">
+                <span class="builder-step-title">
+                  <strong>Étape 1 — Profil</strong>
+                  <span>Âge, taille, poids, niveau, objectif et matériel.</span>
+                </span>
+              </summary>
+              <div class="builder-step-content">
+                <form id="profile-form">
+                  <input type="hidden" name="injuries" value="pain:none" />
+                  <input type="hidden" name="medicalFlags" value="priority:balanced; recovery:normal; preference:mixed" />
+                  <div class="form-grid">
+                    <label class="field">
+                      <span>Sexe biologique pour <button class="glossary-term" type="button" data-glossary="bmr">BMR</button></span>
+                      <select name="sex">
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Âge
+                      <select name="age" data-range-select data-min="14" data-max="90" data-step="1" data-default="29" required></select>
+                    </label>
+                    <label class="field">
+                      Taille (cm)
+                      <select name="heightCm" data-range-select data-min="120" data-max="230" data-step="1" data-default="175" required></select>
+                    </label>
+                    <label class="field">
+                      Poids (kg)
+                      <select name="weightKg" data-range-select data-min="35" data-max="250" data-step="1" data-default="80" required></select>
+                    </label>
+                    <label class="field">
+                      Profil physique
+                      <select name="physicalProfile">
+                        <option value="unknown">Je ne sais pas / standard</option>
+                        <option value="lean_low_muscle">Mince peu musclé</option>
+                        <option value="lean_athletic">Mince sportif</option>
+                        <option value="standard" selected>Standard</option>
+                        <option value="muscular_lean">Musclé plutôt sec</option>
+                        <option value="muscular_soft">Musclé avec un peu de gras</option>
+                        <option value="overweight_low_muscle">Surpoids peu musclé</option>
+                        <option value="overweight_muscular">Surpoids musclé</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span class="field-label-with-help">
+                        Masse grasse estimée
+                        <details class="help-popover">
+                          <summary aria-label="Aide masse grasse">i</summary>
+                          <div class="help-content">
+                            <strong>Optionnel.</strong>
+                            <span>Si tu ne sais pas, laisse “Je ne sais pas”. Si tu as une estimation visuelle ou impédancemètre, le calcul ajuste légèrement la dépense.</span>
+                          </div>
+                        </details>
+                      </span>
+                      <select name="bodyFatEstimate">
+                        <option value="unknown" selected>Je ne sais pas</option>
+                        <option value="8-12">8-12 %</option>
+                        <option value="13-17">13-17 %</option>
+                        <option value="18-22">18-22 %</option>
+                        <option value="23-27">23-27 %</option>
+                        <option value="28-35">28-35 %</option>
+                        <option value="35+">35 %+</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Niveau
+                      <select name="level">
+                        <option value="beginner">Débutant</option>
+                        <option value="intermediate">Intermédiaire</option>
+                        <option value="advanced">Avancé</option>
+                        <option value="very_advanced">Très avancé — split dynamique</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Objectif
+                      <select name="goal">
+                        <option value="recomposition">Recomposition</option>
+                        <option value="fat_loss">Perte de gras</option>
+                        <option value="hypertrophy">Prise de muscle</option>
+                        <option value="lean_bulk">Prise de masse sèche</option>
+                        <option value="strength">Force</option>
+                        <option value="general_health">Santé générale</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Séances/semaine
+                      <select name="daysPerWeek">
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Priorité musculaire
+                      <select name="priorityMuscleUi">
+                        <option value="balanced" selected>Équilibré</option>
+                        <option value="pecs">Pectoraux</option>
+                        <option value="back_width">Dos largeur</option>
+                        <option value="back_thickness">Dos épaisseur</option>
+                        <option value="delts">Épaules largeur</option>
+                        <option value="arms">Bras</option>
+                        <option value="quads">Quadriceps</option>
+                        <option value="glutes">Fessiers</option>
+                        <option value="hamstrings">Ischios</option>
+                        <option value="calves">Mollets</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Récupération
+                      <select name="recoveryLevelUi">
+                        <option value="low">Faible — sommeil/stress compliqués</option>
+                        <option value="normal" selected>Normale</option>
+                        <option value="high">Bonne</option>
+                        <option value="very_high">Très bonne</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Préférence exercices
+                      <select name="exercisePreferenceUi">
+                        <option value="mixed" selected>Mixte</option>
+                        <option value="machines">Machines guidées</option>
+                        <option value="free_weights">Barre / haltères</option>
+                        <option value="cables">Poulies / câbles</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Douleur principale
+                      <select name="painZoneUi">
+                        <option value="none" selected>Aucune</option>
+                        <option value="shoulder">Épaule</option>
+                        <option value="elbow">Coude</option>
+                        <option value="wrist">Poignet</option>
+                        <option value="knee">Genou</option>
+                        <option value="lower_back">Lombaires</option>
+                        <option value="hip">Hanche</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span class="field-label-with-help">
+                        Activité hors muscu
+                        <details class="help-popover">
+                          <summary aria-label="Aide activité hors muscu">i</summary>
+                          <div class="help-content">
+                            <strong>Sédentaire</strong><span>Bureau, télétravail, chauffeur, peu de marche.</span>
+                            <strong>Légère</strong><span>Bureau + marche, étudiant, vendeur calme, environ 5 000-8 000 pas/jour.</span>
+                            <strong>Modérée</strong><span>Serveur, coiffeur, infirmier, magasin actif, souvent debout.</span>
+                            <strong>Élevée</strong><span>Chantier, manutention, livreur vélo, entretien intensif, journée très physique.</span>
+                          </div>
+                        </details>
+                      </span>
+                      <select name="activity">
+                        <option value="sedentary">Sédentaire</option>
+                        <option value="light" selected>Légère</option>
+                        <option value="moderate">Modérée</option>
+                        <option value="high">Élevée</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span class="field-label-with-help">
+                        Budget nutrition
+                        <details class="help-popover">
+                          <summary aria-label="Aide budget nutrition">i</summary>
+                          <div class="help-content">
+                            <strong>Très serré</strong><span>Riz, pâtes, avoine, œufs, lentilles, haricots, sardines, produits simples.</span>
+                            <strong>Moyen</strong><span>Ajoute poulet, viande hachée, yaourt grec, fruits/légumes plus réguliers.</span>
+                            <strong>Flexible</strong><span>Plus de variété : poisson, viande maigre, whey, produits pratiques.</span>
+                          </div>
+                        </details>
+                      </span>
+                      <select name="budget">
+                        <option value="very_low">Très serré — env. 100-150 €/mois</option>
+                        <option value="moderate">Moyen — env. 150-250 €/mois</option>
+                        <option value="flexible">Flexible — env. 250-400+ €/mois</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      Matériel
+                      <select name="equipment">
+                        <option value="basic">Salle basique</option>
+                        <option value="bodyweight">Poids du corps</option>
+                        <option value="full_gym">Salle complète</option>
+                      </select>
+                    </label>
+                    <label class="field full">
+                      Blessures ou douleurs à prendre en compte
+                      <textarea name="injuriesText" rows="2" placeholder="Ex : douleur épaule, genou, lombaire..."></textarea>
+                    </label>
+                    <label class="field full">
+                      Signaux médicaux importants
+                      <textarea name="medicalFlagsText" rows="2" placeholder="Ex : hypertension non contrôlée, douleur thoracique, malaise..."></textarea>
+                    </label>
+                  </div>
+                </form>
+              </div>
+            </details>
+
+            <details class="builder-step calibration-step">
+              <summary class="builder-step-summary">
+                <span class="builder-step-title">
+                  <strong>Étape 2 — Calibration</strong>
+                  <span>Tableau de bord, progression par zone et saisie directe.</span>
+                </span>
+              </summary>
+              <div class="builder-step-content">
+                <p class="muted">
+                  Les tests conseillés se mettent à jour automatiquement quand tu changes le niveau, l’objectif ou le nombre de séances. Remplis directement les tests dans chaque zone : la barre de fiabilité se met à jour au fur et à mesure.
+                </p>
+                <div id="calibration-guidance" class="tests-list" aria-live="polite"></div>
+                <div id="calibration-list" class="tests-list" aria-live="polite"></div>
+                <details class="manual-calibration-panel">
+                  <summary>Calibration manuelle avancée</summary>
+                  <form id="calibration-form">
+                    <div class="form-grid">
+                      <label class="field full">
+                        Zone à calibrer
+                        <select id="calibration-zone" name="zoneId" required>
+                          <option value="pecs">Pecs</option>
+                          <option value="dos">Dos</option>
+                          <option value="jambes">Jambes</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Mouvement / test à calibrer
+                        <select id="calibration-family" name="familyId" required>
+                          <option value="horizontal_push">Développé / chest press</option>
+                          <option value="horizontal_pull">Rowing</option>
+                          <option value="leg_press_pattern">Squat / leg press</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Exercice réellement utilisé
+                        <select id="calibration-exercise" name="calibrationExercise" required>
+                          <option value="Développé couché">Développé couché</option>
+                          <option value="Chest press machine">Chest press machine</option>
+                          <option value="Développé incliné barre">Développé incliné barre</option>
+                          <option value="Développé incliné haltères">Développé incliné haltères</option>
+                        </select>
+                      </label>
+                      <label class="field full">
+                        Charge utilisée (kg)
+                        <select name="calibrationWeight" id="calibration-weight" required></select>
+                        <small class="select-hint">La liste s’adapte au mouvement choisi.</small>
+                      </label>
+                      <label class="field full">
+                        Répétitions propres
+                        <select name="calibrationReps" id="calibration-reps" required></select>
+                      </label>
+                      <label class="field">
+                        RIR réel
+                        <select name="calibrationRir" id="calibration-rir" required></select>
+                      </label>
+                      <label class="field">
+                        Douleur 0-10
+                        <select name="calibrationPain" id="calibration-pain" required></select>
+                      </label>
+                      <label class="field full">
+                        Technique
+                        <select name="calibrationTechnique">
+                          <option value="clean">Propre</option>
+                          <option value="unstable">Instable / amplitude douteuse</option>
+                          <option value="failed">Trop lourd / échec technique</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="form-actions">
+                      <button class="btn primary" type="submit">Ajouter cette calibration</button>
+                      <button class="btn ghost" id="clear-calibrations" type="button">Effacer les calibrations</button>
+                    </div>
+                  </form>
+                </details>
+              </div>
+            </details>
+
+            <section class="panel generation-panel" aria-labelledby="generate-title">
+              <p class="eyebrow">Étape 3</p>
+              <h2 id="generate-title">Générer le programme</h2>
+              <p class="muted">En mode rapide, tu peux générer directement. En mode avancé, les calibrations améliorent la précision des charges.</p>
+              <button class="btn primary" id="generate-plan" type="button">Générer mon plan</button>
+            </section>
+          </div>
+
+          <section id="result" class="result-panel empty" aria-live="polite"></section>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Workout Nykuto est un outil éducatif. Il ne remplace pas un avis médical, diététique ou sportif individualisé.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="src/app.js?v=20260703-ux35"></script>
+    <script type="module" src="src/muscle-display.js?v=20260703-ux35"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux35"></script>
+    <script type="module" src="src/ux-polish.js?v=20260703-ux35"></script>
+  </body>
+</html>

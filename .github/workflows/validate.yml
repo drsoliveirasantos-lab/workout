@@ -1,0 +1,57 @@
+name: Workout Nykuto validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - preview
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Check build output
+        run: |
+          test -f dist/index.html
+          test -f dist/plan.html
+          test -f dist/profil.html
+          test -f dist/sources.html
+          test -f dist/evidence.html
+          test -f dist/body_front_zones.svg
+          test -f dist/body_back.svg
+          test -f dist/src/app.js
+          test -f dist/src/home-resume.js
+          test -f dist/src/biomech-profile.js
+          test -f dist/src/biomech-profile.css
+          test -f dist/src/muscle-display.js
+          test -f dist/src/sources-page.js
+          test -f dist/src/glossary.js
+          test -f dist/src/glossary.css
+          test -f dist/src/calibration.css
+          test -f dist/src/form-steps.css
+          test -f dist/src/result-accordion.css
+          test -f dist/src/ux-polish.css
+          test -f dist/src/premium-controls.css
+          test -f dist/src/visual-pickers.css
+          test -f dist/src/visual-pickers.js
+          test -f dist/src/data/glossary.js
+          test -f dist/src/data/bodyArt.js
+          test -f dist/src/data/movementFamilies.js
+          test -f dist/src/data/exerciseProfiles.js
+          test -f dist/src/engine/calibration.js
+          test ! -e dist/docs/evidence.md

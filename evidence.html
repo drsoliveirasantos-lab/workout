@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evidence base — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Base scientifique publique de Workout Nykuto : repères, limites et transparence sans documentation interne complète."
+    />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-public-evidence1" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-public-evidence1" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="profil.html">Profil biomécanique</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html" aria-current="page">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="evidence-title">
+          <p class="eyebrow">Evidence base</p>
+          <h1 id="evidence-title">Repères scientifiques et limites du moteur</h1>
+          <p class="muted">
+            Cette page présente les principes publics utilisés par Workout Nykuto. La documentation technique complète,
+            les coefficients internes détaillés et les règles d’implémentation ne sont pas publiés sur le site.
+          </p>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="training-evidence">
+          <h2 id="training-evidence">1. Estimation de charge</h2>
+          <p>
+            Le moteur utilise des formules publiques d’estimation de répétition maximale, comme Epley et Brzycki, à partir
+            d’une série sous-maximale. Ces formules servent uniquement à créer un point de départ, jamais une vérité absolue.
+          </p>
+          <div class="two-columns">
+            <article class="mini-card">
+              <p class="eyebrow">Principe</p>
+              <h3>Charge + répétitions + réserve perçue</h3>
+              <p class="muted">
+                Une série proche de l’échec technique donne une estimation plus stable qu’une série très facile ou très longue.
+              </p>
+            </article>
+            <article class="mini-card">
+              <p class="eyebrow">Prudence</p>
+              <h3>Plage de travail plutôt qu’une charge unique</h3>
+              <p class="muted">
+                L’application propose une fourchette et demande d’ajuster selon la technique, le RIR réel et les sensations.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="transfer-evidence">
+          <h2 id="transfer-evidence">2. Transfert entre exercices</h2>
+          <p>
+            Deux exercices ne sont reliés que s’ils partagent une logique suffisamment proche : muscles principaux,
+            muscles secondaires, direction du mouvement, mécanique, stabilité et type de matériel. Plus ces éléments se
+            ressemblent, plus l’estimation est considérée comme fiable.
+          </p>
+          <p>
+            Quand la proximité biomécanique est trop faible, le moteur ne force pas une estimation chiffrée. Il recommande
+            plutôt une sélection de charge par RIR, ce qui évite de donner une fausse précision.
+          </p>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="progression-evidence">
+          <h2 id="progression-evidence">3. Progression</h2>
+          <p>
+            Workout Nykuto utilise une logique de progression progressive : augmenter la charge seulement quand la plage de
+            répétitions cible est atteinte avec une technique propre, sans douleur et avec une récupération suffisante.
+          </p>
+          <ul class="clean-list">
+            <li><strong>Technique propre :</strong> priorité avant l’augmentation de charge.</li>
+            <li><strong>Fatigue élevée :</strong> maintien ou réduction temporaire du volume.</li>
+            <li><strong>Douleur inhabituelle :</strong> prudence et recommandation d’avis professionnel si nécessaire.</li>
+          </ul>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="nutrition-evidence">
+          <h2 id="nutrition-evidence">4. Nutrition</h2>
+          <p>
+            Les repères nutritionnels s’appuient sur des équations publiques d’estimation du métabolisme de base et sur des
+            plages de calories et protéines couramment utilisées chez les adultes actifs. Ces valeurs sont des repères
+            personnalisables, pas une prescription médicale.
+          </p>
+        </section>
+
+        <section class="panel result-section" aria-labelledby="limits-evidence">
+          <h2 id="limits-evidence">5. Limites et sécurité</h2>
+          <p>
+            Le site ne remplace pas un médecin, un kinésithérapeute, un diététicien ou un coach diplômé. Il doit recommander
+            un avis professionnel si l’utilisateur déclare une douleur thoracique, un malaise, une pathologie cardiaque,
+            une hypertension non contrôlée, une grossesse, une maladie rénale ou métabolique, une blessure récente ou une
+            douleur aiguë à l’effort.
+          </p>
+          <p class="muted">
+            Pour les formules publiques et les références externes, consulte la page <a href="sources.html">Sources</a>.
+          </p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Les formules donnent des repères. L’évolution réelle dépend de la technique, récupération, sommeil, nutrition et contexte médical.</p>
+      </footer>
+    </div>
+    <script type="module" src="src/glossary.js?v=20260703-public-evidence1"></script>
+  </body>
+</html>

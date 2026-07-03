@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profil biomécanique — Workout Nykuto</title>
+    <meta name="description" content="Carte biomécanique interactive et analyse musculaire par zone." />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260703-ux35" />
+  </head>
+  <body>
+    <div class="page-shell biomech-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil"><span class="logo-mark">WN</span><span>Workout Nykuto</span></a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="profil.html" aria-current="page">Profil biomécanique</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+      <main>
+        <section class="panel biomech-hero" aria-labelledby="profile-title">
+          <div>
+            <p class="eyebrow">Analyse musculaire</p>
+            <h1 id="profile-title">Profil biomécanique</h1>
+            <p class="muted">Visualise les points forts, les points faibles, les sous-zones musculaires et la qualité des données issues des calibrations.</p>
+          </div>
+          <div class="biomech-summary" aria-label="Résumé global">
+            <article><strong id="global-score">78</strong><span>score global</span></article>
+            <article><strong id="global-reliability">74%</strong><span>fiabilité</span></article>
+            <article><strong id="global-tests">12</strong><span>tests analysés</span></article>
+          </div>
+        </section>
+        <section class="biomech-grid biomech-hud-grid" aria-label="Carte corporelle interactive">
+          <aside class="panel biomech-nav-panel" aria-label="Navigation musculaire compacte">
+            <p class="eyebrow">Zones</p>
+            <h2>Carte musculaire</h2>
+            <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
+            <div class="data-quality-card"><strong>Qualité des données</strong><p>La carte utilise deux fichiers SVG séparés : vue avant et vue arrière. Aucune reconstruction automatique des calques Inkscape.</p></div>
+          </aside>
+          <section class="panel body-map-panel hud-map-panel" aria-label="Silhouette musculaire avec indicateurs">
+            <div class="scan-header"><span>Vue anatomique</span><button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button></div>
+            <div class="body-stage hud-stage" id="body-stage">
+              <div id="body-map-mount" class="user-body-map"></div>
+              <div id="hud-zone-cards" class="body-hud-cards" aria-label="Statistiques musculaires autour du corps"></div>
+              <div class="hud-orbit hud-orbit-one" aria-hidden="true"></div>
+              <div class="hud-orbit hud-orbit-two" aria-hidden="true"></div>
+              <div class="scan-ring" aria-hidden="true"></div>
+            </div>
+            <div class="hud-legend" aria-label="Légende des scores">
+              <span><i class="legend-dot legend-strong"></i>Fort 75%+</span>
+              <span><i class="legend-dot legend-balanced"></i>Équilibré 60–74%</span>
+              <span><i class="legend-dot legend-weak"></i>À renforcer &lt; 60%</span>
+            </div>
+          </section>
+          <aside class="panel biomech-analysis-panel" aria-live="polite">
+            <p class="eyebrow" id="zone-eyebrow">Zone sélectionnée</p>
+            <h2 id="zone-title">Vue globale</h2>
+            <div class="score-card"><strong id="zone-score">78/100</strong><span id="zone-level">Bon</span><small id="zone-reliability">Fiabilité 74%</small></div>
+            <div id="subzones" class="subzone-list"></div>
+            <div class="analysis-block"><h3>Points forts</h3><ul id="strength-list" class="clean-list"></ul></div>
+            <div class="analysis-block"><h3>Points faibles</h3><ul id="weakness-list" class="clean-list"></ul></div>
+            <div class="analysis-block"><h3>Sources utilisées</h3><ul id="source-list" class="clean-list"></ul></div>
+            <div class="analysis-block recommendation-box"><h3>Recommandation</h3><p id="recommendation-text"></p></div>
+          </aside>
+        </section>
+        <section class="panel biomech-bottom" aria-label="Synthèse du profil">
+          <article><p class="eyebrow">Diagnostic</p><h2>Profil de force estimé</h2><p class="muted">Le score compare les calibrations entre elles. Il indique un profil relatif pour guider les priorités du programme.</p></article>
+          <div id="global-cards" class="global-cards"></div>
+        </section>
+      </main>
+      <footer class="site-footer"><p>Le profil biomécanique est une estimation éducative.</p></footer>
+    </div>
+    <script type="module" src="src/biomech-profile.js?v=20260703-ux35"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux35"></script>
+  </body>
+</html>

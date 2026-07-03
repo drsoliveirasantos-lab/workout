@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workout Nykuto — entraînement evidence-based</title>
+    <meta
+      name="description"
+      content="Workout Nykuto crée des repères d'entraînement et de nutrition personnalisés avec des formules transparentes, des sources scientifiques et des garde-fous de sécurité."
+    />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-home3" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-home3" />
+    <link rel="stylesheet" href="src/home-mobile.css?v=20260703-home3" />
+  </head>
+  <body>
+    <div class="page-shell home-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="plan.html">Créer un plan</a>
+          <a href="profil.html">Profil biomécanique</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero home-hero" aria-labelledby="hero-title">
+          <div>
+            <p class="eyebrow">workout.nykuto.com</p>
+            <h1 id="hero-title">Ton entraînement <span>calculé, pas inventé.</span></h1>
+            <p>
+              Crée un programme de musculation et des repères nutritionnels à partir de tes données : niveau,
+              objectif, matériel et <button class="glossary-term" type="button" data-glossary="submaximal">série sous-maximale</button>.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="plan.html">Créer mon plan</a>
+              <a class="btn primary" id="resume-home-plan" href="plan.html#resume" hidden>Reprendre mon dernier plan</a>
+              <a class="btn ghost" href="profil.html">Profil biomécanique</a>
+              <a class="btn ghost" href="evidence.html">Base scientifique</a>
+            </div>
+          </div>
+          <aside class="hero-card" aria-label="Résumé du site">
+            <p class="eyebrow">Repères</p>
+            <h2>Simple, lisible, prudent</h2>
+            <p>
+              L’outil sépare le programme, le profil biomécanique et les références pour garder une navigation courte.
+            </p>
+            <div class="metric-grid">
+              <div class="metric">
+                <strong><button class="glossary-term" type="button" data-glossary="e1rm">e1RM</button></strong>
+                <span>Estimation sous-maximale</span>
+              </div>
+              <div class="metric">
+                <strong>90%</strong>
+                <span><button class="glossary-term" type="button" data-glossary="trainingMax">Training Max</button> prudent</span>
+              </div>
+              <div class="metric">
+                <strong>2-5 j</strong>
+                <span>Programmes/semaine</span>
+              </div>
+              <div class="metric">
+                <strong>Bio</strong>
+                <span>Profil biomécanique</span>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Workout Nykuto est un outil éducatif. Il ne remplace pas un avis médical, diététique ou sportif individualisé.</p>
+      </footer>
+    </div>
+    <script type="module" src="src/home-resume.js?v=20260703-home3"></script>
+    <script type="module" src="src/glossary.js?v=20260703-home3"></script>
+  </body>
+</html>
