@@ -1,4 +1,5 @@
 const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent3';
+const LEGACY_BODY_MAP_LOADER_MARKERS = 'loadSvgTextFromZip extractFirstZipFile';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
