@@ -3,10 +3,10 @@
   --bio-card: rgba(12, 24, 45, 0.72);
   --bio-border: rgba(115, 210, 255, 0.24);
   --bio-accent: #68d8ff;
-  --bio-hot: rgba(255, 73, 102, 0.62);
-  --bio-warm: rgba(255, 152, 77, 0.58);
-  --bio-mid: rgba(246, 214, 91, 0.54);
-  --bio-low: rgba(91, 188, 255, 0.46);
+  --bio-hot: rgba(255, 73, 102, 0.34);
+  --bio-warm: rgba(255, 152, 77, 0.3);
+  --bio-mid: rgba(246, 214, 91, 0.26);
+  --bio-low: rgba(91, 188, 255, 0.24);
 }
 
 .biomech-hero {
@@ -112,109 +112,96 @@
 
 .body-stage {
   position: relative;
-  min-height: 730px;
+  min-height: 740px;
   display: grid;
   place-items: center;
   overflow: hidden;
   border-radius: 1.4rem;
   background:
-    linear-gradient(rgba(104, 216, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(104, 216, 255, 0.07) 1px, transparent 1px),
-    radial-gradient(circle, rgba(104, 216, 255, 0.14), rgba(255, 57, 95, 0.04) 45%, transparent 72%);
+    linear-gradient(rgba(104, 216, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(104, 216, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(circle, rgba(104, 216, 255, 0.12), rgba(255, 57, 95, 0.03) 45%, transparent 72%);
   background-size: 34px 34px, 34px 34px, auto;
 }
 
 .body-stage::before {
   content: '';
   position: absolute;
-  width: 64%;
-  height: 91%;
+  width: 70%;
+  height: 92%;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(104, 216, 255, 0.08), transparent 65%);
   filter: blur(2px);
 }
 
-.body-map {
-  width: min(100%, 360px);
-  max-height: 720px;
-  height: auto;
+.body-art-frame,
+.body-hotspots {
+  width: min(94%, 420px);
+  aspect-ratio: 2 / 3;
   position: relative;
   z-index: 2;
 }
 
-.body-silhouette path,
-.body-silhouette .head,
-.body-silhouette .neck,
-.body-silhouette .torso,
-.body-silhouette .pelvis,
-.body-silhouette .arm,
-.body-silhouette .leg,
-.body-silhouette .foot {
-  fill: url(#bodyGlass);
-  stroke: rgba(170, 226, 255, 0.34);
-  stroke-width: 1.45;
-  vector-effect: non-scaling-stroke;
+.body-art-frame {
+  display: grid;
+  place-items: center;
 }
 
-.body-silhouette .detail {
-  fill: none;
-  stroke: rgba(170, 226, 255, 0.15);
-  stroke-width: 1.05;
+.body-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+  filter: saturate(1.08) contrast(1.06) drop-shadow(0 0 28px rgba(104, 216, 255, 0.26));
 }
 
-.muscle {
-  fill: url(#muscleIdle);
-  stroke: rgba(151, 231, 255, 0.64);
-  stroke-width: 1.08;
+.body-art-front { opacity: 1; }
+.body-stage.is-back .body-art-front { opacity: 0; }
+.body-stage.is-back .body-art-back { opacity: 1; }
+
+.body-hotspots {
+  position: absolute;
+  z-index: 3;
+  overflow: visible;
+}
+
+.hotspot {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.4;
   cursor: pointer;
-  transition: transform 0.22s ease, fill 0.22s ease, opacity 0.22s ease, filter 0.22s ease, stroke 0.22s ease;
-  opacity: 0.42;
-  transform-origin: center;
+  transition: opacity 0.2s ease, fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+  opacity: 0;
   vector-effect: non-scaling-stroke;
 }
 
-.muscle:hover,
-.muscle.is-active {
-  opacity: 0.95;
-  filter: url(#glow) drop-shadow(0 0 10px rgba(104, 216, 255, 0.34));
-  transform: scale(1.006);
-  stroke: rgba(215, 250, 255, 0.92);
+.hotspot:hover,
+.hotspot.is-active {
+  opacity: 1;
+  stroke: rgba(222, 250, 255, 0.9);
+  filter: drop-shadow(0 0 12px rgba(104, 216, 255, 0.55));
 }
 
-.abs-line {
-  fill: none;
-  stroke-linecap: round;
-  opacity: 0.5;
-}
+.hotspot.strength-hot { fill: var(--bio-hot); }
+.hotspot.strength-warm { fill: var(--bio-warm); }
+.hotspot.strength-mid { fill: var(--bio-mid); }
+.hotspot.strength-low { fill: var(--bio-low); }
 
-.body-map[data-zone="pecs"] .pecs,
-.body-map[data-zone="shoulders"] .shoulders,
-.body-map[data-zone="arms"] .arms,
-.body-map[data-zone="back"] .back,
-.body-map[data-zone="legs"] .legs,
-.body-map[data-zone="glutes"] .glutes,
-.body-map[data-zone="calves"] .calves,
-.body-map[data-zone="core"] .core {
-  opacity: 0.95;
-  filter: url(#glow);
-}
-
-.body-map .strength-hot { fill: var(--bio-hot); }
-.body-map .strength-warm { fill: var(--bio-warm); }
-.body-map .strength-mid { fill: var(--bio-mid); }
-.body-map .strength-low { fill: var(--bio-low); }
-
-.back-muscles { display: none; }
-.body-map.is-back .front-muscles { display: none; }
-.body-map.is-back .back-muscles { display: block; }
+.hotspot-back { display: none; }
+.body-stage.is-back .hotspot-front { display: none; }
+.body-stage.is-back .hotspot-back { display: block; }
 
 .scan-ring {
   position: absolute;
-  inset: 4%;
+  inset: 5%;
   border: 1px solid rgba(104, 216, 255, 0.14);
   border-radius: 50%;
   box-shadow: inset 0 0 80px rgba(104, 216, 255, 0.08), 0 0 80px rgba(104, 216, 255, 0.08);
   pointer-events: none;
+  z-index: 1;
 }
 
 .subzone-list {
@@ -278,7 +265,7 @@
 
 @media (max-width: 1080px) {
   .biomech-grid { grid-template-columns: 1fr; }
-  .body-stage { min-height: 700px; }
+  .body-stage { min-height: 720px; }
 }
 
 @media (max-width: 720px) {
@@ -290,5 +277,6 @@
   }
 
   .body-stage { min-height: 650px; }
-  .body-map { width: min(92%, 330px); max-height: 635px; }
+  .body-art-frame,
+  .body-hotspots { width: min(94%, 360px); }
 }
