@@ -1,0 +1,45 @@
+.hotspot {
+  opacity: 0.34 !important;
+  fill: rgba(50, 230, 255, 0.16) !important;
+  stroke: rgba(50, 230, 255, 0.52) !important;
+  stroke-width: 10 !important;
+  vector-effect: non-scaling-stroke;
+  mix-blend-mode: screen;
+}
+
+.hotspot.other {
+  opacity: 0.18 !important;
+  fill: rgba(255, 90, 180, 0.12) !important;
+  stroke: rgba(255, 90, 180, 0.35) !important;
+}
+
+.hotspot:hover,
+.hotspot.is-active {
+  opacity: 0.92 !important;
+  stroke: rgba(220, 252, 255, 0.95) !important;
+  stroke-width: 12 !important;
+  filter: drop-shadow(0 0 18px rgba(50, 230, 255, 0.78));
+}
+
+.hotspot.strength-hot {
+  fill: rgba(50, 230, 255, 0.42) !important;
+}
+
+.hotspot.strength-warm {
+  fill: rgba(74, 168, 255, 0.4) !important;
+}
+
+.hotspot.strength-mid {
+  fill: rgba(255, 173, 53, 0.38) !important;
+  stroke: rgba(255, 190, 80, 0.82) !important;
+}
+
+.hotspot.strength-low {
+  fill: rgba(255, 107, 65, 0.4) !important;
+  stroke: rgba(255, 126, 90, 0.82) !important;
+}
+
+.body-click-layer {
+  display: none !important;
+  pointer-events: none !important;
+}
