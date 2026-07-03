@@ -111,36 +111,34 @@ test('plan page contains adaptive controls, multi-variant calibration and result
   assert.match(accordionCss, /accordion-summary/);
 });
 
-test('biomechanical profile page has premium body art and interactive hotspots', async () => {
+test('biomechanical profile page uses traced Inkscape body map loader', async () => {
   const html = await text('profil.html');
   const script = await text('src/biomech-profile.js');
   const css = await text('src/biomech-profile.css');
-  const bodyArt = await text('src/data/bodyArt.js');
+  const build = await text('scripts/build-static.mjs');
 
   assert.match(html, /Profil biomécanique/);
   assert.match(html, /Carte corporelle interactive/);
-  assert.match(html, /body-art-front/);
-  assert.match(html, /body-art-back/);
-  assert.match(html, /body-hotspots/);
-  assert.match(html, /data-zone="pecs"/);
-  assert.match(html, /data-part="pec_claviculaire"/);
-  assert.match(html, /data-part="vaste_lateral"/);
-  assert.match(html, /id="zone-tabs"/);
+  assert.match(html, /body-map-mount/);
+  assert.match(html, /zones tracées manuellement dans Inkscape/);
   assert.match(html, /src\/biomech-profile\.js/);
-  assert.match(script, /BODY_ART/);
-  assert.match(script, /loadBodyArtwork/);
-  assert.match(script, /renderZone/);
+  assert.match(script, /BODY_MAP_URL/);
+  assert.match(script, /loadSvgTextFromZip/);
+  assert.match(script, /extractFirstZipFile/);
+  assert.match(script, /buildMapFromSvgDocument/);
+  assert.match(script, /renderBodySvg/);
   assert.match(script, /paintBody/);
-  assert.match(script, /body-hotspots/);
-  assert.match(script, /Pectoraux/);
-  assert.match(script, /Quadriceps/);
+  assert.match(script, /grand_rond/);
+  assert.match(script, /serratus_anterior/);
+  assert.match(script, /semimembraneux/);
+  assert.match(script, /gastrocnemien/);
   assert.match(script, /reliability/);
-  assert.match(bodyArt, /data:image\/webp;base64/);
-  assert.match(css, /body-art-frame/);
-  assert.match(css, /body-hotspots/);
+  assert.match(css, /user-body-map/);
+  assert.match(css, /body-map-svg/);
+  assert.match(css, /body-map-image/);
   assert.match(css, /hotspot\.strength-hot/);
-  assert.match(css, /scan-ring/);
   assert.match(css, /body-stage\.is-back/);
+  assert.match(build, /body_back_and_front_zones\.svgz\.zip/);
 });
 
 test('sources and evidence pages are separate pages', async () => {
