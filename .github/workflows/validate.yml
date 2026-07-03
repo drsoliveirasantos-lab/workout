@@ -47,6 +47,8 @@ jobs:
           test -f dist/src/result-accordion.css
           test -f dist/src/ux-polish.css
           test -f dist/src/premium-controls.css
+          test -f dist/src/visual-pickers.css
+          test -f dist/src/visual-pickers.js
           test -f dist/src/data/glossary.js
           test -f dist/src/data/bodyArt.js
           test -f dist/src/data/movementFamilies.js
