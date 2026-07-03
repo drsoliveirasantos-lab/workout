@@ -38,6 +38,7 @@ const premiumControlIcons = {
 
 function initUxPolish() {
   injectPremiumControlStyles();
+  loadVisualPickers();
   decoratePremiumControls();
   addRecoveryHelp();
   bindManualWeightSelect();
@@ -54,6 +55,15 @@ function injectPremiumControlStyles() {
   link.href = 'src/premium-controls.css?v=20260703-select2';
   link.dataset.premiumControls = 'true';
   document.head.appendChild(link);
+}
+
+function loadVisualPickers() {
+  if (document.querySelector('script[data-visual-pickers]')) return;
+  const script = document.createElement('script');
+  script.src = 'src/visual-pickers.js?v=20260703-picker1';
+  script.dataset.visualPickers = 'true';
+  script.defer = true;
+  document.body.appendChild(script);
 }
 
 function decoratePremiumControls(root = document) {
