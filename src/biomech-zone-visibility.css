@@ -7,14 +7,42 @@
   mix-blend-mode: screen;
 }
 
-.hotspot.is-out-of-view {
-  opacity: 0 !important;
-  fill: transparent !important;
-  stroke: transparent !important;
-  pointer-events: none !important;
-}
-
-.hotspot.other {
+.hotspot.is-out-of-view,
+.hotspot.other,
+.body-map-front .hotspot.back,
+.body-map-front .hotspot.glutes,
+.body-map-front .hotspot[data-part='grand_dorsal'],
+.body-map-front .hotspot[data-part='trapezes'],
+.body-map-front .hotspot[data-part='rhomboides'],
+.body-map-front .hotspot[data-part='infra_epineux'],
+.body-map-front .hotspot[data-part='grand_rond'],
+.body-map-front .hotspot[data-part='petit_rond'],
+.body-map-front .hotspot[data-part='lombaires'],
+.body-map-front .hotspot[data-part='grand_fessier'],
+.body-map-front .hotspot[data-part='moyen_fessier'],
+.body-map-front .hotspot[data-part='tenseur_fascia_lata'],
+.body-map-front .hotspot[data-part='semimembraneux'],
+.body-map-front .hotspot[data-part='semitendineux'],
+.body-map-front .hotspot[data-part='biceps_femoral'],
+.body-map-front .hotspot[data-part='deltoide_posterieur'],
+.body-map-back .hotspot.pecs,
+.body-map-back .hotspot[data-part='pec_claviculaire'],
+.body-map-back .hotspot[data-part='pec_sternal'],
+.body-map-back .hotspot[data-part='pec_costal'],
+.body-map-back .hotspot[data-part='abdos'],
+.body-map-back .hotspot[data-part='obliques'],
+.body-map-back .hotspot[data-part='serratus_anterior'],
+.body-map-back .hotspot[data-part='psoas'],
+.body-map-back .hotspot[data-part='iliaque'],
+.body-map-back .hotspot[data-part='vaste_lateral'],
+.body-map-back .hotspot[data-part='vaste_medial'],
+.body-map-back .hotspot[data-part='droit_femoral'],
+.body-map-back .hotspot[data-part='sartorius'],
+.body-map-back .hotspot[data-part='gracile'],
+.body-map-back .hotspot[data-part='grand_adducteur'],
+.body-map-back .hotspot[data-part='long_adducteur'],
+.body-map-back .hotspot[data-part='pectine'],
+.body-map-back .hotspot[data-part='deltoide_anterieur'] {
   opacity: 0 !important;
   fill: transparent !important;
   stroke: transparent !important;
