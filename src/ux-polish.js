@@ -1,5 +1,6 @@
 const lateralRaiseNames = ['elevation laterale halteres', 'elevation laterale assise avec haltere', 'lateral raise'];
 const cableLateralNames = ['elevation laterale poulie', 'elevation laterale unilaterale avec cable', 'cable lateral raise'];
+const customSelectLongNames = new Set(['age', 'heightCm', 'weightKg', 'calibrationWeight', 'calibrationReps', 'inlineWeight', 'inlineReps']);
 const premiumControlIcons = {
   sex: '⚥',
   age: '◷',
@@ -41,6 +42,7 @@ function initUxPolish() {
   addRecoveryHelp();
   bindManualWeightSelect();
   bindInlineCalibrationWeights();
+  bindCustomSelectGlobalEvents();
   polishRenderedResults();
   observeResultChanges();
 }
@@ -49,7 +51,7 @@ function injectPremiumControlStyles() {
   if (document.querySelector('link[data-premium-controls]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'src/premium-controls.css?v=20260703-select1';
+  link.href = 'src/premium-controls.css?v=20260703-select2';
   link.dataset.premiumControls = 'true';
   document.head.appendChild(link);
 }
@@ -57,11 +59,128 @@ function injectPremiumControlStyles() {
 function decoratePremiumControls(root = document) {
   root.querySelectorAll('select, textarea, input:not([type="hidden"])').forEach((control) => {
     const label = control.closest('label');
-    if (!label || label.dataset.premiumDecorated === 'true') return;
-    label.classList.add('premium-control-field');
-    label.dataset.premiumDecorated = 'true';
-    label.dataset.controlIcon = premiumControlIcons[control.name] || '⌄';
-    control.dataset.premiumControl = 'true';
+    if (!label) return;
+
+    if (label.dataset.premiumDecorated !== 'true') {
+      label.classList.add('premium-control-field');
+      label.dataset.premiumDecorated = 'true';
+      label.dataset.controlIcon = premiumControlIcons[control.name] || '⌄';
+      control.dataset.premiumControl = 'true';
+    }
+
+    if (control.matches('select')) enhanceCustomSelect(control);
+  });
+}
+
+function shouldUseCustomSelect(select) {
+  if (!select || select.dataset.rangeSelect !== undefined) return false;
+  if (customSelectLongNames.has(select.name)) return false;
+  if (select.options.length === 0 || select.options.length > 14) return false;
+  return true;
+}
+
+function enhanceCustomSelect(select) {
+  if (!shouldUseCustomSelect(select)) {
+    removeCustomSelect(select);
+    return;
+  }
+
+  let custom = select.nextElementSibling?.classList?.contains('custom-select') ? select.nextElementSibling : null;
+  if (!custom) {
+    custom = document.createElement('div');
+    custom.className = 'custom-select';
+    custom.innerHTML = '<button class="custom-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"></button><div class="custom-select-menu" role="listbox"></div>';
+    select.insertAdjacentElement('afterend', custom);
+    select.classList.add('custom-select-native');
+
+    custom.querySelector('.custom-select-trigger').addEventListener('click', () => toggleCustomSelect(custom));
+    custom.querySelector('.custom-select-menu').addEventListener('click', (event) => {
+      const optionButton = event.target.closest('[data-custom-option]');
+      if (!optionButton) return;
+      select.value = optionButton.dataset.value;
+      select.dispatchEvent(new Event('input', { bubbles: true }));
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      syncCustomSelect(select);
+      closeCustomSelect(custom);
+    });
+
+    custom.querySelector('.custom-select-trigger').addEventListener('keydown', (event) => handleCustomSelectKeydown(event, select, custom));
+    select.addEventListener('change', () => syncCustomSelect(select));
+  }
+
+  syncCustomSelect(select);
+}
+
+function removeCustomSelect(select) {
+  select.classList.remove('custom-select-native');
+  const custom = select.nextElementSibling?.classList?.contains('custom-select') ? select.nextElementSibling : null;
+  if (custom) custom.remove();
+}
+
+function syncCustomSelect(select) {
+  const custom = select.nextElementSibling?.classList?.contains('custom-select') ? select.nextElementSibling : null;
+  if (!custom) return;
+  const trigger = custom.querySelector('.custom-select-trigger');
+  const menu = custom.querySelector('.custom-select-menu');
+  const selectedOption = select.selectedOptions[0] || select.options[0];
+  trigger.textContent = selectedOption?.textContent || 'Sélectionner';
+  trigger.setAttribute('aria-label', `Sélection actuelle : ${trigger.textContent}`);
+  menu.innerHTML = [...select.options].map((option) => `
+    <button class="custom-select-option ${option.selected ? 'is-selected' : ''}" type="button" role="option" aria-selected="${option.selected ? 'true' : 'false'}" data-custom-option data-value="${escapeAttr(option.value)}">${escapeHtml(option.textContent)}</button>
+  `).join('');
+}
+
+function toggleCustomSelect(custom) {
+  const isOpen = custom.classList.contains('is-open');
+  closeAllCustomSelects();
+  if (!isOpen) openCustomSelect(custom);
+}
+
+function openCustomSelect(custom) {
+  custom.classList.add('is-open');
+  custom.querySelector('.custom-select-trigger')?.setAttribute('aria-expanded', 'true');
+}
+
+function closeCustomSelect(custom) {
+  custom.classList.remove('is-open');
+  custom.querySelector('.custom-select-trigger')?.setAttribute('aria-expanded', 'false');
+}
+
+function closeAllCustomSelects() {
+  document.querySelectorAll('.custom-select.is-open').forEach(closeCustomSelect);
+}
+
+function handleCustomSelectKeydown(event, select, custom) {
+  if (event.key === 'Escape') {
+    closeCustomSelect(custom);
+    return;
+  }
+
+  if (!['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
+  event.preventDefault();
+  const options = [...select.options];
+  if (!options.length) return;
+  let index = options.findIndex((option) => option.selected);
+  if (event.key === 'ArrowDown') index = Math.min(options.length - 1, index + 1);
+  if (event.key === 'ArrowUp') index = Math.max(0, index - 1);
+  if (event.key === 'Enter' || event.key === ' ') {
+    toggleCustomSelect(custom);
+    return;
+  }
+  select.value = options[index]?.value || select.value;
+  select.dispatchEvent(new Event('input', { bubbles: true }));
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+  syncCustomSelect(select);
+}
+
+function bindCustomSelectGlobalEvents() {
+  if (document.body.dataset.customSelectEventsBound === 'true') return;
+  document.body.dataset.customSelectEventsBound = 'true';
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.custom-select')) closeAllCustomSelects();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeAllCustomSelects();
   });
 }
 
@@ -157,6 +276,7 @@ function rebuildWeightSelect({ weightSelect, familyId, exerciseName, defaultValu
     : defaultValue;
   weightSelect.innerHTML = values.map((value) => `<option value="${value}" ${value === nextValue ? 'selected' : ''}>${formatNumber(value)} kg</option>`).join('');
   weightSelect.dataset.weightRangeSignature = signature;
+  removeCustomSelect(weightSelect);
 }
 
 function getWeightOptions(familyId, exerciseName = '') {
@@ -301,6 +421,14 @@ function normalize(value) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;');
 }
 
 if (document.readyState === 'loading') {
