@@ -11,7 +11,7 @@ const ZONES = {
     weaknesses: ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'],
     sources: ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'],
     recommendation: 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.',
-    parts: ['pec_sternal', 'vaste_lateral', 'droit_femoral', 'triceps_long']
+    parts: []
   },
   pecs: {
     label: 'Pectoraux', score: 81, reliability: 86, level: 'Fort',
@@ -165,9 +165,8 @@ function paintBody(zoneId, zone) {
   map.dataset.zone = zoneId;
   map.querySelectorAll('.hotspot').forEach((hotspot) => {
     hotspot.classList.remove('is-active', 'strength-hot', 'strength-warm', 'strength-mid', 'strength-low');
-    const active = zoneId === 'global'
-      ? zone.parts.includes(hotspot.dataset.part)
-      : hotspot.dataset.zone === zoneId || zone.parts.includes(hotspot.dataset.part);
+    if (zoneId === 'global') return;
+    const active = hotspot.dataset.zone === zoneId || zone.parts.includes(hotspot.dataset.part);
     if (!active) return;
     hotspot.classList.add('is-active', strengthClass(zone.score));
   });
