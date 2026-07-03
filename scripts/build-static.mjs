@@ -21,7 +21,6 @@ for (const file of htmlFiles) {
 }
 
 await cp('src', 'dist/src', { recursive: true });
-await cp('docs', 'dist/docs', { recursive: true });
 
 for (const file of ['_headers', '_redirects', 'body_front_zones.svg', 'body_back.svg']) {
   if (await exists(file)) {
@@ -29,4 +28,4 @@ for (const file of ['_headers', '_redirects', 'body_front_zones.svg', 'body_back
   }
 }
 
-console.log(`Static build ready in dist/ with ${htmlFiles.length} HTML page(s).`);
+console.log(`Static build ready in dist/ with ${htmlFiles.length} HTML page(s). Internal docs are not copied to public dist.`);
