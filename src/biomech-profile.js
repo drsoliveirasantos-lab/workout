@@ -1,5 +1,5 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent1';
-const BODY_MAP_FALLBACK_URL = 'body_back_and_front_zones.svgz.zip?v=20260703-transparent1';
+const BODY_MAP_URL = 'body_back_and_front_zones.svgz.zip?v=20260703-transparent2';
+const BODY_MAP_DIRECT_FALLBACK_URL = 'body_back_and_front_zones.svg?v=20260703-transparent2';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -19,38 +19,44 @@ async function loadBodyMap() {
   if (!mount) return;
   mount.innerHTML = '<div class="body-map-loading">Chargement des zones Inkscape…</div>';
   try {
-    const svgText = await loadSvgText(BODY_MAP_URL);
+    const svgText = await loadSvgText();
     const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+    const parserError = doc.querySelector('parsererror');
+    if (parserError) throw new Error('SVG invalide après lecture');
     const map = buildMapFromSvgDocument(doc);
     mount.innerHTML = renderBodySvg('front', map.front) + renderBodySvg('back', map.back);
     paintBody(state.zone, ZONES[state.zone] || ZONES.global);
   } catch (error) {
     console.error(error);
-    mount.innerHTML = '<div class="body-map-error">Impossible de charger la carte anatomique tracée. Réessaie après le prochain déploiement.</div>';
+    mount.innerHTML = `<div class="body-map-error">Impossible de charger la carte anatomique tracée.<br><small>${escapeHtml(error.message || String(error))}</small></div>`;
   }
 }
-async function loadSvgText(url) {
+async function loadSvgText() {
   try {
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Fichier SVG introuvable: ${response.status}`);
-    const text = await response.text();
-    if (!text.includes('<svg')) throw new Error('Le fichier SVG direct est vide ou invalide');
-    return text;
-  } catch (error) {
-    console.warn('Chargement SVG direct impossible, fallback SVGZ ZIP.', error);
-    return loadSvgTextFromZip(BODY_MAP_FALLBACK_URL);
+    return await loadSvgTextFromZip(BODY_MAP_URL);
+  } catch (zipError) {
+    console.warn('Chargement ZIP impossible, tentative SVG direct.', zipError);
+    return loadDirectSvgText(BODY_MAP_DIRECT_FALLBACK_URL);
   }
+}
+async function loadDirectSvgText(url) {
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Fichier SVG introuvable: ${response.status}`);
+  const text = await response.text();
+  if (!text.includes('<svg')) throw new Error('Le fichier SVG direct est vide ou invalide');
+  return text;
 }
 async function loadSvgTextFromZip(url) {
   const buffer = await fetch(url, { cache: 'no-store' }).then((response) => {
     if (!response.ok) throw new Error(`Fichier anatomique introuvable: ${response.status}`);
     return response.arrayBuffer();
   });
-  const svgzBytes = await extractFirstZipFile(buffer);
-  return inflateGzipToText(svgzBytes);
+  const entry = await extractFirstSvgEntry(buffer);
+  if (entry.name.endsWith('.svgz')) return inflateGzipToText(entry.bytes);
+  return new TextDecoder().decode(entry.bytes);
 }
-async function extractFirstZipFile(buffer) {
-  const entry = findCentralDirectorySvgzEntry(buffer);
+async function extractFirstSvgEntry(buffer) {
+  const entry = findCentralDirectorySvgEntry(buffer);
   const view = new DataView(buffer);
   const localOffset = entry.localHeaderOffset;
   if (view.getUint32(localOffset, true) !== 0x04034b50) throw new Error('Entrée ZIP invalide');
@@ -58,11 +64,13 @@ async function extractFirstZipFile(buffer) {
   const extraLength = view.getUint16(localOffset + 28, true);
   const dataOffset = localOffset + 30 + nameLength + extraLength;
   const compressed = buffer.slice(dataOffset, dataOffset + entry.compressedSize);
-  if (entry.method === 0) return compressed;
-  if (entry.method === 8) return inflateArrayBuffer(compressed, 'deflate-raw');
-  throw new Error(`Méthode ZIP non supportée: ${entry.method}`);
+  let bytes;
+  if (entry.method === 0) bytes = compressed;
+  else if (entry.method === 8) bytes = await inflateArrayBuffer(compressed, 'deflate-raw');
+  else throw new Error(`Méthode ZIP non supportée: ${entry.method}`);
+  return { name: entry.name, bytes };
 }
-function findCentralDirectorySvgzEntry(buffer) {
+function findCentralDirectorySvgEntry(buffer) {
   const view = new DataView(buffer);
   let eocdOffset = -1;
   for (let index = buffer.byteLength - 22; index >= 0; index -= 1) {
@@ -79,10 +87,13 @@ function findCentralDirectorySvgzEntry(buffer) {
     const commentLength = view.getUint16(offset + 32, true);
     const localHeaderOffset = view.getUint32(offset + 42, true);
     const name = decoder.decode(new Uint8Array(buffer, offset + 46, nameLength));
-    if (name.endsWith('.svgz') && !name.startsWith('__MACOSX/')) return { method, compressedSize, localHeaderOffset };
+    const normalizedName = name.toLowerCase();
+    if ((normalizedName.endsWith('.svgz') || normalizedName.endsWith('.svg')) && !normalizedName.startsWith('__macosx/')) {
+      return { name: normalizedName, method, compressedSize, localHeaderOffset };
+    }
     offset += 46 + nameLength + extraLength + commentLength;
   }
-  throw new Error('Fichier SVGZ introuvable dans le ZIP');
+  throw new Error('Aucun fichier .svg ou .svgz trouvé dans le ZIP');
 }
 async function inflateArrayBuffer(buffer, format) {
   if (!('DecompressionStream' in window)) throw new Error('Décompression non supportée par ce navigateur');
@@ -104,7 +115,7 @@ function collectView(doc, view, zoneLayerName, imageLayerNames) {
   const zoneLayer = findLayer(doc, zoneLayerName);
   const imageLayer = findLayer(doc, imageLayerNames);
   const image = imageLayer?.querySelector('image');
-  if (!zoneLayer || !image) throw new Error(`Vue ${view} incomplète`);
+  if (!zoneLayer || !image) throw new Error(`Vue ${view} incomplète: calque image ou zones introuvable`);
   const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height') };
   const seen = new Map();
   const paths = [...zoneLayer.querySelectorAll('path')].map((path) => normalizePath(path, view, seen)).filter(Boolean);
@@ -172,6 +183,7 @@ function part(zone, partName, name) { return { zone, part: partName, name }; }
 function normalizeText(value) { return (value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
 function inferSide(label) { const last = normalizeText(label).split(' ').at(-1); if (['d', 'r', 'right', 'droite'].includes(last)) return 'right'; if (['g', 'i', 'l', 'left', 'gauche'].includes(last)) return 'left'; return ''; }
 function numberAttr(node, name) { return Number.parseFloat(node.getAttribute(name) || '0'); }
+function escapeHtml(value) { return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]); }
 function renderTabs() { const tabs = document.querySelector('#zone-tabs'); if (!tabs) return; tabs.innerHTML = Object.entries(ZONES).map(([id, zone]) => `<button class="zone-tab" type="button" data-zone="${id}" role="tab"><span>${zone.label}</span><small>${zone.score}/100</small></button>`).join(''); }
 function bindEvents() { document.querySelector('#zone-tabs')?.addEventListener('click', (event) => { const button = event.target.closest('[data-zone]'); if (button) renderZone(button.dataset.zone); }); document.querySelector('#body-map-mount')?.addEventListener('click', (event) => { const hotspot = event.target.closest('[data-zone]'); if (hotspot) renderZone(hotspot.dataset.zone); }); document.querySelector('#toggle-view')?.addEventListener('click', () => { state.view = state.view === 'front' ? 'back' : 'front'; document.querySelector('#body-stage')?.classList.toggle('is-back', state.view === 'back'); document.querySelector('#toggle-view').textContent = state.view === 'front' ? 'Vue arrière' : 'Vue avant'; paintBody(state.zone, ZONES[state.zone] || ZONES.global); }); }
 function renderZone(zoneId) { const zone = ZONES[zoneId] || ZONES.global; state.zone = zoneId; document.querySelectorAll('.zone-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.zone === zoneId)); document.querySelector('#zone-eyebrow').textContent = zoneId === 'global' ? 'Synthèse' : 'Zone sélectionnée'; document.querySelector('#zone-title').textContent = zone.label; document.querySelector('#zone-score').textContent = `${zone.score}/100`; document.querySelector('#zone-level').textContent = zone.level; document.querySelector('#zone-reliability').textContent = `Fiabilité ${zone.reliability}%`; document.querySelector('#subzones').innerHTML = zone.subzones.map(([label, score]) => `<div class="subzone-row"><strong>${label}</strong><span>${score}/100</span><div class="subzone-bar" style="--score:${score}%"><span></span></div></div>`).join(''); fillList('#strength-list', zone.strengths); fillList('#weakness-list', zone.weaknesses); fillList('#source-list', zone.sources); document.querySelector('#recommendation-text').textContent = zone.recommendation; paintBody(zoneId, zone); }
