@@ -1,4 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent4';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent5';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -11,8 +11,18 @@ const ZONES = {
   calves: z('Mollets', 55, 42, 'Correct', [['Gastrocnémien', 58], ['Soléaire', 50], ['Stabilité pied', 44]], ['Base debout exploitable'], ['Mollets assis manquants', 'Soléaire peu documenté'], ['Mollets debout machine'], 'Ajouter mollets assis pour séparer gastrocnémien et soléaire.', ['gastrocnemien', 'soleaire']),
   core: z('Core / abdos', 62, 40, 'Correct', [['Abdominaux', 64], ['Obliques / dentelé', 60], ['Stabilité lombaire', 55]], ['Core présent dans les mouvements libres'], ['Peu de tests directs', 'Endurance spécifique à mesurer'], ['Gainage', 'Squat Smith', 'RDL'], 'Ajouter un test simple de gainage ou crunch lesté si tu veux suivre le core.', ['abdos', 'obliques', 'lombaires', 'serratus_anterior', 'psoas', 'iliaque'])
 };
+const HUD_ZONES = [
+  { id: 'pecs', slot: 'left-1', icon: '◎', connector: 'connector-right' },
+  { id: 'back', slot: 'left-2', icon: '◇', connector: 'connector-right' },
+  { id: 'glutes', slot: 'left-3', icon: '⌁', connector: 'connector-right' },
+  { id: 'shoulders', slot: 'right-1', icon: '⌃', connector: 'connector-left' },
+  { id: 'arms', slot: 'right-2', icon: '↯', connector: 'connector-left' },
+  { id: 'core', slot: 'right-3', icon: '▦', connector: 'connector-left' },
+  { id: 'legs', slot: 'right-4', icon: '⋀', connector: 'connector-left' },
+  { id: 'calves', slot: 'right-5', icon: '⋁', connector: 'connector-left' }
+];
 const state = { zone: 'global', view: 'front' };
-async function init() { renderTabs(); bindEvents(); renderZone('global'); renderGlobalCards(); await loadBodyMap(); }
+async function init() { renderTabs(); renderHudCards(); bindEvents(); renderZone('global'); renderGlobalCards(); await loadBodyMap(); }
 async function loadBodyMap() {
   const mount = document.querySelector('#body-map-mount');
   if (!mount) return;
@@ -40,20 +50,8 @@ async function loadDirectSvgText(url) {
 function buildMapFromSvgDocument(doc) {
   const candidates = collectLayerCandidates(doc);
   return {
-    front: collectView(doc, candidates, {
-      view: 'front',
-      imageAliases: ['image_reference_front', 'image reference front', 'front', 'avant', 'image_reference_back copy'],
-      zoneAliases: ['zones_front', 'zones front', 'front', 'avant'],
-      imageIndex: 1,
-      zoneIndex: 1
-    }),
-    back: collectView(doc, candidates, {
-      view: 'back',
-      imageAliases: ['image_reference_back', 'image reference back', 'back', 'arriere', 'arrière', 'posterior'],
-      zoneAliases: ['zones_back', 'zones back', 'back', 'arriere', 'arrière', 'posterior'],
-      imageIndex: 0,
-      zoneIndex: 0
-    })
+    front: collectView(doc, candidates, { view: 'front', imageAliases: ['image_reference_front', 'image reference front', 'front', 'avant', 'image_reference_back copy'], zoneAliases: ['zones_front', 'zones front', 'front', 'avant'], imageIndex: 1, zoneIndex: 1 }),
+    back: collectView(doc, candidates, { view: 'back', imageAliases: ['image_reference_back', 'image reference back', 'back', 'arriere', 'arrière', 'posterior'], zoneAliases: ['zones_back', 'zones back', 'back', 'arriere', 'arrière', 'posterior'], imageIndex: 0, zoneIndex: 0 })
   };
 }
 function collectView(doc, candidates, options) {
@@ -144,11 +142,83 @@ function normalizeText(value) { return (value || '').toLowerCase().normalize('NF
 function inferSide(label) { const last = normalizeText(label).split(' ').at(-1); if (['d', 'r', 'right', 'droite'].includes(last)) return 'right'; if (['g', 'i', 'l', 'left', 'gauche'].includes(last)) return 'left'; return ''; }
 function numberAttr(node, name) { return Number.parseFloat(node.getAttribute(name) || '0'); }
 function escapeHtml(value) { return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]); }
-function renderTabs() { const tabs = document.querySelector('#zone-tabs'); if (!tabs) return; tabs.innerHTML = Object.entries(ZONES).map(([id, zone]) => `<button class="zone-tab" type="button" data-zone="${id}" role="tab"><span>${zone.label}</span><small>${zone.score}/100</small></button>`).join(''); }
-function bindEvents() { document.querySelector('#zone-tabs')?.addEventListener('click', (event) => { const button = event.target.closest('[data-zone]'); if (button) renderZone(button.dataset.zone); }); document.querySelector('#body-map-mount')?.addEventListener('click', (event) => { const hotspot = event.target.closest('[data-zone]'); if (hotspot) renderZone(hotspot.dataset.zone); }); document.querySelector('#toggle-view')?.addEventListener('click', () => { state.view = state.view === 'front' ? 'back' : 'front'; document.querySelector('#body-stage')?.classList.toggle('is-back', state.view === 'back'); document.querySelector('#toggle-view').textContent = state.view === 'front' ? 'Vue arrière' : 'Vue avant'; paintBody(state.zone, ZONES[state.zone] || ZONES.global); }); }
-function renderZone(zoneId) { const zone = ZONES[zoneId] || ZONES.global; state.zone = zoneId; document.querySelectorAll('.zone-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.zone === zoneId)); document.querySelector('#zone-eyebrow').textContent = zoneId === 'global' ? 'Synthèse' : 'Zone sélectionnée'; document.querySelector('#zone-title').textContent = zone.label; document.querySelector('#zone-score').textContent = `${zone.score}/100`; document.querySelector('#zone-level').textContent = zone.level; document.querySelector('#zone-reliability').textContent = `Fiabilité ${zone.reliability}%`; document.querySelector('#subzones').innerHTML = zone.subzones.map(([label, score]) => `<div class="subzone-row"><strong>${label}</strong><span>${score}/100</span><div class="subzone-bar" style="--score:${score}%"><span></span></div></div>`).join(''); fillList('#strength-list', zone.strengths); fillList('#weakness-list', zone.weaknesses); fillList('#source-list', zone.sources); document.querySelector('#recommendation-text').textContent = zone.recommendation; paintBody(zoneId, zone); }
+function statusForScore(score) { if (score >= 75) return 'Fort'; if (score >= 60) return 'Équilibré'; return 'À renforcer'; }
+function statusClass(score) { if (score >= 75) return 'strong'; if (score >= 60) return 'balanced'; return 'weak'; }
+function renderTabs() {
+  const tabs = document.querySelector('#zone-tabs');
+  if (!tabs) return;
+  tabs.innerHTML = Object.entries(ZONES).map(([id, zone]) => `<button class="zone-tab" type="button" data-zone="${id}" role="tab"><span>${zone.label}</span><small>${zone.score}/100</small></button>`).join('');
+}
+function renderHudCards() {
+  const host = document.querySelector('#hud-zone-cards');
+  if (!host) return;
+  host.innerHTML = HUD_ZONES.map(({ id, slot, icon, connector }) => {
+    const zone = ZONES[id];
+    const status = statusForScore(zone.score);
+    return `<button class="hud-zone-card ${statusClass(zone.score)} ${connector}" data-slot="${slot}" data-zone="${id}" type="button" aria-label="Sélectionner ${zone.label}">
+      <span class="hud-card-top"><i>${icon}</i><b>${zone.label}</b></span>
+      <span class="hud-card-score">${zone.score}<small>%</small></span>
+      <span class="hud-card-status">${status}</span>
+      <span class="hud-card-bar" style="--score:${zone.score}%"><i></i></span>
+    </button>`;
+  }).join('');
+}
+function bindEvents() {
+  document.querySelector('#zone-tabs')?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-zone]');
+    if (button) renderZone(button.dataset.zone);
+  });
+  document.querySelector('#hud-zone-cards')?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-zone]');
+    if (button) renderZone(button.dataset.zone);
+  });
+  document.querySelector('#body-map-mount')?.addEventListener('click', (event) => {
+    const hotspot = event.target.closest('[data-zone]');
+    if (hotspot) renderZone(hotspot.dataset.zone);
+  });
+  document.querySelector('#toggle-view')?.addEventListener('click', () => {
+    state.view = state.view === 'front' ? 'back' : 'front';
+    document.querySelector('#body-stage')?.classList.toggle('is-back', state.view === 'back');
+    document.querySelector('#toggle-view').textContent = state.view === 'front' ? 'Vue arrière' : 'Vue avant';
+    paintBody(state.zone, ZONES[state.zone] || ZONES.global);
+  });
+}
+function renderZone(zoneId) {
+  const zone = ZONES[zoneId] || ZONES.global;
+  state.zone = zoneId;
+  document.querySelectorAll('.zone-tab, .hud-zone-card').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.zone === zoneId));
+  document.querySelector('#zone-eyebrow').textContent = zoneId === 'global' ? 'Synthèse' : 'Zone sélectionnée';
+  document.querySelector('#zone-title').textContent = zone.label;
+  document.querySelector('#zone-score').textContent = `${zone.score}/100`;
+  document.querySelector('#zone-level').textContent = zone.level;
+  document.querySelector('#zone-reliability').textContent = `Fiabilité ${zone.reliability}%`;
+  document.querySelector('#subzones').innerHTML = zone.subzones.map(([label, score]) => `<div class="subzone-row"><strong>${label}</strong><span>${score}/100</span><div class="subzone-bar" style="--score:${score}%"><span></span></div></div>`).join('');
+  fillList('#strength-list', zone.strengths);
+  fillList('#weakness-list', zone.weaknesses);
+  fillList('#source-list', zone.sources);
+  document.querySelector('#recommendation-text').textContent = zone.recommendation;
+  paintBody(zoneId, zone);
+}
 function fillList(selector, items) { const list = document.querySelector(selector); if (!list) return; list.innerHTML = items.map((item) => `<li>${item}</li>`).join(''); }
-function paintBody(zoneId, zone) { const map = document.querySelector('#body-map-mount'); if (!map) return; map.dataset.zone = zoneId; map.querySelectorAll('.hotspot').forEach((hotspot) => { hotspot.classList.remove('is-active', 'strength-hot', 'strength-warm', 'strength-mid', 'strength-low'); if (zoneId === 'global') return; const active = hotspot.dataset.zone === zoneId || zone.parts.includes(hotspot.dataset.part); if (!active) return; hotspot.classList.add('is-active', strengthClass(zone.score)); }); }
+function paintBody(zoneId, zone) {
+  const map = document.querySelector('#body-map-mount');
+  if (!map) return;
+  map.dataset.zone = zoneId;
+  map.querySelectorAll('.hotspot').forEach((hotspot) => {
+    hotspot.classList.remove('is-active', 'strength-hot', 'strength-warm', 'strength-mid', 'strength-low');
+    if (zoneId === 'global') return;
+    const active = hotspot.dataset.zone === zoneId || zone.parts.includes(hotspot.dataset.part);
+    if (!active) return;
+    hotspot.classList.add('is-active', strengthClass(zone.score));
+  });
+}
 function strengthClass(score) { if (score >= 78) return 'strength-hot'; if (score >= 68) return 'strength-warm'; if (score >= 55) return 'strength-mid'; return 'strength-low'; }
-function renderGlobalCards() { const cards = document.querySelector('#global-cards'); if (!cards) return; const zones = Object.values(ZONES).filter((zone) => zone !== ZONES.global); const strongest = zones.toSorted((a, b) => b.score - a.score).slice(0, 3); const weakest = zones.toSorted((a, b) => a.score - b.score).slice(0, 3); cards.innerHTML = `<article><strong>Points forts</strong><p>${strongest.map((zone) => zone.label).join(' · ')}</p></article><article><strong>À renforcer</strong><p>${weakest.map((zone) => zone.label).join(' · ')}</p></article><article><strong>Données à compléter</strong><p>Dos, épaules latérales, ischios et mollets assis donnent la meilleure précision supplémentaire.</p></article>`; }
+function renderGlobalCards() {
+  const cards = document.querySelector('#global-cards');
+  if (!cards) return;
+  const zones = Object.values(ZONES).filter((zone) => zone !== ZONES.global);
+  const strongest = zones.toSorted((a, b) => b.score - a.score).slice(0, 3);
+  const weakest = zones.toSorted((a, b) => a.score - b.score).slice(0, 3);
+  cards.innerHTML = `<article><strong>Points forts</strong><p>${strongest.map((zone) => zone.label).join(' · ')}</p></article><article><strong>À renforcer</strong><p>${weakest.map((zone) => zone.label).join(' · ')}</p></article><article><strong>Données à compléter</strong><p>Dos, épaules latérales, ischios et mollets assis donnent la meilleure précision supplémentaire.</p></article>`;
+}
 init();
