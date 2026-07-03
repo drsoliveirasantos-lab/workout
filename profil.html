@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profil biomécanique — Workout Nykuto</title>
+    <meta
+      name="description"
+      content="Carte biomécanique interactive : points forts, points faibles, fiabilité des calibrations et analyse musculaire par zone."
+    />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux15" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux15" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux15" />
+  </head>
+  <body>
+    <div class="page-shell biomech-shell">
+      <header class="site-header">
+        <a class="logo" href="index.html" aria-label="Workout Nykuto accueil">
+          <span class="logo-mark">WN</span>
+          <span>Workout Nykuto</span>
+        </a>
+        <nav class="nav" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="plan.html">Créer un plan</a>
+          <a href="profil.html" aria-current="page">Profil biomécanique</a>
+          <a href="sources.html">Sources</a>
+          <a href="evidence.html">Evidence base</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="panel biomech-hero" aria-labelledby="profile-title">
+          <div>
+            <p class="eyebrow">Analyse musculaire</p>
+            <h1 id="profile-title">Profil biomécanique</h1>
+            <p class="muted">
+              Visualise les points forts, les points faibles, les sous-zones musculaires et la qualité des données issues des calibrations.
+            </p>
+          </div>
+          <div class="biomech-summary" aria-label="Résumé global">
+            <article><strong id="global-score">78</strong><span>score global</span></article>
+            <article><strong id="global-reliability">74%</strong><span>fiabilité</span></article>
+            <article><strong id="global-tests">12</strong><span>tests analysés</span></article>
+          </div>
+        </section>
+
+        <section class="biomech-grid" aria-label="Carte corporelle interactive">
+          <aside class="panel biomech-nav-panel">
+            <p class="eyebrow">Zones</p>
+            <h2>Carte musculaire</h2>
+            <div id="zone-tabs" class="zone-tabs" role="tablist" aria-label="Groupes musculaires"></div>
+            <div class="data-quality-card">
+              <strong>Qualité des données</strong>
+              <p>La page utilise les calibrations disponibles. Sans données réelles, elle affiche une démo réaliste pour montrer le fonctionnement.</p>
+            </div>
+          </aside>
+
+          <section class="panel body-map-panel" aria-label="Silhouette musculaire">
+            <div class="scan-header">
+              <span>Vue anatomique</span>
+              <button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button>
+            </div>
+            <div class="body-stage">
+              <svg class="body-map front-view" viewBox="0 0 320 620" role="img" aria-labelledby="body-title">
+                <title id="body-title">Silhouette interactive du profil biomécanique</title>
+                <defs>
+                  <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                <g class="body-outline">
+                  <circle cx="160" cy="58" r="35" />
+                  <path d="M110 120 Q160 92 210 120 L236 235 Q222 314 205 405 L196 560 Q178 585 160 560 Q142 585 124 560 L115 405 Q98 314 84 235 Z" />
+                  <path d="M90 138 Q48 220 45 310 Q48 352 70 347 Q78 270 112 180 Z" />
+                  <path d="M230 138 Q272 220 275 310 Q272 352 250 347 Q242 270 208 180 Z" />
+                </g>
+                <g class="muscle-layer front-muscles">
+                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs pec-upper" d="M116 145 Q160 122 204 145 Q196 162 166 165 Q137 162 116 145Z" />
+                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs pec-mid" d="M108 158 Q160 138 212 158 Q206 196 160 204 Q114 196 108 158Z" />
+                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs pec-low" d="M120 204 Q160 222 200 204 Q194 230 160 238 Q126 230 120 204Z" />
+                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders delt-front-left" d="M82 128 Q111 112 124 145 Q110 178 82 186 Q66 155 82 128Z" />
+                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders delt-front-right" d="M238 128 Q209 112 196 145 Q210 178 238 186 Q254 155 238 128Z" />
+                  <path data-zone="arms" data-part="biceps" class="muscle arms biceps-left" d="M70 188 Q93 220 86 300 Q69 318 58 294 Q57 235 70 188Z" />
+                  <path data-zone="arms" data-part="biceps" class="muscle arms biceps-right" d="M250 188 Q227 220 234 300 Q251 318 262 294 Q263 235 250 188Z" />
+                  <path data-zone="core" data-part="abdos" class="muscle core abs" d="M128 250 Q160 236 192 250 L184 366 Q160 386 136 366 Z" />
+                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs quad-left" d="M116 402 Q144 420 146 540 Q126 562 110 536 Q104 466 116 402Z" />
+                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs quad-right" d="M204 402 Q176 420 174 540 Q194 562 210 536 Q216 466 204 402Z" />
+                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs quad-center-left" d="M146 412 Q160 430 154 548 Q141 555 134 538 Q134 466 146 412Z" />
+                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs quad-center-right" d="M174 412 Q160 430 166 548 Q179 555 186 538 Q186 466 174 412Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves calf-left" d="M118 538 Q140 560 132 600 Q112 606 104 580 Q106 552 118 538Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves calf-right" d="M202 538 Q180 560 188 600 Q208 606 216 580 Q214 552 202 538Z" />
+                </g>
+                <g class="muscle-layer back-muscles" aria-hidden="true">
+                  <path data-zone="back" data-part="grand_dorsal" class="muscle back lat-left" d="M108 150 Q145 170 150 265 Q114 268 96 230 Q92 182 108 150Z" />
+                  <path data-zone="back" data-part="grand_dorsal" class="muscle back lat-right" d="M212 150 Q175 170 170 265 Q206 268 224 230 Q228 182 212 150Z" />
+                  <path data-zone="back" data-part="trapezes" class="muscle back traps" d="M124 118 Q160 145 196 118 Q188 184 160 194 Q132 184 124 118Z" />
+                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders rear-delt-left" d="M82 130 Q116 112 126 150 Q104 176 80 182 Q66 154 82 130Z" />
+                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders rear-delt-right" d="M238 130 Q204 112 194 150 Q216 176 240 182 Q254 154 238 130Z" />
+                  <path data-zone="legs" data-part="ischios" class="muscle legs ham-left" d="M116 410 Q146 430 142 548 Q120 558 110 530 Q105 458 116 410Z" />
+                  <path data-zone="legs" data-part="ischios" class="muscle legs ham-right" d="M204 410 Q174 430 178 548 Q200 558 210 530 Q215 458 204 410Z" />
+                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes glute-left" d="M118 350 Q158 330 160 390 Q136 410 112 390 Q108 368 118 350Z" />
+                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes glute-right" d="M202 350 Q162 330 160 390 Q184 410 208 390 Q212 368 202 350Z" />
+                </g>
+              </svg>
+              <div class="scan-ring" aria-hidden="true"></div>
+            </div>
+          </section>
+
+          <aside class="panel biomech-analysis-panel" aria-live="polite">
+            <p class="eyebrow" id="zone-eyebrow">Zone sélectionnée</p>
+            <h2 id="zone-title">Vue globale</h2>
+            <div class="score-card">
+              <strong id="zone-score">78/100</strong>
+              <span id="zone-level">Bon</span>
+              <small id="zone-reliability">Fiabilité 74%</small>
+            </div>
+            <div id="subzones" class="subzone-list"></div>
+            <div class="analysis-block">
+              <h3>Points forts</h3>
+              <ul id="strength-list" class="clean-list"></ul>
+            </div>
+            <div class="analysis-block">
+              <h3>Points faibles</h3>
+              <ul id="weakness-list" class="clean-list"></ul>
+            </div>
+            <div class="analysis-block">
+              <h3>Sources utilisées</h3>
+              <ul id="source-list" class="clean-list"></ul>
+            </div>
+            <div class="analysis-block recommendation-box">
+              <h3>Recommandation</h3>
+              <p id="recommendation-text"></p>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel biomech-bottom" aria-label="Synthèse du profil">
+          <article>
+            <p class="eyebrow">Diagnostic</p>
+            <h2>Profil de force estimé</h2>
+            <p class="muted">Le score compare les calibrations entre elles. Il indique un profil relatif pour guider les priorités du programme, pas un classement universel.</p>
+          </article>
+          <div id="global-cards" class="global-cards"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Le profil biomécanique est une estimation éducative. Les douleurs, blessures ou limitations doivent être évaluées par un professionnel.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="src/biomech-profile.js?v=20260702-ux15"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux15"></script>
+  </body>
+</html>
