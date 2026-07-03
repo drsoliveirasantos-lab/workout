@@ -8,9 +8,9 @@
       name="description"
       content="Carte biomécanique interactive : points forts, points faibles, fiabilité des calibrations et analyse musculaire par zone."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260702-ux15" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux15" />
-    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux15" />
+    <link rel="stylesheet" href="src/styles.css?v=20260702-ux16" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260702-ux16" />
+    <link rel="stylesheet" href="src/biomech-profile.css?v=20260702-ux16" />
   </head>
   <body>
     <div class="page-shell biomech-shell">
@@ -61,43 +61,77 @@
               <button class="btn ghost mini-action" id="toggle-view" type="button">Vue arrière</button>
             </div>
             <div class="body-stage">
-              <svg class="body-map front-view" viewBox="0 0 320 620" role="img" aria-labelledby="body-title">
+              <svg class="body-map front-view" viewBox="0 0 420 720" role="img" aria-labelledby="body-title">
                 <title id="body-title">Silhouette interactive du profil biomécanique</title>
                 <defs>
+                  <radialGradient id="bodyGlass" cx="50%" cy="35%" r="68%">
+                    <stop offset="0" stop-color="#6edfff" stop-opacity="0.28" />
+                    <stop offset="0.55" stop-color="#1b86bd" stop-opacity="0.18" />
+                    <stop offset="1" stop-color="#061426" stop-opacity="0.02" />
+                  </radialGradient>
+                  <linearGradient id="muscleIdle" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stop-color="#7ce7ff" stop-opacity="0.42" />
+                    <stop offset="1" stop-color="#0d5d91" stop-opacity="0.18" />
+                  </linearGradient>
                   <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 </defs>
-                <g class="body-outline">
-                  <circle cx="160" cy="58" r="35" />
-                  <path d="M110 120 Q160 92 210 120 L236 235 Q222 314 205 405 L196 560 Q178 585 160 560 Q142 585 124 560 L115 405 Q98 314 84 235 Z" />
-                  <path d="M90 138 Q48 220 45 310 Q48 352 70 347 Q78 270 112 180 Z" />
-                  <path d="M230 138 Q272 220 275 310 Q272 352 250 347 Q242 270 208 180 Z" />
+
+                <g class="body-silhouette">
+                  <path class="head" d="M174 62 C174 32 246 32 246 62 C248 100 232 124 210 124 C188 124 172 100 174 62Z" />
+                  <path class="neck" d="M183 116 C197 130 223 130 237 116 L247 162 C230 174 190 174 173 162Z" />
+                  <path class="torso" d="M124 168 C146 144 176 136 210 136 C244 136 274 144 296 168 C282 222 276 284 268 350 C252 376 230 392 210 392 C190 392 168 376 152 350 C144 284 138 222 124 168Z" />
+                  <path class="pelvis" d="M154 352 C174 386 246 386 266 352 C286 398 282 440 250 456 C228 468 192 468 170 456 C138 440 134 398 154 352Z" />
+                  <path class="arm left" d="M124 174 C94 194 78 246 68 314 C58 384 66 438 88 444 C107 450 115 424 116 384 C118 326 137 262 151 202Z" />
+                  <path class="arm right" d="M296 174 C326 194 342 246 352 314 C362 384 354 438 332 444 C313 450 305 424 304 384 C302 326 283 262 269 202Z" />
+                  <path class="leg left" d="M160 440 C180 456 196 456 207 440 C202 500 197 594 189 662 C180 688 154 686 148 660 C148 590 150 510 160 440Z" />
+                  <path class="leg right" d="M260 440 C240 456 224 456 213 440 C218 500 223 594 231 662 C240 688 266 686 272 660 C272 590 270 510 260 440Z" />
+                  <path class="foot left" d="M148 658 C128 676 120 696 142 700 C166 704 186 694 190 672Z" />
+                  <path class="foot right" d="M272 658 C292 676 300 696 278 700 C254 704 234 694 230 672Z" />
+                  <path class="detail sternum" d="M210 142 C208 202 208 280 210 362" />
+                  <path class="detail ribs-left" d="M154 210 C178 228 197 232 210 230" />
+                  <path class="detail ribs-right" d="M266 210 C242 228 223 232 210 230" />
+                  <path class="detail hip-left" d="M164 386 C184 404 198 414 208 432" />
+                  <path class="detail hip-right" d="M256 386 C236 404 222 414 212 432" />
                 </g>
+
                 <g class="muscle-layer front-muscles">
-                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs pec-upper" d="M116 145 Q160 122 204 145 Q196 162 166 165 Q137 162 116 145Z" />
-                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs pec-mid" d="M108 158 Q160 138 212 158 Q206 196 160 204 Q114 196 108 158Z" />
-                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs pec-low" d="M120 204 Q160 222 200 204 Q194 230 160 238 Q126 230 120 204Z" />
-                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders delt-front-left" d="M82 128 Q111 112 124 145 Q110 178 82 186 Q66 155 82 128Z" />
-                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders delt-front-right" d="M238 128 Q209 112 196 145 Q210 178 238 186 Q254 155 238 128Z" />
-                  <path data-zone="arms" data-part="biceps" class="muscle arms biceps-left" d="M70 188 Q93 220 86 300 Q69 318 58 294 Q57 235 70 188Z" />
-                  <path data-zone="arms" data-part="biceps" class="muscle arms biceps-right" d="M250 188 Q227 220 234 300 Q251 318 262 294 Q263 235 250 188Z" />
-                  <path data-zone="core" data-part="abdos" class="muscle core abs" d="M128 250 Q160 236 192 250 L184 366 Q160 386 136 366 Z" />
-                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs quad-left" d="M116 402 Q144 420 146 540 Q126 562 110 536 Q104 466 116 402Z" />
-                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs quad-right" d="M204 402 Q176 420 174 540 Q194 562 210 536 Q216 466 204 402Z" />
-                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs quad-center-left" d="M146 412 Q160 430 154 548 Q141 555 134 538 Q134 466 146 412Z" />
-                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs quad-center-right" d="M174 412 Q160 430 166 548 Q179 555 186 538 Q186 466 174 412Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves calf-left" d="M118 538 Q140 560 132 600 Q112 606 104 580 Q106 552 118 538Z" />
-                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves calf-right" d="M202 538 Q180 560 188 600 Q208 606 216 580 Q214 552 202 538Z" />
+                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs" d="M142 166 C170 142 196 148 208 166 C198 184 168 188 136 180 C136 174 138 170 142 166Z" />
+                  <path data-zone="pecs" data-part="pec_claviculaire" class="muscle pecs" d="M278 166 C250 142 224 148 212 166 C222 184 252 188 284 180 C284 174 282 170 278 166Z" />
+                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs" d="M136 184 C166 188 196 188 208 170 L206 224 C178 234 150 224 132 206 C132 198 133 190 136 184Z" />
+                  <path data-zone="pecs" data-part="pec_sternal" class="muscle pecs" d="M284 184 C254 188 224 188 212 170 L214 224 C242 234 270 224 288 206 C288 198 287 190 284 184Z" />
+                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs" d="M142 218 C170 240 196 238 206 228 L202 260 C174 274 150 256 136 232 C137 226 139 222 142 218Z" />
+                  <path data-zone="pecs" data-part="pec_costal" class="muscle pecs" d="M278 218 C250 240 224 238 214 228 L218 260 C246 274 270 256 284 232 C283 226 281 222 278 218Z" />
+                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders" d="M104 166 C124 142 146 148 154 176 C144 212 116 236 92 226 C84 202 88 180 104 166Z" />
+                  <path data-zone="shoulders" data-part="deltoide_anterieur" class="muscle shoulders" d="M316 166 C296 142 274 148 266 176 C276 212 304 236 328 226 C336 202 332 180 316 166Z" />
+                  <path data-zone="arms" data-part="biceps" class="muscle arms" d="M84 240 C110 252 120 290 112 340 C106 370 88 390 72 376 C70 330 72 282 84 240Z" />
+                  <path data-zone="arms" data-part="biceps" class="muscle arms" d="M336 240 C310 252 300 290 308 340 C314 370 332 390 348 376 C350 330 348 282 336 240Z" />
+                  <path data-zone="arms" data-part="avant_bras" class="muscle arms" d="M78 380 C104 390 106 432 88 456 C68 452 58 426 62 400 C66 390 70 384 78 380Z" />
+                  <path data-zone="arms" data-part="avant_bras" class="muscle arms" d="M342 380 C316 390 314 432 332 456 C352 452 362 426 358 400 C354 390 350 384 342 380Z" />
+                  <path data-zone="core" data-part="abdos" class="muscle core" d="M184 266 C196 260 224 260 236 266 C238 292 234 330 224 362 C216 370 204 370 196 362 C186 330 182 292 184 266Z" />
+                  <path data-zone="core" data-part="abdos" class="muscle core abs-line" d="M190 274 L230 274 M188 306 L232 306 M190 338 L230 338" />
+                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs" d="M154 456 C182 464 192 520 188 596 C176 632 154 632 144 598 C142 542 144 496 154 456Z" />
+                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs" d="M188 454 C206 480 204 554 194 610 C184 594 178 510 188 454Z" />
+                  <path data-zone="legs" data-part="vaste_lateral" class="muscle legs" d="M266 456 C238 464 228 520 232 596 C244 632 266 632 276 598 C278 542 276 496 266 456Z" />
+                  <path data-zone="legs" data-part="droit_femoral" class="muscle legs" d="M232 454 C214 480 216 554 226 610 C236 594 242 510 232 454Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M154 602 C174 618 176 660 160 686 C138 674 136 626 154 602Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M266 602 C246 618 244 660 260 686 C282 674 284 626 266 602Z" />
                 </g>
+
                 <g class="muscle-layer back-muscles" aria-hidden="true">
-                  <path data-zone="back" data-part="grand_dorsal" class="muscle back lat-left" d="M108 150 Q145 170 150 265 Q114 268 96 230 Q92 182 108 150Z" />
-                  <path data-zone="back" data-part="grand_dorsal" class="muscle back lat-right" d="M212 150 Q175 170 170 265 Q206 268 224 230 Q228 182 212 150Z" />
-                  <path data-zone="back" data-part="trapezes" class="muscle back traps" d="M124 118 Q160 145 196 118 Q188 184 160 194 Q132 184 124 118Z" />
-                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders rear-delt-left" d="M82 130 Q116 112 126 150 Q104 176 80 182 Q66 154 82 130Z" />
-                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders rear-delt-right" d="M238 130 Q204 112 194 150 Q216 176 240 182 Q254 154 238 130Z" />
-                  <path data-zone="legs" data-part="ischios" class="muscle legs ham-left" d="M116 410 Q146 430 142 548 Q120 558 110 530 Q105 458 116 410Z" />
-                  <path data-zone="legs" data-part="ischios" class="muscle legs ham-right" d="M204 410 Q174 430 178 548 Q200 558 210 530 Q215 458 204 410Z" />
-                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes glute-left" d="M118 350 Q158 330 160 390 Q136 410 112 390 Q108 368 118 350Z" />
-                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes glute-right" d="M202 350 Q162 330 160 390 Q184 410 208 390 Q212 368 202 350Z" />
+                  <path data-zone="back" data-part="trapezes" class="muscle back" d="M156 130 C184 154 236 154 264 130 C260 182 236 218 210 224 C184 218 160 182 156 130Z" />
+                  <path data-zone="back" data-part="grand_dorsal" class="muscle back" d="M130 190 C160 206 184 238 198 306 C172 330 142 318 124 280 C116 242 118 210 130 190Z" />
+                  <path data-zone="back" data-part="grand_dorsal" class="muscle back" d="M290 190 C260 206 236 238 222 306 C248 330 278 318 296 280 C304 242 302 210 290 190Z" />
+                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders" d="M101 166 C126 144 150 150 158 178 C144 210 116 226 92 218 C84 196 88 178 101 166Z" />
+                  <path data-zone="shoulders" data-part="deltoide_posterieur" class="muscle shoulders" d="M319 166 C294 144 270 150 262 178 C276 210 304 226 328 218 C336 196 332 178 319 166Z" />
+                  <path data-zone="arms" data-part="triceps_long" class="muscle arms" d="M84 240 C112 256 120 312 108 360 C98 384 80 388 68 370 C70 318 74 274 84 240Z" />
+                  <path data-zone="arms" data-part="triceps_long" class="muscle arms" d="M336 240 C308 256 300 312 312 360 C322 384 340 388 352 370 C350 318 346 274 336 240Z" />
+                  <path data-zone="core" data-part="lombaires" class="muscle core" d="M184 312 C198 320 222 320 236 312 C240 348 232 382 210 402 C188 382 180 348 184 312Z" />
+                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes" d="M152 390 C178 374 204 384 208 422 C192 454 158 456 142 426 C140 410 142 398 152 390Z" />
+                  <path data-zone="glutes" data-part="grand_fessier" class="muscle glutes" d="M268 390 C242 374 216 384 212 422 C228 454 262 456 278 426 C280 410 278 398 268 390Z" />
+                  <path data-zone="legs" data-part="ischios" class="muscle legs" d="M154 456 C184 470 190 536 184 612 C166 628 148 606 144 564 C142 516 144 478 154 456Z" />
+                  <path data-zone="legs" data-part="ischios" class="muscle legs" d="M266 456 C236 470 230 536 236 612 C254 628 272 606 276 564 C278 516 276 478 266 456Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M154 604 C180 618 180 660 160 686 C136 672 136 624 154 604Z" />
+                  <path data-zone="calves" data-part="gastrocnemien" class="muscle calves" d="M266 604 C240 618 240 660 260 686 C284 672 284 624 266 604Z" />
                 </g>
               </svg>
               <div class="scan-ring" aria-hidden="true"></div>
@@ -147,7 +181,7 @@
       </footer>
     </div>
 
-    <script type="module" src="src/biomech-profile.js?v=20260702-ux15"></script>
-    <script type="module" src="src/glossary.js?v=20260702-ux15"></script>
+    <script type="module" src="src/biomech-profile.js?v=20260702-ux16"></script>
+    <script type="module" src="src/glossary.js?v=20260702-ux16"></script>
   </body>
 </html>
