@@ -39,7 +39,7 @@ function injectVisualPickerStyles() {
   if (document.querySelector('link[data-visual-pickers]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'src/visual-pickers.css?v=20260703-picker3';
+  link.href = 'src/visual-pickers.css?v=20260703-picker4';
   link.dataset.visualPickers = 'true';
   document.head.appendChild(link);
 }
@@ -48,10 +48,13 @@ function enhanceNumberSteppers(root = document) {
   Object.keys(pickerConfig).forEach((name) => {
     const select = root.querySelector(`select[name="${name}"]`);
     if (!select || select.dataset.stepperEnhanced === 'true') return;
+    const field = select.closest('label');
+    field?.classList.add('compact-number-control');
+    field?.setAttribute('data-control-icon', '');
     select.dataset.stepperEnhanced = 'true';
     select.classList.add('visual-picker-native');
     const stepper = document.createElement('div');
-    stepper.className = 'number-stepper';
+    stepper.className = 'number-stepper number-stepper-compact';
     stepper.dataset.stepperFor = name;
     stepper.innerHTML = `
       <button class="number-stepper-btn" type="button" data-stepper-step="-1" aria-label="Diminuer ${pickerConfig[name].aria}">−</button>
@@ -91,11 +94,7 @@ function renderStepper(select) {
   const current = select.selectedOptions[0] || select.options[0];
   const config = pickerConfig[select.name] || {};
   const value = current?.textContent || `${select.value} ${config.unit || ''}`;
-  const options = [...select.options];
-  const currentIndex = Math.max(0, options.findIndex((option) => option.selected));
-  const previous = options[Math.max(0, currentIndex - 1)]?.textContent || '';
-  const next = options[Math.min(options.length - 1, currentIndex + 1)]?.textContent || '';
-  display.innerHTML = `<span>${escapeHtml(previous)}</span><strong>${escapeHtml(value)}</strong><span>${escapeHtml(next)}</span>`;
+  display.innerHTML = `<strong>${escapeHtml(value)}</strong>`;
 }
 
 function shiftSelect(select, delta) {
