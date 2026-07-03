@@ -8,12 +8,12 @@
       name="description"
       content="Crée un plan d'entraînement personnalisé avec estimation e1RM, Training Max, progression et repères nutritionnels."
     />
-    <link rel="stylesheet" href="src/styles.css?v=20260703-ux15" />
-    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux15" />
-    <link rel="stylesheet" href="src/calibration.css?v=20260703-ux15" />
-    <link rel="stylesheet" href="src/form-steps.css?v=20260703-ux15" />
-    <link rel="stylesheet" href="src/result-accordion.css?v=20260703-ux15" />
-    <link rel="stylesheet" href="src/ux-polish.css?v=20260703-ux15" />
+    <link rel="stylesheet" href="src/styles.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/glossary.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/calibration.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/form-steps.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/result-accordion.css?v=20260703-ux35" />
+    <link rel="stylesheet" href="src/ux-polish.css?v=20260703-ux35" />
   </head>
   <body>
     <div class="page-shell">
@@ -36,16 +36,24 @@
           <p class="eyebrow">Créer un plan</p>
           <h1 id="page-title">Générateur d'entraînement personnalisé</h1>
           <p class="muted">
-            Remplis les étapes dans des menus déroulants, ferme celles que tu as terminées, puis génère le plan à la fin.
+            Choisis un mode, complète les informations utiles, puis génère ton plan. Les données sont sauvegardées localement sur cet appareil.
           </p>
-          <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
+          <div class="mode-switch" aria-label="Mode d’utilisation">
+            <button class="mode-pill" type="button" data-set-mode="quick">Mode rapide</button>
+            <button class="mode-pill" type="button" data-set-mode="advanced">Mode avancé</button>
+          </div>
+          <div class="hero-actions plan-actions">
+            <button class="btn ghost" id="load-demo" type="button">Charger une démo</button>
+            <button class="btn primary" id="resume-plan" type="button" hidden>Reprendre mon dernier plan</button>
+            <button class="btn ghost" id="clear-saved-plan" type="button" hidden>Effacer la sauvegarde</button>
+          </div>
         </section>
 
         <section class="builder-grid" aria-label="Générateur de programme">
           <div class="builder-steps">
             <div id="notice" class="notice" aria-live="polite">Remplis le profil, ajoute les calibrations utiles, puis génère le plan.</div>
 
-            <details class="builder-step">
+            <details class="builder-step" open>
               <summary class="builder-step-summary">
                 <span class="builder-step-title">
                   <strong>Étape 1 — Profil</strong>
@@ -116,7 +124,7 @@
                         <option value="beginner">Débutant</option>
                         <option value="intermediate">Intermédiaire</option>
                         <option value="advanced">Avancé</option>
-                        <option value="very_advanced">Très avancé — split ABCD</option>
+                        <option value="very_advanced">Très avancé — split dynamique</option>
                       </select>
                     </label>
                     <label class="field">
@@ -243,7 +251,7 @@
               </div>
             </details>
 
-            <details class="builder-step">
+            <details class="builder-step calibration-step">
               <summary class="builder-step-summary">
                 <span class="builder-step-title">
                   <strong>Étape 2 — Calibration</strong>
@@ -323,7 +331,7 @@
             <section class="panel generation-panel" aria-labelledby="generate-title">
               <p class="eyebrow">Étape 3</p>
               <h2 id="generate-title">Générer le programme</h2>
-              <p class="muted">Quand le profil est rempli et que les calibrations utiles sont ajoutées, génère le plan final.</p>
+              <p class="muted">En mode rapide, tu peux générer directement. En mode avancé, les calibrations améliorent la précision des charges.</p>
               <button class="btn primary" id="generate-plan" type="button">Générer mon plan</button>
             </section>
           </div>
@@ -337,25 +345,9 @@
       </footer>
     </div>
 
-    <script>
-      (() => {
-        const form = document.querySelector('#profile-form');
-        if (!form) return;
-        const val = (name) => form.querySelector(`[name="${name}"]`)?.value || '';
-        const sync = () => {
-          const injuries = form.querySelector('[name="injuries"]');
-          const flags = form.querySelector('[name="medicalFlags"]');
-          if (injuries) injuries.value = [`pain:${val('painZoneUi') || 'none'}`, val('injuriesText')].filter(Boolean).join('; ');
-          if (flags) flags.value = [`priority:${val('priorityMuscleUi') || 'balanced'}`, `recovery:${val('recoveryLevelUi') || 'normal'}`, `preference:${val('exercisePreferenceUi') || 'mixed'}`, val('medicalFlagsText')].filter(Boolean).join('; ');
-        };
-        form.addEventListener('input', sync);
-        form.addEventListener('change', sync);
-        sync();
-      })();
-    </script>
-    <script type="module" src="src/app.js?v=20260703-ux15"></script>
-    <script type="module" src="src/muscle-display.js?v=20260703-ux15"></script>
-    <script type="module" src="src/glossary.js?v=20260703-ux15"></script>
-    <script type="module" src="src/ux-polish.js?v=20260703-ux15"></script>
+    <script type="module" src="src/app.js?v=20260703-ux35"></script>
+    <script type="module" src="src/muscle-display.js?v=20260703-ux35"></script>
+    <script type="module" src="src/glossary.js?v=20260703-ux35"></script>
+    <script type="module" src="src/ux-polish.js?v=20260703-ux35"></script>
   </body>
 </html>
