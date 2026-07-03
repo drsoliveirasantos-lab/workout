@@ -6,6 +6,8 @@
   --bio-cyan: #32e6ff;
   --bio-blue: #4aa8ff;
   --bio-orange: #ffad35;
+  --bio-hotspot-fill: rgba(255, 54, 116, 0.48);
+  --bio-hotspot-stroke: rgba(255, 154, 194, 0.88);
 }
 
 .biomech-hero {
@@ -104,8 +106,8 @@
 .body-stage::before {
   content: '';
   position: absolute;
-  width: 60%;
-  height: 82%;
+  width: 70%;
+  height: 86%;
   border-radius: 50%;
   border: 1px solid rgba(104, 216, 255, 0.13);
   background: radial-gradient(circle, rgba(104, 216, 255, 0.07), transparent 66%);
@@ -120,12 +122,12 @@
   z-index: 1;
 }
 
-.hud-orbit-one { width: min(74%, 720px); height: 75%; }
-.hud-orbit-two { width: min(52%, 460px); height: 60%; opacity: 0.55; }
+.hud-orbit-one { width: min(82%, 820px); height: 78%; }
+.hud-orbit-two { width: min(62%, 560px); height: 64%; opacity: 0.55; }
 
 .user-body-map {
   position: relative;
-  width: min(52%, 520px);
+  width: min(86%, 840px);
   aspect-ratio: 2 / 3;
   z-index: 5;
   filter: drop-shadow(0 0 34px rgba(104, 216, 255, 0.22));
@@ -167,10 +169,12 @@
 }
 
 .hotspot {
-  opacity: 0.36 !important;
-  fill: rgba(0, 138, 174, 0.22) !important;
-  stroke: rgba(71, 232, 255, 0.62) !important;
-  stroke-width: 6 !important;
+  opacity: 0.28 !important;
+  fill: rgba(255, 54, 116, 0.12) !important;
+  stroke: rgba(255, 154, 194, 0.56) !important;
+  stroke-width: 0.8 !important;
+  stroke-linejoin: round !important;
+  stroke-linecap: round !important;
   vector-effect: non-scaling-stroke;
   mix-blend-mode: screen;
   cursor: pointer;
@@ -187,21 +191,28 @@
 
 .hotspot:hover,
 .hotspot.is-active {
-  opacity: 0.94 !important;
-  stroke: rgba(230, 252, 255, 0.98) !important;
-  stroke-width: 8 !important;
-  filter: drop-shadow(0 0 18px rgba(50, 230, 255, 0.78));
+  opacity: 0.82 !important;
+  fill: var(--bio-hotspot-fill) !important;
+  stroke: var(--bio-hotspot-stroke) !important;
+  stroke-width: 1.15 !important;
+  filter: drop-shadow(0 0 14px rgba(255, 82, 142, 0.56));
 }
 
-.hotspot.strength-hot { fill: rgba(0, 183, 214, 0.48) !important; }
-.hotspot.strength-warm { fill: rgba(32, 126, 232, 0.42) !important; }
+.hotspot.strength-hot {
+  fill: rgba(255, 46, 110, 0.52) !important;
+  stroke: rgba(255, 164, 202, 0.9) !important;
+}
+.hotspot.strength-warm {
+  fill: rgba(255, 94, 148, 0.46) !important;
+  stroke: rgba(255, 174, 208, 0.84) !important;
+}
 .hotspot.strength-mid {
-  fill: rgba(224, 128, 25, 0.4) !important;
-  stroke: rgba(255, 190, 80, 0.84) !important;
+  fill: rgba(230, 66, 118, 0.4) !important;
+  stroke: rgba(255, 146, 184, 0.78) !important;
 }
 .hotspot.strength-low {
-  fill: rgba(214, 69, 35, 0.42) !important;
-  stroke: rgba(255, 126, 90, 0.84) !important;
+  fill: rgba(214, 44, 78, 0.38) !important;
+  stroke: rgba(255, 112, 150, 0.76) !important;
 }
 
 .scan-ring {
@@ -406,8 +417,8 @@
   }
 
   .body-map-panel { padding: 0.75rem; }
-  .body-stage { min-height: 820px; border-radius: 1.2rem; }
-  .user-body-map { width: 220px; max-width: 58%; transform: translateY(1.1rem); }
+  .body-stage { min-height: 840px; border-radius: 1.2rem; }
+  .user-body-map { width: min(360px, 88vw); max-width: 88%; transform: translateY(1.4rem); }
   .hud-zone-card { width: 96px; min-height: 72px; padding: 0.46rem 0.48rem; }
   .hud-card-top { font-size: 0.5rem; }
   .hud-card-score { font-size: 1.08rem; }
@@ -423,8 +434,8 @@
 }
 
 @media (max-width: 430px) {
-  .body-stage { min-height: 790px; }
-  .user-body-map { width: 212px; max-width: 58%; transform: translateY(1.1rem); }
+  .body-stage { min-height: 820px; }
+  .user-body-map { width: min(352px, 90vw); max-width: 90%; transform: translateY(1.4rem); }
   .hud-zone-card { width: 92px; min-height: 68px; padding: 0.42rem 0.44rem; }
   .hud-card-score { font-size: 1rem; }
   .hud-card-bar { margin-top: 0.32rem; }
