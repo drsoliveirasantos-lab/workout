@@ -66,20 +66,22 @@ test('premium controls include custom dropdown menus for short selects', async (
   assert.match(workflow, /dist\/src\/visual-pickers\.js/);
 });
 
-test('visual pickers add compact number wheels and profile cards', async () => {
+test('visual pickers use compact steppers and mature profile chips', async () => {
   const visual = await text('src/visual-pickers.js');
   const css = await text('src/visual-pickers.css');
 
   assert.match(visual, /pickerConfig/);
   assert.match(visual, /heightCm/);
-  assert.match(visual, /number-wheel/);
+  assert.match(visual, /number-stepper/);
   assert.match(visual, /visualChoiceMeta/);
   assert.match(visual, /physicalProfile/);
-  assert.match(visual, /sex-card-group/);
-  assert.match(visual, /physique-card-group/);
-  assert.match(css, /number-wheel-track/);
-  assert.match(css, /visual-choice-card/);
-  assert.match(css, /visual-choice-icon/);
+  assert.match(visual, /sex-segment-group/);
+  assert.match(visual, /physique-chip-group/);
+  assert.match(css, /number-stepper-display/);
+  assert.match(css, /visual-choice-chip/);
+  assert.match(css, /visual-choice-code/);
+  assert.doesNotMatch(css, /number-wheel-track/);
+  assert.doesNotMatch(css, /visual-choice-icon/);
 });
 
 test('sources page explains the public method without exposing exact internal coefficients', async () => {
