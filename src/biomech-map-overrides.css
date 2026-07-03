@@ -1,0 +1,35 @@
+.hotspot {
+  stroke-width: 7;
+}
+
+.hotspot:hover,
+.hotspot.is-active {
+  opacity: 0.82;
+  stroke: rgba(222, 250, 255, 0.38);
+  filter: drop-shadow(0 0 8px rgba(104, 216, 255, 0.32));
+}
+
+.hotspot.is-open-path {
+  fill: none !important;
+  stroke-width: 10;
+}
+
+.hotspot.is-open-path:hover,
+.hotspot.is-open-path.is-active {
+  opacity: 0.76;
+  fill: none !important;
+  stroke: rgba(104, 216, 255, 0.46);
+  filter: drop-shadow(0 0 7px rgba(104, 216, 255, 0.26));
+}
+
+.hotspot.is-open-path.strength-hot,
+.hotspot.is-open-path.strength-warm,
+.hotspot.is-open-path.strength-mid,
+.hotspot.is-open-path.strength-low {
+  fill: none !important;
+}
+
+.hotspot.strength-hot { fill: rgba(255, 73, 102, 0.22); }
+.hotspot.strength-warm { fill: rgba(255, 152, 77, 0.19); }
+.hotspot.strength-mid { fill: rgba(246, 214, 91, 0.17); }
+.hotspot.strength-low { fill: rgba(91, 188, 255, 0.14); }
