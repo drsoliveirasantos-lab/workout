@@ -1,4 +1,4 @@
-const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent6';
+const BODY_MAP_URL = 'body_back_and_front_zones.svg?v=20260703-transparent7';
 const z = (label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts) => ({ label, score, reliability, level, subzones, strengths, weaknesses, sources, recommendation, parts });
 const ZONES = {
   global: z('Vue globale', 78, 74, 'Bon', [['Poussée / pectoraux', 82], ['Jambes antérieures', 80], ['Dos / tirages', 63], ['Épaules largeur', 58]], ['Poussée horizontale solide', 'Quadriceps dominants', 'Triceps bien contributeurs'], ['Haut des pectoraux à surveiller', 'Deltoïde latéral à renforcer', 'Ischios moins documentés'], ['Développé couché', 'Développé incliné haltères', 'Pec deck', 'Leg press 45°', 'Développé assis'], 'Compléter un tirage vertical, une élévation latérale et un leg curl pour rendre la carte plus fiable.', []),
@@ -21,6 +21,8 @@ const HUD_ZONES = [
   { id: 'legs', slot: 'right-4', icon: '⋀', connector: 'connector-left' },
   { id: 'calves', slot: 'right-5', icon: '⋁', connector: 'connector-left' }
 ];
+const FRONT_PARTS = new Set(['pec_claviculaire', 'pec_sternal', 'pec_costal', 'deltoide_anterieur', 'deltoide_lateral', 'biceps', 'avant_bras', 'abdos', 'obliques', 'serratus_anterior', 'psoas', 'iliaque', 'vaste_lateral', 'vaste_medial', 'droit_femoral', 'sartorius', 'gracile', 'grand_adducteur', 'long_adducteur', 'pectine', 'gastrocnemien', 'soleaire']);
+const BACK_PARTS = new Set(['grand_dorsal', 'trapezes', 'rhomboides', 'infra_epineux', 'grand_rond', 'petit_rond', 'lombaires', 'deltoide_posterieur', 'deltoide_lateral', 'triceps', 'avant_bras', 'grand_fessier', 'moyen_fessier', 'tenseur_fascia_lata', 'semimembraneux', 'semitendineux', 'biceps_femoral', 'gastrocnemien', 'soleaire']);
 const state = { zone: 'global', view: 'front' };
 async function init() { renderTabs(); renderHudCards(); bindEvents(); renderZone('global'); renderGlobalCards(); await loadBodyMap(); }
 async function loadBodyMap() {
@@ -63,7 +65,9 @@ function collectView(doc, candidates, options) {
   if (!image || !pathNodes.length) throw new Error(`Vue ${options.view} incomplète: image ou zones introuvable`);
   const imageData = { href: image.getAttribute('href') || image.getAttribute('xlink:href'), x: numberAttr(image, 'x'), y: numberAttr(image, 'y'), width: numberAttr(image, 'width'), height: numberAttr(image, 'height'), transform: collectTransformChain(image) };
   const seen = new Map();
-  const paths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter(Boolean);
+  const allPaths = pathNodes.map((path) => normalizePath(path, options.view, seen)).filter(Boolean);
+  const viewPaths = allPaths.filter((path) => shouldShowPathInView(path, options.view));
+  const paths = viewPaths.length ? viewPaths : allPaths;
   return { label: options.view === 'front' ? 'Vue avant' : 'Vue arrière', viewBox: [imageData.x, imageData.y, imageData.width, imageData.height], image: imageData, paths };
 }
 function collectLayerCandidates(doc) {
@@ -93,6 +97,11 @@ function normalizePath(path, view, seen) {
   const count = (seen.get(baseId) || 0) + 1;
   seen.set(baseId, count);
   return { id: count === 1 ? baseId : `${baseId}_${count}`, zone, part, name, rawLabel, side, d, transform: collectTransformChain(path) };
+}
+function shouldShowPathInView(path, view) {
+  if (path.zone === 'other') return false;
+  if (view === 'front') return FRONT_PARTS.has(path.part) || ['pecs', 'core', 'calves'].includes(path.zone);
+  return BACK_PARTS.has(path.part) || ['back', 'glutes', 'calves'].includes(path.zone);
 }
 function renderBodySvg(view, data) {
   const imageTransform = data.image.transform ? ` transform="${escapeAttr(data.image.transform)}"` : '';
