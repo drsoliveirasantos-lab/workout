@@ -37,6 +37,7 @@ jobs:
           test -f dist/src/biomech-profile.js
           test -f dist/src/biomech-click-zones.js
           test -f dist/src/biomech-profile.css
+          test -f dist/src/biomech-zone-visibility.css
           test -f dist/src/biomech-background-key.js
           test -f dist/src/biomech-map-cleanup.js
           test -f dist/src/biomech-map-overrides.css
