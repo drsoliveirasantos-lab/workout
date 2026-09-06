@@ -12,3 +12,9 @@ Development work should happen on the `preview` branch first. `main` is kept as 
 - Generate beginner/intermediate strength and hypertrophy sessions using transparent formulas.
 - Add nutrition targets and budget-aware food suggestions.
 - Keep sources, formulas, limits, and safety rules visible in the repository.
+
+## Typography
+
+Use [the shared typography standard](docs/typography-standard.md) for new and
+updated interfaces. The root AGENTS and Copilot instructions also require passing
+this standard to future sites created from this project.
